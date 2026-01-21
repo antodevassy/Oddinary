@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Oddinary</title>
+    <title>Oddinary - Party Game</title>
     <link rel="icon" type="image/png" href="fav-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -472,7 +472,8 @@
 
     <!-- 5. Voting Phase -->
     <div id="screen-voting" class="screen">
-        <h3 class="text-c text-muted mb-2">Pass to <span id="voter-name" class="text-primary">Player</span></h3>
+        <h3 class="text-c text-muted">Pass to</h3>
+        <h1 id="voter-name" class="text-primary mb-2" style="font-size: 2.5rem;">Player</h1>
         <h2 class="text-c mb-2">Who is the Imposter?</h2>
         
         <div class="content-area" id="voting-list">
@@ -484,7 +485,7 @@
     <div id="modal-vote-confirm" class="modal">
         <div style="max-width: 400px; width: 100%; text-align: center;">
             <h2 class="text-white mb-2">Confirm Vote?</h2>
-            <p class="text-muted mb-2">Are you sure you want to vote for <span id="confirm-vote-name" class="text-primary">Player</span>?</p>
+            <p class="text-muted mb-2">Are you sure you want to vote for: <span id="confirm-vote-name" class="text-primary" style="display: block; font-size: 1.5rem; font-weight: 900; margin-top: 10px;">Player</span></p>
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button class="btn" style="flex:1" onclick="Game.cancelVote()">Cancel</button>
                 <button class="btn btn-danger" style="flex:1" onclick="Game.confirmVote()">Vote</button>
