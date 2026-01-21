@@ -493,7 +493,7 @@
     <div id="screen-discuss" class="screen">
         <div class="content-area">
             <div class="pulse-anim">🗣️</div>
-            <h1 class="text-gold mb-2">Discuss!</h1>
+            <h1 class="text-gold mb-2">Discussion Time</h1>
             <p class="text-c text-muted mb-2">Describe your word, but don't say it. Find out who is the imposter.</p>
             
             <div id="timer-display" class="hidden" style="font-size: 3rem; font-weight: 900; color: var(--text-main); margin: 30px 0;">
@@ -522,6 +522,18 @@
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button class="btn" style="flex:1" onclick="Game.cancelVote()">Cancel</button>
                 <button class="btn btn-danger" style="flex:1" onclick="Game.confirmVote()">Vote</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal for New Game -->
+    <div id="modal-new-game-confirm" class="modal">
+        <div style="max-width: 400px; width: 100%; text-align: center;">
+            <h2 class="text-white mb-2">Reset Session?</h2>
+            <p class="text-muted mb-2">This will clear all scores and player history. Are you sure?</p>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn" style="flex:1" onclick="Game.cancelNewGame()">Cancel</button>
+                <button class="btn btn-danger" style="flex:1" onclick="Game.confirmNewGame()">Reset</button>
             </div>
         </div>
     </div>
@@ -556,7 +568,7 @@
         </div>
         
         <button class="btn btn-primary" onclick="Game.setupNextRound()">Next Round</button>
-        <button class="btn" onclick="Game.resetGame()">New Game</button>
+        <button class="btn" onclick="Game.askNewGame()">New Game</button>
     </div>
 </div>
 
@@ -592,6 +604,7 @@ const State = {
 const $ = (id) => document.getElementById(id);
 const Screens = ['landing', 'setup', 'reveal', 'discuss', 'voting', 'results', 'scoreboard'];
 let shouldPreventRefresh = true;
+const SESSION_KEY = 'oddinary_session_v1';
 
 // --- Safety: Prevent Refresh ---
 window.addEventListener('beforeunload', (e) => {
@@ -605,12 +618,36 @@ window.addEventListener('beforeunload', (e) => {
 // --- Game Controller ---
 const Game = {
     init: () => {
-        // Default 3 players
-        State.players = [
-            { id: 101, name: "Player 1", score: 0 },
-            { id: 102, name: "Player 2", score: 0 },
-            { id: 103, name: "Player 3", score: 0 }
-        ];
+        Game.loadSession();
+        // If no players loaded (fresh session), default start
+        if(State.players.length === 0) {
+            State.players = [
+                { id: 101, name: "Player 1", score: 0 },
+                { id: 102, name: "Player 2", score: 0 },
+                { id: 103, name: "Player 3", score: 0 }
+            ];
+        }
+    },
+
+    saveSession: () => {
+        const data = {
+            players: State.players,
+        };
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(data));
+    },
+
+    loadSession: () => {
+        const raw = sessionStorage.getItem(SESSION_KEY);
+        if(raw) {
+            try {
+                const data = JSON.parse(raw);
+                if(data.players) State.players = data.players;
+                // Force reset scores to 0 on reload (New User Requirement)
+                State.players.forEach(p => p.score = 0); 
+            } catch(e) {
+                console.error("Failed to load session", e);
+            }
+        }
     },
 
     showScreen: (name) => {
@@ -636,12 +673,14 @@ const Game = {
         if(State.players.length >= 30) return alert("Max 30 players!");
         const nextNum = State.players.length + 1;
         State.players.push({ id: Date.now(), name: `Player ${nextNum}`, score: 0 });
+        Game.saveSession();
         Game.renderSetupInputs();
     },
 
     removePlayer: (index) => {
         if(State.players.length <= 3) return alert("Min 3 players required!");
         State.players.splice(index, 1);
+        Game.saveSession();
         Game.renderSetupInputs();
     },
     
@@ -659,6 +698,7 @@ const Game = {
             el.value = el.dataset.oldVal || `Player ${index + 1}`;
             State.players[index].name = el.value;
         }
+        Game.saveSession();
     },
 
     renderSetupInputs: () => {
@@ -691,6 +731,8 @@ const Game = {
         });
         
         if(State.players.length < 3) return alert("Min 3 players!");
+
+        Game.saveSession();
 
         // Configs
         State.config.shuffle = $('setting-shuffle').checked;
@@ -767,12 +809,21 @@ const Game = {
     },
 
     nextReveal: () => {
-        State.stepIndex++;
-        if(State.stepIndex < State.players.length) {
-            Game.showRevealScreen();
-        } else {
-            Game.startDiscussion();
-        }
+        // Hide button immediately to prevent double clicks
+        $('btn-next-player').classList.add('hidden');
+        
+        // Flip card back first
+        $('word-card').classList.remove('flipped');
+        
+        // Wait for animation (600ms) before changing content
+        setTimeout(() => {
+            State.stepIndex++;
+            if(State.stepIndex < State.players.length) {
+                Game.showRevealScreen();
+            } else {
+                Game.startDiscussion();
+            }
+        }, 600);
     },
 
     // --- Discussion ---
@@ -866,7 +917,11 @@ const Game = {
         const voteCounts = {}; 
         let maxVotes = 0;
         
-        State.players.forEach(p => { voteCounts[p.id] = 0; });
+        // Reset Round Scores (temp property)
+        State.players.forEach(p => { 
+            voteCounts[p.id] = 0; 
+            p.roundScore = 0; 
+        });
         
         Object.values(State.votes).forEach(targetId => {
             voteCounts[targetId] = (voteCounts[targetId] || 0) + 1;
@@ -876,79 +931,66 @@ const Game = {
         const oddId = State.currentOddPlayerId;
         const oddVotes = voteCounts[oddId] || 0;
         const oddPlayer = State.players.find(p => p.id === oddId);
-        
+        let roundStatus = "";
+
         // --- 1. PERFECT DECEPTION ---
         // Condition: VoteCount[OddPlayer] == 0
         if (oddVotes === 0) {
-             oddPlayer.score += 20;
-             // Ignore all other scoring rules
-             Game.renderResults(voteCounts, oddPlayer, "Perfect Deception! (+20)");
-             return;
+             oddPlayer.roundScore = 20;
+             roundStatus = "Perfect Deception! (+20)";
         }
+        else {
+            // --- 2. ODD PLAYER CAUGHT ---
+            // Condition: VoteCount[OddPlayer] is STRICTLY greater than any other player
+            // This means oddVotes MUST be > all others.
+            // If there is a tie for max votes, and odd player is one of them, it is NOT strictly greater.
+            let isStrictlyHighest = true;
+            for (const pid in voteCounts) {
+                if (pid != oddId && voteCounts[pid] >= oddVotes) {
+                    isStrictlyHighest = false;
+                    break;
+                }
+            }
 
-        // --- 2. ODD PLAYER CAUGHT ---
-        // Condition: VoteCount[OddPlayer] is STRICTLY greater than any other player
-        // This means oddVotes MUST be > all others.
-        // If there is a tie for max votes, and odd player is one of them, it is NOT strictly greater.
-        let isStrictlyHighest = true;
-        for (const pid in voteCounts) {
-            if (pid != oddId && voteCounts[pid] >= oddVotes) {
-                isStrictlyHighest = false;
-                break;
+            if (isStrictlyHighest) {
+                // Actions:
+                // For each player p where Votes[p] == OddPlayer → Score[p] += 10
+                Object.entries(State.votes).forEach(([voterId, targetId]) => {
+                    if(targetId == oddId) {
+                         State.players.find(p => p.id == voterId).roundScore += 10;
+                    }
+                });
+                roundStatus = "Imposter Caught!";
+            }
+            // --- 3. ODD PLAYER ESCAPES ---
+            // Condition: VoteCount[OddPlayer] is NOT the highest among all players
+            // Let's interpret "NOT the highest" as: oddVotes < maxVotes.
+            else if (oddVotes < maxVotes) {
+                 // Actions:
+                 if (oddVotes > 0) {
+                     oddPlayer.roundScore += 15;
+                 }
+                 // For each player p where Votes[p] == OddPlayer → Score[p] += 5
+                 Object.entries(State.votes).forEach(([voterId, targetId]) => {
+                    if(targetId == oddId) {
+                        State.players.find(p => p.id == voterId).roundScore += 5;
+                    }
+                 });
+                 roundStatus = "Imposter Escaped! (+15)";
+            }
+            // --- 4. TIE (Implicit) ---
+            else {
+                roundStatus = "Draw! No Points.";
             }
         }
-
-        if (isStrictlyHighest) {
-            // Actions:
-            // For each player p where Votes[p] == OddPlayer → Score[p] += 10
-            // Score[OddPlayer] += 0
-            Object.entries(State.votes).forEach(([voterId, targetId]) => {
-                if(targetId == oddId) {
-                     State.players.find(p => p.id == voterId).score += 10;
-                }
-            });
-            Game.renderResults(voteCounts, oddPlayer, "Odd Player Caught!");
-            return;
-        }
-
-        // --- 3. ODD PLAYER ESCAPES ---
-        // Condition: VoteCount[OddPlayer] is NOT the highest among all players
-        // This means SOMEONE ELSE has >= votes than OddPlayer OR OddPlayer is not Max.
-        // Wait, "NOT the highest" usually means < Max.
-        // If OddPlayer TIES for highest, they ARE one of the highest.
-        // Re-reading rule 2: "Is NOT the highest among all players".
-        // If Odd=3, P2=3. Max=3. Is Odd "The Highest"? No, shared highest.
-        // However, looking at the logic:
-        // Rule 1 was "Strictly Greater".
-        // Rule 2 condition: "VoteCount[OddPlayer] is NOT the highest".
-        // If Odd < MaxVotes, then certainly not highest.
-        // If Odd == MaxVotes (Tie), strictly speaking they hold the highest value, but are not unique.
-        // Let's look at the actions: "If VoteCount > 0: Score += 15".
         
-        // Let's interpret "NOT the highest" as: oddVotes < maxVotes.
-        if (oddVotes < maxVotes) {
-             // Actions:
-             if (oddVotes > 0) {
-                 oddPlayer.score += 15;
-             }
-             // For each player p where Votes[p] == OddPlayer → Score[p] += 5
-             Object.entries(State.votes).forEach(([voterId, targetId]) => {
-                if(targetId == oddId) {
-                    State.players.find(p => p.id == voterId).score += 5;
-                }
-             });
-             Game.renderResults(voteCounts, oddPlayer, "Odd Player Escaped! (+15)");
-             return;
-        }
+        // Accumulate and Save
+        State.players.forEach(p => {
+             p.score += p.roundScore;
+        });
+        Game.saveSession();
 
-        // --- 4. TIE (Implicit) ---
-        // OddPlayer HAS the highest votes (or tied for it), but not strictly greater.
-        // E.g. Odd=3, Other=3.
-        // Rules don't cover this explicit gap between "Strictly Greater" and "Not Highest".
-        // "Not Highest" (odd < max) vs "Strictly Highest" (odd > any other).
-        // The gap is Odd == Max (Tie).
-        // Do nothing.
-        Game.renderResults(voteCounts, oddPlayer, "Draw! No Points.");
+        Game.renderResults(voteCounts, oddPlayer, roundStatus);
     },
     
     renderResults: (voteCounts, oddPlayer, roundStatus) => {
@@ -972,14 +1014,17 @@ const Game = {
         
         sortedPlayers.forEach(p => {
              const count = voteCounts[p.id];
+             const rScore = p.roundScore > 0 ? `+${p.roundScore}` : `0`;
+             const rClass = p.roundScore > 0 ? `text-primary` : `text-muted`;
              
              const wrap = document.createElement('div');
              wrap.style.width = "100%";
              wrap.style.marginBottom = "15px";
              
              wrap.innerHTML = `
-                <div style="display:flex; justify-content:center; align-items:center;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span>${p.name}</span>
+                    <span class="${rClass}" style="font-weight:bold;">${rScore} pts</span>
                 </div>
                 <div class="vote-bar-container">
                     <div class="vote-bar-fill" style="width: 0%;" data-w="${(count/State.players.length)*100}%"></div>
@@ -1020,7 +1065,10 @@ const Game = {
                     <span style="font-weight:900; color:var(--text-muted); width:30px; text-align:right; margin-right:10px;">#${idx+1}</span>
                     <span style="font-size:1.2rem; font-weight:bold;">${p.name}</span>
                 </div>
-                <span class="text-primary" style="font-weight:900; font-size:1.2rem;">${p.score}</span>
+                <div style="text-align:right;">
+                    <span class="text-primary" style="font-weight:900; font-size:1.2rem; display:block;">${p.score}</span>
+                    <span class="text-muted" style="font-size:0.7rem;">TOTAL</span>
+                </div>
             `;
             area.appendChild(item);
         });
@@ -1028,9 +1076,25 @@ const Game = {
         Game.showScreen('scoreboard');
     },
     
-    resetGame: () => {
+    // --- New Game Utils ---
+    askNewGame: () => {
+        $('modal-new-game-confirm').classList.add('open');
+    },
+    
+    cancelNewGame: () => {
+        $('modal-new-game-confirm').classList.remove('open');
+    },
+
+    confirmNewGame: () => {
+        // Clear Persistence
+        sessionStorage.removeItem(SESSION_KEY);
+        // Hard Reload
         shouldPreventRefresh = false;
         location.reload();
+    },
+
+    resetGame: () => {
+         // Deprecated
     }
 };
 
