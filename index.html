@@ -861,6 +861,7 @@ const Game = {
     },
 
     // --- Results ---
+    // --- Results ---
     calculateResults: () => {
         const voteCounts = {}; 
         let maxVotes = 0;
@@ -872,44 +873,100 @@ const Game = {
             if(voteCounts[targetId] > maxVotes) maxVotes = voteCounts[targetId];
         });
         
-        const oddPlayerCaught = (voteCounts[State.currentOddPlayerId] === maxVotes && maxVotes > 0);
-        
         const oddId = State.currentOddPlayerId;
+        const oddVotes = voteCounts[oddId] || 0;
         const oddPlayer = State.players.find(p => p.id === oddId);
         
-        if(oddPlayerCaught) {
+        // --- 1. PERFECT DECEPTION ---
+        // Condition: VoteCount[OddPlayer] == 0
+        if (oddVotes === 0) {
+             oddPlayer.score += 20;
+             // Ignore all other scoring rules
+             Game.renderResults(voteCounts, oddPlayer, "Perfect Deception! (+20)");
+             return;
+        }
+
+        // --- 2. ODD PLAYER CAUGHT ---
+        // Condition: VoteCount[OddPlayer] is STRICTLY greater than any other player
+        // This means oddVotes MUST be > all others.
+        // If there is a tie for max votes, and odd player is one of them, it is NOT strictly greater.
+        let isStrictlyHighest = true;
+        for (const pid in voteCounts) {
+            if (pid != oddId && voteCounts[pid] >= oddVotes) {
+                isStrictlyHighest = false;
+                break;
+            }
+        }
+
+        if (isStrictlyHighest) {
+            // Actions:
+            // For each player p where Votes[p] == OddPlayer → Score[p] += 10
+            // Score[OddPlayer] += 0
             Object.entries(State.votes).forEach(([voterId, targetId]) => {
                 if(targetId == oddId) {
                      State.players.find(p => p.id == voterId).score += 10;
                 }
             });
-        } else {
-            State.players.find(p => p.id === oddId).score += 15;
-            if(voteCounts[oddId] === 0) {
-                 State.players.find(p => p.id === oddId).score += 5; 
-            }
-            Object.entries(State.votes).forEach(([voterId, targetId]) => {
+            Game.renderResults(voteCounts, oddPlayer, "Odd Player Caught!");
+            return;
+        }
+
+        // --- 3. ODD PLAYER ESCAPES ---
+        // Condition: VoteCount[OddPlayer] is NOT the highest among all players
+        // This means SOMEONE ELSE has >= votes than OddPlayer OR OddPlayer is not Max.
+        // Wait, "NOT the highest" usually means < Max.
+        // If OddPlayer TIES for highest, they ARE one of the highest.
+        // Re-reading rule 2: "Is NOT the highest among all players".
+        // If Odd=3, P2=3. Max=3. Is Odd "The Highest"? No, shared highest.
+        // However, looking at the logic:
+        // Rule 1 was "Strictly Greater".
+        // Rule 2 condition: "VoteCount[OddPlayer] is NOT the highest".
+        // If Odd < MaxVotes, then certainly not highest.
+        // If Odd == MaxVotes (Tie), strictly speaking they hold the highest value, but are not unique.
+        // Let's look at the actions: "If VoteCount > 0: Score += 15".
+        
+        // Let's interpret "NOT the highest" as: oddVotes < maxVotes.
+        if (oddVotes < maxVotes) {
+             // Actions:
+             if (oddVotes > 0) {
+                 oddPlayer.score += 15;
+             }
+             // For each player p where Votes[p] == OddPlayer → Score[p] += 5
+             Object.entries(State.votes).forEach(([voterId, targetId]) => {
                 if(targetId == oddId) {
                     State.players.find(p => p.id == voterId).score += 5;
                 }
-            });
+             });
+             Game.renderResults(voteCounts, oddPlayer, "Odd Player Escaped! (+15)");
+             return;
         }
-        
-        Game.renderResults(voteCounts, oddPlayer, oddPlayerCaught);
+
+        // --- 4. TIE (Implicit) ---
+        // OddPlayer HAS the highest votes (or tied for it), but not strictly greater.
+        // E.g. Odd=3, Other=3.
+        // Rules don't cover this explicit gap between "Strictly Greater" and "Not Highest".
+        // "Not Highest" (odd < max) vs "Strictly Highest" (odd > any other).
+        // The gap is Odd == Max (Tie).
+        // Do nothing.
+        Game.renderResults(voteCounts, oddPlayer, "Draw! No Points.");
     },
     
-    renderResults: (voteCounts, oddPlayer, wasCaught) => {
+    renderResults: (voteCounts, oddPlayer, roundStatus) => {
         const area = $('results-area');
         area.innerHTML = "";
         
         // Always show "VOTE RESULTS"
         const statusH = document.createElement('h2');
-        // REMOVED COLOR LOGIC
-        // statusH.className = wasCaught ? 'text-primary' : 'text-danger'; 
         statusH.innerText = "VOTE RESULTS"; 
-        statusH.style.marginBottom = "20px";
-        statusH.style.color = "white"; // Force White
+        statusH.style.marginBottom = "5px";
+        statusH.style.color = "white"; 
         area.appendChild(statusH);
+
+        const subH = document.createElement('h3');
+        subH.innerText = roundStatus;
+        subH.style.marginBottom = "20px";
+        subH.className = "text-gold";
+        area.appendChild(subH);
         
         const sortedPlayers = [...State.players].sort((a,b) => voteCounts[b.id] - voteCounts[a.id]);
         
