@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Oddinary - Party Game</title>
+    <title>Oddinary</title>
     <link rel="icon" type="image/png" href="fav-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -362,6 +362,39 @@
             padding: 20px;
         }
         .modal.open { display: flex; animation: fadeIn 0.3s ease-out; }
+
+        /* --- MOBILE OPTIMIZATION --- */
+        @media (max-width: 480px) {
+            h1 { font-size: 1.8rem !important; }
+            h2 { font-size: 1.5rem !important; }
+            h3 { font-size: 1.1rem !important; }
+            
+            .btn {
+                padding: 14px;
+                font-size: 1rem;
+                border-width: 1px;
+            }
+            
+            .input-group input { padding: 12px; font-size: 1rem; }
+            .btn-icon { width: 44px; }
+            
+            .card-container {
+                height: 340px;
+                max-width: 280px;
+            }
+            .card-face h1 { font-size: 2rem !important; }
+            
+            .pulse-anim { width: 80px; height: 80px; font-size: 2.2rem; }
+            .vote-bar-container { height: 32px; }
+            .vote-count-text { font-size: 0.9rem; }
+            
+            .list-item { padding: 12px 15px; }
+            .list-item span { font-size: 1rem !important; }
+
+            /* Ensure highlight text scales but stays relatively large */
+            #voter-name { font-size: 2rem !important; }
+            #confirm-vote-name { font-size: 1.3rem !important; }
+        }
     </style>
 </head>
 <body>
