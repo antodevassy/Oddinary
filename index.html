@@ -493,7 +493,7 @@
     <div id="screen-discuss" class="screen">
         <div class="content-area">
             <div class="pulse-anim">🗣️</div>
-            <h1 class="text-gold mb-2">Discussion Time</h1>
+            <h1 class="text-gold mb-2">DISCUSSION TIME</h1>
             <p class="text-c text-muted mb-2">Describe your word, but don't say it. Find out who is the imposter.</p>
             
             <div id="timer-display" class="hidden" style="font-size: 3rem; font-weight: 900; color: var(--text-main); margin: 30px 0;">
@@ -976,11 +976,11 @@ const Game = {
                         State.players.find(p => p.id == voterId).roundScore += 5;
                     }
                  });
-                 roundStatus = "Imposter Escaped! (+15)";
+                 roundStatus = "Imposter Escaped!";
             }
             // --- 4. TIE (Implicit) ---
             else {
-                roundStatus = "Draw! No Points.";
+                roundStatus = "Draw!";
             }
         }
         
