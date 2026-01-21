@@ -529,8 +529,8 @@
     <!-- Confirmation Modal for New Game -->
     <div id="modal-new-game-confirm" class="modal">
         <div style="max-width: 400px; width: 100%; text-align: center;">
-            <h2 class="text-white mb-2">Reset Session?</h2>
-            <p class="text-muted mb-2">This will clear all scores and player history. Are you sure?</p>
+            <h2 class="text-white mb-2">Reset Game?</h2>
+            <p class="text-muted mb-2">This will clear all the scores. Are you sure?</p>
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button class="btn" style="flex:1" onclick="Game.cancelNewGame()">Cancel</button>
                 <button class="btn btn-danger" style="flex:1" onclick="Game.confirmNewGame()">Reset</button>
@@ -580,16 +580,50 @@
 
 // --- Word Data ---
 const WORD_PAIRS = [
-    ["Sun", "Moon"], ["Pizza", "Burger"], ["Coffee", "Tea"], ["Ocean", "Pool"], ["Car", "Bus"], 
-    ["Dog", "Cat"], ["Apple", "Orange"], ["Pen", "Pencil"], ["Chair", "Sofa"], ["Shoes", "Socks"], 
-    ["Guitar", "Violin"], ["Winter", "Summer"], ["Rain", "Snow"], ["Book", "Magazine"], 
-    ["Laptop", "Tablet"], ["Train", "Subway"], ["Football", "Basketball"], ["King", "Prince"], 
-    ["Ghost", "Vampire"], ["Robot", "Alien"], ["Doctor", "Nurse"]
+  ["Sun", "Moon"], ["Pizza", "Burger"], ["Nail", "Hammer"], ["Cherry", "Strawberry"],
+  ["Pen", "Pencil"], ["Love", "Happiness"], ["Chair", "Sofa"], ["Dolphin", "Whale"],
+  ["Lightning", "Thunder"], ["Boat", "Ship"], ["Ice cream", "Cake"], ["Crayon", "Marker"],
+  ["Banana", "Mango"], ["Violin", "Guitar"], ["Jeans", "Pants"], ["Clock", "Watch"],
+  ["Pepsi", "Fanta"], ["Milk", "Juice"], ["Spoon", "Fork"], ["Carrot", "Potato"],
+  ["Pillow", "Blanket"], ["Moon", "Star"], ["Donut", "Cupcake"], ["Orange", "Grapes"],
+  ["Sunglasses", "Spectacles"], ["Cookie", "Brownie"], ["Snowman", "Santa"],
+  ["Dragon", "Dinosaur"], ["Socks", "Shoes"], ["Spider", "Ant"], ["Kite", "Balloon"],
+  ["Shirt", "Jacket"], ["House", "Apartment"], ["Zoo", "Farm"],
+  ["Pumpkin", "Watermelon"], ["Fish", "Whale"], ["Marker", "Chalk"],
+  ["Slide", "Swing"], ["Sunglasses", "Hat"], ["Shell", "Rock"],
+  ["Ladder", "Stairs"], ["Elevator", "Escalator"], ["Bubble", "Balloon"],
+  ["Candy", "Lollipop"], ["Bell", "Whistle"], ["Cloud", "Fog"],
+  ["Garlic", "Onion"], ["Carrot", "Radish"], ["Zip", "Button"],
+  ["Yogurt", "Ice cream"], ["Cup", "Bowl"], ["Star", "Sun"],
+  ["Tent", "Hut"], ["Goat", "Sheep"], ["Ball", "Bat"], ["Noodles", "Pasta"],
+  ["Map", "Globe"], ["Kitten", "Puppy"], ["Dog", "Cat"], ["Fire", "Smoke"],
+  ["Radio", "TV"], ["Mug", "Glass"], ["Gloves", "Socks"], ["Scarf", "Cap"],
+  ["Broom", "Mop"], ["Bench", "Stool"], ["Train", "Bus"],
+  ["Colour Pencil", "Sketch Pen"], ["Rope", "String"], ["Jacket", "Sweater"],
+  ["Chair", "Stool"], ["Toothbrush", "Toothpaste"], ["Owl", "Eagle"],
+  ["Desk", "Table"], ["Hat", "Helmet"], ["Butter", "Cheese"],
+  ["Candle", "Lamp"], ["Soda", "Lemonade"], ["Lion", "Tiger"],
+  ["Netflix", "YouTube"], ["Giraffe", "Zebra"], ["Bubblegum", "Lollipop"],
+  ["Dolphin", "Whale"], ["Virus", "Bacteria"], ["Horse", "Donkey"],
+  ["Cow", "Goat"], ["Cycle", "Bike"], ["Airplane", "Helicopter"],
+  ["Aquarium", "Zoo"], ["Taxi", "Auto"], ["Ambulance", "Firetruck"],
+  ["Bulldozer", "Crane"], ["Door", "Gate"], ["Fridge", "Freezer"],
+  ["Shower", "Tap"], ["Cupboard", "Drawer"], ["Classroom", "Library"],
+  ["Bell", "Alarm"], ["Shirt", "T-Shirt"], ["Raincoat", "Umbrella"],
+  ["Necklace", "Earrings"], ["Birthday", "Anniversary"],
+  ["Captain America", "Iron Man"], ["Hulk", "Thor"], ["Rice", "Wheat"],
+  ["Fish", "Crab"], ["Leg", "Arm"], ["Water", "Juice"],
+  ["Soap", "Shampoo"], ["Salt", "Sugar"], ["Sugar", "Honey"],
+  ["Butter", "Ghee"], ["Salt", "Pepper"], ["Tea", "Coffee"],
+  ["Shoes", "Slippers"], ["Mobile", "Telephone"], ["Temple", "Church"],
+  ["King", "Queen"], ["Milk", "Curd"], ["Wallet", "Purse"],
+  ["Gas Stove", "Induction Stove"]
 ];
+
 
 // --- State ---
 const State = {
-    players: [], // { name: "Anto", score: 0, id: 1 }
+    players: [],
     playerOrder: [], 
     roles: {}, 
     words: { common: "", odd: "" },
@@ -937,7 +971,7 @@ const Game = {
         // Condition: VoteCount[OddPlayer] == 0
         if (oddVotes === 0) {
              oddPlayer.roundScore = 20;
-             roundStatus = "Perfect Deception! (+20)";
+             roundStatus = "Perfect Escape!";
         }
         else {
             // --- 2. ODD PLAYER CAUGHT ---
