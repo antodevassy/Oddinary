@@ -970,7 +970,7 @@ const Game = {
         if(State.players.length >= 30) return alert("Max 30 players!");
         State.players.push({ id: Date.now(), name: "", score: 0 });
         Game.saveSession();
-        Game.renderSetupInputs();
+        Game.renderSetupInputs(true); // Pass true to indicate new player added
     },
 
     removePlayer: (index) => {
@@ -1007,16 +1007,18 @@ const Game = {
         Game.saveSession();
     },
 
-    renderSetupInputs: () => {
+    renderSetupInputs: (scrollToLast = false) => {
         const list = $('players-list');
         list.innerHTML = "";
         
         State.players.forEach((p, idx) => {
             const grp = document.createElement('div');
             grp.className = "input-group";
+            grp.setAttribute('data-player-index', idx);
             
             grp.innerHTML = `
                 <input type="text" 
+                       id="player-input-${idx}"
                        value="${p.name}" 
                        placeholder="Enter player name"
                        oninput="Game.onInputChange(this, ${idx})"
@@ -1028,6 +1030,18 @@ const Game = {
             `;
             list.appendChild(grp);
         });
+        
+        // Scroll to last player and focus if new player was added
+        if(scrollToLast && State.players.length > 0) {
+            setTimeout(() => {
+                const lastIndex = State.players.length - 1;
+                const lastInput = $(`player-input-${lastIndex}`);
+                if(lastInput) {
+                    lastInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    lastInput.focus();
+                }
+            }, 100);
+        }
     },
 
     startGame: () => {
