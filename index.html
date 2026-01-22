@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script src="words-data.js"></script>
     <style>
         :root {
             /* Palette */
@@ -30,14 +31,33 @@
             --radius: 16px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+        
+        /* Hide scrollbar but keep scroll functionality */
+        * {
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+        *::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
         
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
-            height: 100vh;
-            overflow: hidden; /* Prevent scroll */
+            min-height: 100vh;
+            overflow-x: hidden; /* Prevent horizontal scroll only */
+            overflow-y: auto; /* Allow vertical scroll */
             display: flex;
             flex-direction: column;
             text-align: center; /* Global center text */
@@ -59,35 +79,35 @@
             margin: 0 auto;
             padding: 20px;
             position: relative;
+            min-height: 100vh;
         }
 
         .screen {
             display: none;
             flex-direction: column;
-            height: 100%;
-            animation: fadeIn 0.4s ease-out;
-            /* Central Layout Logic */
-            justify-content: center; 
+            min-height: calc(100vh - 40px);
+            animation: fadeIn 0.25s ease-out;
+            justify-content: center;
             align-items: center;
-            gap: 15px; /* Consistent gap between Header, Content, Buttons */
+            gap: 0;
+            padding: 20px 0;
         }
         .screen.active { display: flex; }
 
         .content-area {
-            flex-shrink: 1; /* Allow shrinking if needed */
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             width: 100%;
-            overflow-y: auto;
-            /* padding: 10px 0; */
-            justify-content: center; /* Center vertical */
-            text-align: center; /* Center text */
+            text-align: center;
+            gap: 15px;
         }
 
         /* Specific fix for Reveal Screen scrollbar */
         #screen-reveal .content-area {
             overflow: hidden !important; /* Force no scroll during animation */
+            justify-content: center;
         }
 
         /* Components */
@@ -100,8 +120,9 @@
             font-size: 1.1rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition: all 0.15s cubic-bezier(0.25, 0.8, 0.25, 1); /* Faster */
             width: 100%;
+            min-height: 54px; /* Accessibility: minimum tap target */
             margin-bottom: 12px;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -109,9 +130,17 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation; /* Prevent double-tap zoom */
         }
 
-        .btn:active { transform: scale(0.98); }
+        .btn:active { 
+            transform: scale(0.97); 
+            opacity: 0.9;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+        }
 
         .btn-primary {
             background: var(--primary);
@@ -123,6 +152,9 @@
             background: var(--primary-glow);
             box-shadow: 0 0 30px rgba(156, 255, 58, 0.6);
         }
+        .btn-primary:active {
+            background: #5AB825;
+        }
 
         .btn-danger {
             background: var(--danger);
@@ -130,9 +162,13 @@
             border: none;
             box-shadow: var(--glow-danger);
         }
+        .btn-danger:active {
+            background: #B82E2E;
+        }
         
         .btn-icon {
-            width: 50px; /* Square button */
+            width: 54px; /* Increased for better tap target */
+            min-height: 54px;
             padding: 0;
             display: flex;
             justify-content: center; /* Center icon */
@@ -153,6 +189,7 @@
             opacity: 0.5;
             cursor: not-allowed;
             filter: grayscale(1);
+            pointer-events: none;
         }
 
         .input-group {
@@ -161,7 +198,7 @@
             display: flex;
             align-items: center;
             justify-content: center; /* Center content */
-            animation: slideIn 0.3s ease;
+            animation: slideIn 0.2s ease; /* Faster */
         }
 
         input {
@@ -173,7 +210,7 @@
             color: white;
             font-size: 1.1rem;
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color 0.15s; /* Faster */
             text-align: center; /* Center input text */
         }
         input:focus { border-color: var(--primary); box-shadow: var(--glow-primary); }
@@ -192,7 +229,7 @@
             height: 100%;
             position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Faster */
             border-radius: 24px;
         }
 
@@ -302,7 +339,7 @@
             display: flex; justify-content: center; align-items: center;
             font-size: 3rem;
             margin: 40px auto;
-            animation: pulse-ring 2s infinite;
+            animation: pulse-ring 1.5s infinite; /* Faster */
         }
 
         /* Utilities */
@@ -336,14 +373,14 @@
         .slider {
             position: absolute; cursor: pointer;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #333; transition: .4s;
+            background-color: #333; transition: .3s; /* Faster */
             border-radius: 34px;
         }
         .slider:before {
             position: absolute; content: "";
             height: 20px; width: 20px;
             left: 4px; bottom: 4px;
-            background-color: white; transition: .4s;
+            background-color: white; transition: .3s; /* Faster */
             border-radius: 50%;
         }
         input:checked + .slider { background-color: var(--primary); }
@@ -361,7 +398,164 @@
             justify-content: center;
             padding: 20px;
         }
-        .modal.open { display: flex; animation: fadeIn 0.3s ease-out; }
+        .modal.open { display: flex; animation: fadeIn 0.2s ease-out; } /* Faster */
+
+        .modal-content {
+            max-width: 500px;
+            width: 100%;
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: var(--radius);
+            border: 2px solid var(--text-muted);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        /* Close Button */
+        .close-btn {
+            position: fixed;
+            top: 30px;
+            right: calc(50% - 280px);
+            width: 44px;
+            height: 44px;
+            background: var(--bg-card);
+            border: 2px solid var(--danger);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--danger);
+            font-size: 1.5rem;
+            font-weight: bold;
+            transition: background 0.15s, color 0.15s;
+            z-index: 100;
+            user-select: none;
+            touch-action: manipulation;
+        }
+        .close-btn:active {
+            background: var(--danger);
+            color: white;
+        }
+        
+        @media (max-width: 640px) {
+            .close-btn {
+                right: 20px;
+            }
+        }
+
+        /* Timer Slider */
+        .timer-control {
+            width: 100%;
+            max-width: 400px;
+            margin: 15px auto;
+            padding: 20px 25px;
+            background: linear-gradient(145deg, var(--bg-card), #1a1c22);
+            border-radius: var(--radius);
+            border: 2px solid rgba(107, 207, 45, 0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+
+        .slider-input {
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #2a2d35, #1f2128);
+            outline: none;
+            -webkit-appearance: none;
+            margin: 15px 0;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .slider-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, var(--primary-glow), var(--primary));
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(107, 207, 45, 0.5), 0 2px 8px rgba(0,0,0,0.4);
+            transition: all 0.2s;
+        }
+        
+        .slider-input::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(107, 207, 45, 0.7), 0 2px 8px rgba(0,0,0,0.4);
+        }
+
+        .slider-input::-moz-range-thumb {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, var(--primary-glow), var(--primary));
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 15px rgba(107, 207, 45, 0.5), 0 2px 8px rgba(0,0,0,0.4);
+            transition: all 0.2s;
+        }
+        
+        .slider-input::-moz-range-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(107, 207, 45, 0.7), 0 2px 8px rgba(0,0,0,0.4);
+        }
+
+        .timer-value {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--primary);
+            text-shadow: 0 0 20px rgba(107, 207, 45, 0.4);
+            margin: 5px 0;
+            letter-spacing: 2px;
+        }
+
+        /* Player List Modal */
+        .player-select-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+
+        .player-select-item {
+            background: var(--bg-card);
+            padding: 15px 20px;
+            margin: 8px 0;
+            border-radius: var(--radius);
+            border: 2px solid var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+            font-weight: 600;
+            min-height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .player-select-item:active {
+            transform: scale(0.98);
+            border-color: var(--primary);
+            background: rgba(107, 207, 45, 0.1);
+        }
+
+        /* Error Message */
+        .error-msg {
+            color: var(--danger);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+            text-align: center;
+        }
+        .error-msg.show {
+            display: block;
+            animation: shake 0.3s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
 
         /* --- MOBILE OPTIMIZATION --- */
         @media (max-width: 480px) {
@@ -420,15 +614,25 @@
             </div>
             
             <div class="switch-container">
-                <span>Discussion Timer (3 mins)</span>
+                <span>Discussion Timer</span>
                 <label class="switch">
-                    <input type="checkbox" id="setting-timer">
+                    <input type="checkbox" id="setting-timer" onchange="Game.toggleTimerSettings()">
                     <span class="slider"></span>
                 </label>
             </div>
+            
+            <div id="timer-slider-container" class="timer-control hidden">
+                <p class="text-muted" style="margin-bottom: 10px;">Timer Duration</p>
+                <div class="timer-value" id="timer-value-display">3 min</div>
+                <input type="range" min="1" max="5" value="3" class="slider-input" id="timer-duration-slider" oninput="Game.updateTimerValue(this.value)">
+                <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.8rem;">
+                    <span>1 min</span>
+                    <span>5 min</span>
+                </div>
+            </div>
         </div>
         
-        <div class="footer-copyright">© Anto Devassy V.P</div>
+        <div class="footer-copyright"><br><br>© Anto Devassy V.P</div>
     </div>
 
     <!-- How To Play Modal Overlay -->
@@ -442,23 +646,25 @@
                 <p class="mb-2">4. Vote for who you think is the Imposter!</p>
                 <p class="mb-2 text-gold">If the Imposter is caught, they lose... unless they can guess the common word!</p>
             </div>
-            <button class="btn btn-primary mt-2" onclick="Game.toggleRules()">Got it</button>
+            <button class="btn btn-primary mt-2" onclick="Game.toggleRules()">Got It</button>
         </div>
     </div>
 
     <!-- 2. Player Setup -->
     <div id="screen-setup" class="screen">
-        <h2 class="text-c" style="margin-bottom: 20px;">PLAYERS LIST</h2>
-        
-        <!-- List Container -->
-        <div id="players-list" style="width: 100%; max-height: 60vh; overflow-y: auto;">
-            <!-- Dynamic Inputs -->
-        </div>
-        
-        <button class="btn" onclick="Game.addPlayer()" style="border-style: dashed; margin-top: 5px;">+ Add Player</button>
-        
-        <!-- Action Buttons Flowing Directly Below -->
-        <div style="width: 100%; margin-top: 20px;">
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+            <h2 class="text-c">PLAYERS</h2>
+            
+            <!-- Error Message -->
+            <div id="setup-error" class="error-msg"></div>
+            
+            <!-- List Container -->
+            <div id="players-list" style="width: 100%; max-height: 60vh; overflow-y: auto;">
+                <!-- Dynamic Inputs -->
+            </div>
+            
+            <button class="btn" onclick="Game.addPlayer()" style="border-style: dashed;">+ Add Player</button>
+            
             <button class="btn btn-primary" onclick="Game.startGame()">Start</button>
             <button class="btn" onclick="Game.goHome()">Back</button>
         </div>
@@ -466,6 +672,7 @@
 
     <!-- 3. Word Reveal (Pass N Play) -->
     <div id="screen-reveal" class="screen">
+        <div class="close-btn" onclick="Game.askCloseReveal()" title="Close">✕</div>
         <div class="content-area">
             <h3 class="text-muted">Pass device to</h3>
             <h1 id="reveal-player-name" class="text-primary text-glow mb-2" style="font-size: 2.5rem;">Player Name</h1>
@@ -476,11 +683,12 @@
                 <div class="card" id="word-card">
                     <div class="card-face card-front">
                         <span style="font-size: 3rem;">🕵️</span>
-                        <h3>Tap to Reveal</h3>
-                        <p class="text-muted">Keep it secret!</p>
+                        <h3><br>Tap to Reveal</h3>
+                        <p class="text-muted"><br>Keep it secret!</p>
                     </div>
                     <div class="card-face card-back">
-                        <p class="text-muted">Your secret word is</p>
+                        <p class="text-muted">Your secret word is:</p>
+                        <br>
                         <h1 id="secret-word-display" style="font-size: 2.5rem; color: var(--primary);">WORD</h1>
                     </div>
                 </div>
@@ -493,24 +701,28 @@
     <div id="screen-discuss" class="screen">
         <div class="content-area">
             <div class="pulse-anim">🗣️</div>
-            <h1 class="text-gold mb-2">DISCUSSION TIME</h1>
-            <p class="text-c text-muted mb-2">Describe your word, but don't say it. Find out who is the imposter.</p>
-            
+            <h1 class="text-gold">DISCUSSION TIME</h1>
+            <p class="text-c text-muted">Describe your word, but don't say it directly. Find the Imposter...</p>
+            <br>
             <div id="timer-display" class="hidden" style="font-size: 3rem; font-weight: 900; color: var(--text-main); margin: 30px 0;">
                 03:00
             </div>
+            
+            <button class="btn" onclick="Game.showForgotWord()">Forgot Your Word?</button>
+            <button class="btn btn-primary" onclick="Game.startVoting()">Start Voting</button>
         </div>
-        <button class="btn btn-primary" onclick="Game.startVoting()">Start Voting</button>
     </div>
 
     <!-- 5. Voting Phase -->
     <div id="screen-voting" class="screen">
-        <h3 class="text-c text-muted">Pass to</h3>
-        <h1 id="voter-name" class="text-primary text-glow mb-2" style="font-size: 2.5rem;">Player</h1>
-        <h2 class="text-c mb-2">Who is the Imposter?</h2>
-        
-        <div class="content-area" id="voting-list">
-            <!-- Voting Buttons -->
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+            <h3 class="text-c text-muted">Pass to</h3>
+            <h1 id="voter-name" class="text-primary text-glow" style="font-size: 2.5rem;">Player</h1>
+            <h2 class="text-c">Who is the Imposter?</h2><br>
+            
+            <div class="content-area" id="voting-list">
+                <!-- Voting Buttons -->
+            </div>
         </div>
     </div>
 
@@ -538,88 +750,121 @@
         </div>
     </div>
 
-    <!-- 6. Results -->
-    <div id="screen-results" class="screen">
-        <div class="content-area" id="results-area">
-            <!-- Dynamic Results -->
+    <!-- Close Reveal Confirmation Modal -->
+    <div id="modal-close-reveal" class="modal">
+        <div style="max-width: 400px; width: 100%; text-align: center;">
+            <h2 class="text-white mb-2">Go to Leaderboard?</h2>
+            <p class="text-muted mb-2">Are you sure you want to leave the word reveal?</p>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn" style="flex:1" onclick="Game.cancelCloseReveal()">Cancel</button>
+                <button class="btn btn-primary" style="flex:1" onclick="Game.confirmCloseReveal()">Continue</button>
+            </div>
         </div>
-        
-        <h3 id="imposter-reveal-text" class="text-c text-danger mb-2"></h3>
-
-        <div style="background: var(--bg-card); padding: 15px; border-radius: var(--radius); width: 100%; margin-bottom: 15px;">
-           <div style="display:flex; justify-content:center; gap: 20px; align-items:center;">
-             <span class="text-muted">Common Word:</span>
-             <strong id="res-common-word" class="text-primary">Word</strong>
-           </div>
-           <div style="display:flex; justify-content:center; gap: 20px; align-items:center; margin-top: 10px;">
-             <span class="text-muted">Odd Word:</span>
-             <strong id="res-odd-word" class="text-danger">Word</strong>
-           </div>
-        </div>
-
-        <button class="btn btn-primary" onclick="Game.goToScoreboard()">See Scoreboard</button>
     </div>
 
-    <!-- 7. Scoreboard -->
-    <div id="screen-scoreboard" class="screen">
-        <h1 class="text-c text-gold mb-2">LEADERBOARD</h1>
-        <div class="content-area" id="scoreboard-list" style="justify-content: flex-start; text-align: center;">
-            <!-- Scores -->
+    <!-- Forgot Word Modal -->
+    <div id="modal-forgot-word" class="modal">
+        <div class="modal-content">
+            <h2 class="text-primary mb-2 text-c">Select Your Name</h2>
+            <p class="text-muted text-c">Choose your name to see your word</p>
+            <div id="forgot-word-player-list" class="player-select-list">
+                <!-- Dynamic player list -->
+            </div>
+            <button class="btn" onclick="Game.closeForgotWord()">Cancel</button>
         </div>
-        
-        <button class="btn btn-primary" onclick="Game.setupNextRound()">Next Round</button>
-        <button class="btn" onclick="Game.askNewGame()">New Game</button>
+    </div>
+
+    <!-- Confirm Forgot Word Modal -->
+    <div id="modal-confirm-forgot" class="modal">
+        <div style="max-width: 400px; width: 100%; text-align: center;">
+            <h2 class="text-white mb-2">Confirm Selection</h2>
+            <p class="text-muted mb-2">Show word for: <span id="confirm-forgot-name" class="text-primary" style="display: block; font-size: 1.5rem; font-weight: 900; margin-top: 10px;">Player</span></p>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn" style="flex:1" onclick="Game.cancelForgotConfirm()">Cancel</button>
+                <button class="btn btn-primary" style="flex:1" onclick="Game.showForgotWordReveal()">Show Word</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Word Reveal Modal -->
+    <div id="modal-word-reveal" class="modal">
+        <div style="max-width: 400px; width: 100%; text-align: center;">
+            <h2 class="text-muted mb-2">Your word is:</h2>
+            <h1 id="forgot-word-display" class="text-primary text-glow" style="font-size: 3rem; margin: 30px 0;">WORD</h1>
+            <button class="btn btn-primary" onclick="Game.closeWordReveal()">Got It</button>
+        </div>
+    </div>
+
+    <!-- Points Rules Modal -->
+    <div id="modal-points-rules" class="modal">
+        <div class="modal-content">
+            <h2 class="text-primary mb-2 text-c">POINTS RULES</h2>
+            <div style="text-align: left; line-height: 1.8; color: var(--text-sec);">
+                <h3 class="text-gold" style="margin-top: 15px; margin-bottom: 10px;">Perfect Escape (Imposter)</h3>
+                <p><strong class="text-primary">+20 points</strong> - Imposter receives zero votes.</p>
+                
+                <h3 class="text-gold" style="margin-top: 15px; margin-bottom: 10px;">Imposter Caught</h3>
+                <p><strong class="text-primary">+10 points</strong> - Each player who correctly voted for the imposter.</p>
+                
+                <h3 class="text-gold" style="margin-top: 15px; margin-bottom: 10px;">Imposter Escapes</h3>
+                <p><strong class="text-primary">+15 points</strong> - Imposter (if they received at least 1 vote but not the most).</p>
+                <p><strong class="text-primary">+5 points</strong> - Each player who voted for the imposter.</p>
+                
+                <h3 class="text-gold" style="margin-top: 15px; margin-bottom: 10px;">Draw</h3>
+                <p>No points awarded when there's a tie for most votes.</p>
+            </div>
+            <button class="btn btn-primary mt-2" onclick="Game.closePointsRules()">Got it!</button>
+        </div>
+    </div>
+
+    <!-- 6. Results -->
+    <div id="screen-results" class="screen">
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+            <div class="content-area" id="results-area">
+                <!-- Dynamic Results -->
+            </div>
+            
+            <h3 id="imposter-reveal-text" class="text-c text-danger"></h3>
+
+            <div style="background: var(--bg-card); padding: 15px; border-radius: var(--radius); width: 100%;">
+               <div style="display:flex; justify-content:center; gap: 20px; align-items:center;">
+                 <span class="text-muted">Common Word:</span>
+                 <strong id="res-common-word" class="text-primary">Word</strong>
+               </div>
+               <div style="display:flex; justify-content:center; gap: 20px; align-items:center; margin-top: 10px;">
+                 <span class="text-muted">Odd Word:</span>
+                 <strong id="res-odd-word" class="text-danger">Word</strong>
+               </div>
+            </div>
+
+            <button class="btn" onclick="Game.showPointsRules()">Points Rules</button>
+            <button class="btn btn-primary" onclick="Game.goToScoreboard()">Leaderboard</button>
+        </div>
+    </div>
+
+    <!-- 7. Leaderboard -->
+    <div id="screen-scoreboard" class="screen">
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+            <h1 class="text-c text-gold">LEADERBOARD</h1>
+            <div class="content-area" id="scoreboard-list" style="width: 100%;">
+                <!-- Scores -->
+            </div>
+            
+            <button class="btn" onclick="Game.backToResults()">Back to Scoreboard</button>
+            <button class="btn btn-primary" onclick="Game.setupNextRound()">Next Round</button>
+            <button class="btn" onclick="Game.askNewGame()">New Game</button>
+        </div>
     </div>
 </div>
 
 <script>
 /**
  * ODDINARY GAME ENGINE
- * Refined and Updated
+ * Fully Updated with All Requirements
  */
 
-// --- Word Data ---
-const WORD_PAIRS = [
-  ["Sun", "Moon"], ["Pizza", "Burger"], ["Nail", "Hammer"], ["Cherry", "Strawberry"],
-  ["Pen", "Pencil"], ["Love", "Happiness"], ["Chair", "Sofa"], ["Dolphin", "Whale"],
-  ["Lightning", "Thunder"], ["Boat", "Ship"], ["Ice cream", "Cake"], ["Crayon", "Marker"],
-  ["Banana", "Mango"], ["Violin", "Guitar"], ["Jeans", "Pants"], ["Clock", "Watch"],
-  ["Pepsi", "Fanta"], ["Milk", "Juice"], ["Spoon", "Fork"], ["Carrot", "Potato"],
-  ["Pillow", "Blanket"], ["Moon", "Star"], ["Donut", "Cupcake"], ["Orange", "Grapes"],
-  ["Sunglasses", "Spectacles"], ["Cookie", "Brownie"], ["Snowman", "Santa"],
-  ["Dragon", "Dinosaur"], ["Socks", "Shoes"], ["Spider", "Ant"], ["Kite", "Balloon"],
-  ["Shirt", "Jacket"], ["House", "Apartment"], ["Zoo", "Farm"],
-  ["Pumpkin", "Watermelon"], ["Fish", "Whale"], ["Marker", "Chalk"],
-  ["Slide", "Swing"], ["Sunglasses", "Hat"], ["Shell", "Rock"],
-  ["Ladder", "Stairs"], ["Elevator", "Escalator"], ["Bubble", "Balloon"],
-  ["Candy", "Lollipop"], ["Bell", "Whistle"], ["Cloud", "Fog"],
-  ["Garlic", "Onion"], ["Carrot", "Radish"], ["Zip", "Button"],
-  ["Yogurt", "Ice cream"], ["Cup", "Bowl"], ["Star", "Sun"],
-  ["Tent", "Hut"], ["Goat", "Sheep"], ["Ball", "Bat"], ["Noodles", "Pasta"],
-  ["Map", "Globe"], ["Kitten", "Puppy"], ["Dog", "Cat"], ["Fire", "Smoke"],
-  ["Radio", "TV"], ["Mug", "Glass"], ["Gloves", "Socks"], ["Scarf", "Cap"],
-  ["Broom", "Mop"], ["Bench", "Stool"], ["Train", "Bus"],
-  ["Colour Pencil", "Sketch Pen"], ["Rope", "String"], ["Jacket", "Sweater"],
-  ["Chair", "Stool"], ["Toothbrush", "Toothpaste"], ["Owl", "Eagle"],
-  ["Desk", "Table"], ["Hat", "Helmet"], ["Butter", "Cheese"],
-  ["Candle", "Lamp"], ["Soda", "Lemonade"], ["Lion", "Tiger"],
-  ["Netflix", "YouTube"], ["Giraffe", "Zebra"], ["Bubblegum", "Lollipop"],
-  ["Dolphin", "Whale"], ["Virus", "Bacteria"], ["Horse", "Donkey"],
-  ["Cow", "Goat"], ["Cycle", "Bike"], ["Airplane", "Helicopter"],
-  ["Aquarium", "Zoo"], ["Taxi", "Auto"], ["Ambulance", "Firetruck"],
-  ["Bulldozer", "Crane"], ["Door", "Gate"], ["Fridge", "Freezer"],
-  ["Shower", "Tap"], ["Cupboard", "Drawer"], ["Classroom", "Library"],
-  ["Bell", "Alarm"], ["Shirt", "T-Shirt"], ["Raincoat", "Umbrella"],
-  ["Necklace", "Earrings"], ["Birthday", "Anniversary"],
-  ["Captain America", "Iron Man"], ["Hulk", "Thor"], ["Rice", "Wheat"],
-  ["Fish", "Crab"], ["Leg", "Arm"], ["Water", "Juice"],
-  ["Soap", "Shampoo"], ["Salt", "Sugar"], ["Sugar", "Honey"],
-  ["Butter", "Ghee"], ["Salt", "Pepper"], ["Tea", "Coffee"],
-  ["Shoes", "Slippers"], ["Mobile", "Telephone"], ["Temple", "Church"],
-  ["King", "Queen"], ["Milk", "Curd"], ["Wallet", "Purse"],
-  ["Gas Stove", "Induction Stove"]
-];
-
+// --- Initialize Word Selector ---
+const wordSelector = new WordSelector();
 
 // --- State ---
 const State = {
@@ -630,9 +875,11 @@ const State = {
     currentOddPlayerId: null,
     votes: {}, 
     round: 0,
-    config: { shuffle: false, timer: false },
+    config: { shuffle: false, timer: false, timerDuration: 3 },
     stepIndex: 0,
-    pendingVoteTarget: null // For confirmation
+    pendingVoteTarget: null, // For vote confirmation
+    pendingForgotPlayer: null, // For forgot word confirmation
+    timerInterval: null
 };
 
 const $ = (id) => document.getElementById(id);
@@ -653,12 +900,12 @@ window.addEventListener('beforeunload', (e) => {
 const Game = {
     init: () => {
         Game.loadSession();
-        // If no players loaded (fresh session), default start
+        // If no players loaded (fresh session), start with empty names
         if(State.players.length === 0) {
             State.players = [
-                { id: 101, name: "Player 1", score: 0 },
-                { id: 102, name: "Player 2", score: 0 },
-                { id: 103, name: "Player 3", score: 0 }
+                { id: 101, name: "", score: 0 },
+                { id: 102, name: "", score: 0 },
+                { id: 103, name: "", score: 0 }
             ];
         }
     },
@@ -695,6 +942,22 @@ const Game = {
         modal.classList.toggle('open');
     },
 
+    // Timer Settings
+    toggleTimerSettings: () => {
+        const enabled = $('setting-timer').checked;
+        const sliderContainer = $('timer-slider-container');
+        if(enabled) {
+            sliderContainer.classList.remove('hidden');
+        } else {
+            sliderContainer.classList.add('hidden');
+        }
+    },
+
+    updateTimerValue: (value) => {
+        $('timer-value-display').innerText = `${value} min`;
+        State.config.timerDuration = parseInt(value);
+    },
+
     // --- Setup Phase ---
     goToSetup: () => {
         Game.showScreen('setup');
@@ -705,8 +968,7 @@ const Game = {
 
     addPlayer: () => {
         if(State.players.length >= 30) return alert("Max 30 players!");
-        const nextNum = State.players.length + 1;
-        State.players.push({ id: Date.now(), name: `Player ${nextNum}`, score: 0 });
+        State.players.push({ id: Date.now(), name: "", score: 0 });
         Game.saveSession();
         Game.renderSetupInputs();
     },
@@ -718,20 +980,30 @@ const Game = {
         Game.renderSetupInputs();
     },
     
-    // Clear default name logic
-    onInputFocus: (el) => {
-        if(el.value.startsWith('Player')) {
-            el.dataset.oldVal = el.value;
-            el.value = '';
+    // Validate player name for duplicates
+    validatePlayerName: (index) => {
+        const errorEl = $('setup-error');
+        const currentName = State.players[index].name.trim();
+        
+        // Check for duplicates
+        const hasDuplicate = State.players.some((p, i) => 
+            i !== index && p.name.trim().toLowerCase() === currentName.toLowerCase() && currentName !== ""
+        );
+        
+        if(hasDuplicate) {
+            errorEl.innerText = "Duplicate name! Please use unique names.";
+            errorEl.classList.add('show');
+            setTimeout(() => errorEl.classList.remove('show'), 3000);
+            return false;
         }
+        
+        errorEl.classList.remove('show');
+        return true;
     },
 
-    onInputBlur: (el, index) => {
-        if(el.value.trim() === '') {
-            // Restore if empty
-            el.value = el.dataset.oldVal || `Player ${index + 1}`;
-            State.players[index].name = el.value;
-        }
+    onInputChange: (el, index) => {
+        State.players[index].name = el.value;
+        Game.validatePlayerName(index);
         Game.saveSession();
     },
 
@@ -746,9 +1018,9 @@ const Game = {
             grp.innerHTML = `
                 <input type="text" 
                        value="${p.name}" 
-                       oninput="State.players[${idx}].name = this.value"
-                       onfocus="Game.onInputFocus(this)"
-                       onblur="Game.onInputBlur(this, ${idx})"
+                       placeholder="Enter player name"
+                       oninput="Game.onInputChange(this, ${idx})"
+                       required
                 >
                 <button class="btn btn-icon btn-danger" onclick="Game.removePlayer(${idx})">
                    <svg viewBox="0 0 24 24"><path d="M5 11h14v2H5z"/></svg>
@@ -759,25 +1031,49 @@ const Game = {
     },
 
     startGame: () => {
-        // Validation: use defaults if empty
-        State.players.forEach((p, i) => {
-            if(!p.name.trim()) p.name = `Player ${i+1}`;
-        });
+        const errorEl = $('setup-error');
         
-        if(State.players.length < 3) return alert("Min 3 players!");
+        // Validation: Check for empty names
+        const hasEmpty = State.players.some(p => !p.name.trim());
+        if(hasEmpty) {
+            errorEl.innerText = "All players must have a name!";
+            errorEl.classList.add('show');
+            setTimeout(() => errorEl.classList.remove('show'), 3000);
+            return;
+        }
+        
+        // Check for duplicates
+        const names = State.players.map(p => p.name.trim().toLowerCase());
+        const hasDuplicates = names.some((name, idx) => names.indexOf(name) !== idx);
+        if(hasDuplicates) {
+            errorEl.innerText = "All player names must be unique!";
+            errorEl.classList.add('show');
+            setTimeout(() => errorEl.classList.remove('show'), 3000);
+            return;
+        }
+        
+        if(State.players.length < 3) {
+            errorEl.innerText = "Min 3 players required!";
+            errorEl.classList.add('show');
+            setTimeout(() => errorEl.classList.remove('show'), 3000);
+            return;
+        }
 
         Game.saveSession();
 
         // Configs
         State.config.shuffle = $('setting-shuffle').checked;
         State.config.timer = $('setting-timer').checked;
+        if(State.config.timer) {
+            State.config.timerDuration = parseInt($('timer-duration-slider').value);
+        }
 
         Game.setupNextRound();
     },
 
     setupNextRound: () => {
         State.round++;
-        const pair = WORD_PAIRS[Math.floor(Math.random() * WORD_PAIRS.length)];
+        const pair = wordSelector.getRandomPair();
         
         if(Math.random() > 0.5) {
             State.words.common = pair[0];
@@ -828,11 +1124,20 @@ const Game = {
              nextBtn.innerHTML = `Hide & Pass`;
         }
         
-        Game.showRevealCounter = true;
+        // Disable card flip initially
+        State.canFlip = false;
+        
         Game.showScreen('reveal');
+        
+        // Enable flip after player name is displayed (500ms delay)
+        setTimeout(() => {
+            State.canFlip = true;
+        }, 500);
     },
 
     flipCard: () => {
+        if(!State.canFlip) return; // Prevent flip before player name is shown
+        
         const card = $('word-card');
         if(card.classList.contains('flipped')) return;
         
@@ -867,14 +1172,17 @@ const Game = {
         
         if(State.config.timer) {
             timerDisplay.classList.remove('hidden');
-            let timeLeft = 180; 
+            let timeLeft = State.config.timerDuration * 60; // Convert minutes to seconds
             const tick = () => {
                 const m = Math.floor(timeLeft / 60).toString().padStart(2,'0');
                 const s = (timeLeft % 60).toString().padStart(2,'0');
                 timerDisplay.innerText = `${m}:${s}`;
                 if(timeLeft > 0) {
                     timeLeft--;
-                    State.timerIdx = setTimeout(tick, 1000); 
+                    State.timerInterval = setTimeout(tick, 1000); 
+                } else {
+                    // Time's up!
+                    alert("⏰ Time's up! Start voting now.");
                 }
             };
             tick();
@@ -883,9 +1191,81 @@ const Game = {
         }
     },
 
+    // --- Close Reveal Modal ---
+    askCloseReveal: () => {
+        $('modal-close-reveal').classList.add('open');
+    },
+
+    cancelCloseReveal: () => {
+        $('modal-close-reveal').classList.remove('open');
+    },
+
+    confirmCloseReveal: () => {
+        $('modal-close-reveal').classList.remove('open');
+        Game.goToScoreboard();
+    },
+
+    // --- Forgot Word Feature ---
+    showForgotWord: () => {
+        const list = $('forgot-word-player-list');
+        list.innerHTML = "";
+        
+        State.players.forEach(p => {
+            const item = document.createElement('div');
+            item.className = "player-select-item";
+            item.innerText = p.name;
+            item.onclick = () => Game.askForgotConfirm(p.id);
+            list.appendChild(item);
+        });
+        
+        $('modal-forgot-word').classList.add('open');
+    },
+
+    closeForgotWord: () => {
+        $('modal-forgot-word').classList.remove('open');
+    },
+
+    askForgotConfirm: (playerId) => {
+        State.pendingForgotPlayer = playerId;
+        const player = State.players.find(p => p.id === playerId);
+        $('confirm-forgot-name').innerText = player.name;
+        $('modal-forgot-word').classList.remove('open');
+        $('modal-confirm-forgot').classList.add('open');
+    },
+
+    cancelForgotConfirm: () => {
+        $('modal-confirm-forgot').classList.remove('open');
+        State.pendingForgotPlayer = null;
+        $('modal-forgot-word').classList.add('open');
+    },
+
+    showForgotWordReveal: () => {
+        const playerId = State.pendingForgotPlayer;
+        const role = State.roles[playerId];
+        const word = (role === 'odd') ? State.words.odd : State.words.common;
+        
+        $('forgot-word-display').innerText = word;
+        $('modal-confirm-forgot').classList.remove('open');
+        $('modal-word-reveal').classList.add('open');
+    },
+
+    closeWordReveal: () => {
+        $('modal-word-reveal').classList.remove('open');
+        State.pendingForgotPlayer = null;
+    },
+
+    // --- Points Rules ---
+    showPointsRules: () => {
+        $('modal-points-rules').classList.add('open');
+    },
+
+    closePointsRules: () => {
+        $('modal-points-rules').classList.remove('open');
+    },
+
     // --- Voting ---
     startVoting: () => {
-        clearTimeout(State.timerIdx);
+        clearTimeout(State.timerInterval);
         State.stepIndex = 0;
         State.votes = {};
         Game.showVotingScreen();
@@ -1031,9 +1411,9 @@ const Game = {
         const area = $('results-area');
         area.innerHTML = "";
         
-        // Always show "VOTE RESULTS"
+        // Always show "SCOREBOARD"
         const statusH = document.createElement('h2');
-        statusH.innerText = "VOTE RESULTS"; 
+        statusH.innerText = "SCOREBOARD"; 
         statusH.style.marginBottom = "5px";
         statusH.style.color = "white"; 
         area.appendChild(statusH);
@@ -1108,6 +1488,10 @@ const Game = {
         });
         
         Game.showScreen('scoreboard');
+    },
+    
+    backToResults: () => {
+        Game.showScreen('results');
     },
     
     // --- New Game Utils ---
