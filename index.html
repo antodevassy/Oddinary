@@ -811,8 +811,9 @@
                 <p><strong class="text-primary">+5 points</strong> - Each player who voted for the imposter.</p>
                 
                 <h3 class="text-gold" style="margin-top: 15px; margin-bottom: 10px;">Draw</h3>
+                <p><strong class="text-primary">+5 points</strong> - Imposter (for not getting caught).</p>
                 <p><strong class="text-primary">+5 points</strong> - Each player who voted for the imposter.</p>
-                <p class="text-muted" style="font-size: 0.9rem; margin-top: 5px;">Note: Players who vote for the imposter always get +5 points, even in a draw.</p>
+                <p><strong class="text-muted">0 points</strong> - Players who didn't vote for the imposter.</p>
             </div>
             <button class="btn btn-primary mt-2" onclick="Game.closePointsRules()">Got it!</button>
         </div>
@@ -1409,6 +1410,9 @@ const Game = {
             }
             // --- 4. TIE (Implicit) ---
             else {
+                // Award +5 points to the imposter for not getting caught
+                oddPlayer.roundScore += 5;
+                
                 // Award +5 points to players who voted for the imposter even in a draw
                 Object.entries(State.votes).forEach(([voterId, targetId]) => {
                     if(targetId == oddId) {
