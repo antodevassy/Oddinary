@@ -7,7 +7,7 @@ const WORD_PAIRS = [
   ["Sun", "Moon"], ["Pizza", "Burger"], ["Nail", "Hammer"], ["Cherry", "Strawberry"],
   ["Pen", "Pencil"], ["Love", "Happiness"], ["Chair", "Sofa"], ["Dolphin", "Whale"],
   ["Lightning", "Thunder"], ["Boat", "Ship"], ["Ice cream", "Cake"], ["Crayon", "Marker"],
-  ["Banana", "Mango"], ["Violin", "Guitar"], ["Jeans", "Pants"], ["Clock", "Watch"],
+  ["Banana", "Mango"], ["Violin", "Guitar"], ["Clock", "Watch"], ["Matchstick", "Lighter"],
   ["Pepsi", "Fanta"], ["Milk", "Juice"], ["Spoon", "Fork"], ["Carrot", "Potato"],
   ["Pillow", "Blanket"], ["Moon", "Star"], ["Donut", "Cupcake"], ["Orange", "Grapes"],
   ["Sunglasses", "Spectacles"], ["Cookie", "Brownie"], ["Snowman", "Santa"],
@@ -41,7 +41,14 @@ const WORD_PAIRS = [
   ["Butter", "Ghee"], ["Salt", "Pepper"], ["Tea", "Coffee"],
   ["Shoes", "Slippers"], ["Mobile", "Telephone"], ["Temple", "Church"],
   ["King", "Queen"], ["Milk", "Curd"], ["Wallet", "Purse"],
-  ["Gas Stove", "Induction Stove"]
+  ["Gas Stove", "Induction Stove"], ["City", "Village"], ["Idli", "Dosa"],
+  ["Burger", "Sandwich"], ["Cricket", "Football"], ["Honey", "Jam"],
+  ["Almond", "Cashew"], ["Blackboard", "Whiteboard"], ["Speaker", "Headphones"],
+  ["Teacher", "Student"], ["Farmer", "Gardener"], ["Actor", "Director"],
+  ["Snake", "Lizard"], ["Gold", "Silver"], ["Ludo", "Carrom"],
+  ["Projector", "Television"], ["Cellotape", "Glue"], ["Mosquito", "Housefly"],
+  ["Movie", "Series"], ["Compass", "Map"], ["Rocket", "Missile"], ["Helmet", "Cap"],
+  ["Ring", "Bracelet"], ["Earthquake", "Tsunami"]
 ];
 
 /**
