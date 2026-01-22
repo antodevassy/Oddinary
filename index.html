@@ -702,7 +702,7 @@
         <div class="content-area">
             <div class="pulse-anim">🗣️</div>
             <h1 class="text-gold">DISCUSSION TIME</h1>
-            <p class="text-c text-muted">Describe your word, but don't say it directly. Find the Imposter...</p>
+            <p class="text-c text-muted">Describe your word, but don't say it directly. Find the Imposter.</p>
             <br>
             <div id="timer-display" class="hidden" style="font-size: 3rem; font-weight: 900; color: var(--text-main); margin: 30px 0;">
                 03:00
@@ -766,11 +766,11 @@
     <div id="modal-forgot-word" class="modal">
         <div class="modal-content">
             <h2 class="text-primary mb-2 text-c">Select Your Name</h2>
-            <p class="text-muted text-c">Choose your name to see your word</p>
+            <p class="text-muted text-c">Choose your name to see your word.</p>
             <div id="forgot-word-player-list" class="player-select-list">
                 <!-- Dynamic player list -->
             </div>
-            <button class="btn" onclick="Game.closeForgotWord()">Cancel</button>
+            <button class="btn btn-danger" onclick="Game.closeForgotWord()">Cancel</button>
         </div>
     </div>
 
@@ -811,7 +811,8 @@
                 <p><strong class="text-primary">+5 points</strong> - Each player who voted for the imposter.</p>
                 
                 <h3 class="text-gold" style="margin-top: 15px; margin-bottom: 10px;">Draw</h3>
-                <p>No points awarded when there's a tie for most votes.</p>
+                <p><strong class="text-primary">+5 points</strong> - Each player who voted for the imposter.</p>
+                <p class="text-muted" style="font-size: 0.9rem; margin-top: 5px;">Note: Players who vote for the imposter always get +5 points, even in a draw.</p>
             </div>
             <button class="btn btn-primary mt-2" onclick="Game.closePointsRules()">Got it!</button>
         </div>
@@ -1408,6 +1409,12 @@ const Game = {
             }
             // --- 4. TIE (Implicit) ---
             else {
+                // Award +5 points to players who voted for the imposter even in a draw
+                Object.entries(State.votes).forEach(([voterId, targetId]) => {
+                    if(targetId == oddId) {
+                        State.players.find(p => p.id == voterId).roundScore += 5;
+                    }
+                });
                 roundStatus = "Draw!";
             }
         }
