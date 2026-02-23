@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <script src="words-data.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
             /* Palette */
@@ -66,6 +67,7 @@
         /* Typography */
         h1, h2, h3 { font-weight: 900; letter-spacing: -0.5px; }
         .text-glow { text-shadow: 0 0 15px rgba(156, 255, 58, 0.5); }
+        .text-primary { color: var(--primary); }
         .text-danger { color: var(--danger); text-shadow: 0 0 15px rgba(217, 58, 58, 0.5); }
         .text-gold { color: var(--accent-gold); }
         
@@ -93,6 +95,11 @@
             padding: 20px 0;
         }
         .screen.active { display: flex; }
+        
+        #screen-setup {
+            justify-content: flex-start;
+            padding-top: 20px;
+        }
 
         .content-area {
             display: flex;
@@ -197,8 +204,9 @@
             margin-bottom: 12px;
             display: flex;
             align-items: center;
-            justify-content: center; /* Center content */
-            animation: slideIn 0.2s ease; /* Faster */
+            justify-content: center;
+            gap: 10px;
+            animation: slideIn 0.2s ease;
         }
 
         input {
@@ -322,7 +330,7 @@
         }
 
         /* Animations */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
         
         @keyframes pulse-ring {
@@ -398,7 +406,14 @@
             justify-content: center;
             padding: 20px;
         }
-        .modal.open { display: flex; animation: fadeIn 0.2s ease-out; } /* Faster */
+        .modal.open { display: flex; animation: fadeIn 0.15s ease-out; } 
+
+        /* Speed up: Remove animations for Forgot Word section to fix lag */
+        #modal-forgot-word.open, 
+        #modal-confirm-forgot.open, 
+        #modal-word-reveal.open {
+            animation: none !important;
+        }
 
         .modal-content {
             max-width: 500px;
@@ -409,6 +424,52 @@
             border: 2px solid var(--text-muted);
             max-height: 80vh;
             overflow-y: auto;
+        }
+
+        /* Stepper Control */
+        .stepper-control {
+            display: flex;
+            align-items: center;
+            background: rgba(0,0,0,0.3);
+            border-radius: 14px;
+            padding: 4px;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .stepper-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.05);
+            color: var(--text-main);
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1.4rem;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        .stepper-btn:hover {
+            background: #2a2e38;
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-1px);
+        }
+        .stepper-btn:active {
+            transform: translateY(1px) scale(0.95);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .stepper-value {
+            padding: 0 15px;
+            font-weight: 900;
+            font-size: 1.3rem;
+            color: var(--primary);
+            min-width: 45px;
+            text-align: center;
+            text-shadow: 0 0 15px rgba(107, 207, 45, 0.3);
         }
 
         /* Close Button */
@@ -463,6 +524,7 @@
             background: linear-gradient(to right, #2a2d35, #1f2128);
             outline: none;
             -webkit-appearance: none;
+            appearance: none; /* Added for compatibility */
             margin: 15px 0;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
         }
@@ -497,7 +559,34 @@
         
         .slider-input::-moz-range-thumb:hover {
             transform: scale(1.1);
-            box-shadow: 0 0 20px rgba(107, 207, 45, 0.7), 0 2px 8px rgba(0,0,0,0.4);
+        }
+
+        /* Drag and Drop */
+        .input-group.dragging {
+            opacity: 0.5;
+            background: rgba(107, 207, 45, 0.1);
+            border-radius: var(--radius);
+        }
+        .drag-handle {
+            cursor: grab;
+            padding: 10px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            user-select: none;
+        }
+        .drag-handle:active { cursor: grabbing; }
+        .drag-handle svg { width: 20px; height: 20px; fill: currentColor; }
+        
+        .players-list-container {
+            width: 100%;
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 5px; /* Space for scrollbar if it were visible */
+        }
+        
+        .input-group {
+            transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), opacity 0.2s;
         }
 
         .timer-value {
@@ -536,6 +625,19 @@
             transform: scale(0.98);
             border-color: var(--primary);
             background: rgba(107, 207, 45, 0.1);
+        }
+
+        .player-num {
+            font-weight: 900;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            min-width: 24px;
+            text-align: center;
+            opacity: 0.7;
+        }
+
+        #modal-stealth-info {
+            z-index: 2000;
         }
 
         /* Error Message */
@@ -599,37 +701,9 @@
         <!-- Center Stack -->
         <img src="logo.png" alt="Oddinary" class="logo-img" onerror="this.src='';this.innerHTML='<h1>Oddinary</h1>'">
         
-        <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 10px;">
             <button class="btn btn-primary" onclick="Game.goToSetup()">Start Game</button>
             <button class="btn" onclick="Game.toggleRules()">How to Play?</button>
-            
-            <h3 class="text-muted text-c mt-2 mb-2" style="font-size: 0.9rem;">GAME SETTINGS</h3>
-            
-            <div class="switch-container">
-                <span>Shuffle Player Order</span>
-                <label class="switch">
-                    <input type="checkbox" id="setting-shuffle">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            
-            <div class="switch-container">
-                <span>Discussion Timer</span>
-                <label class="switch">
-                    <input type="checkbox" id="setting-timer" onchange="Game.toggleTimerSettings()">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            
-            <div id="timer-slider-container" class="timer-control hidden">
-                <p class="text-muted" style="margin-bottom: 10px;">Timer Duration</p>
-                <div class="timer-value" id="timer-value-display">3 min</div>
-                <input type="range" min="1" max="5" value="3" class="slider-input" id="timer-duration-slider" oninput="Game.updateTimerValue(this.value)">
-                <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.8rem;">
-                    <span>1 min</span>
-                    <span>5 min</span>
-                </div>
-            </div>
         </div>
         
         <div class="footer-copyright"><br><br>© Anto Devassy V.P</div>
@@ -639,12 +713,11 @@
     <div id="modal-rules" class="modal">
         <div style="max-width: 500px; width: 100%;">
             <h2 class="text-primary mb-2 text-c">How to Play?</h2>
-            <div style="text-align: center; line-height: 1.6; color: var(--text-sec); display: flex; flex-direction: column; align-items: center;">
-                <p class="mb-2">1. Everyone gets a secret word.</p>
-                <p class="mb-2">2. <strong>One player</strong> gets a slightly different word (The Imposter).</p>
-                <p class="mb-2">3. Describe your word without revealing it directly.</p>
-                <p class="mb-2">4. Vote for who you think is the Imposter!</p>
-                <p class="mb-2 text-gold">If the Imposter is caught, they lose... unless they can guess the common word!</p>
+            <div style="text-align: left; line-height: 1.6; color: var(--text-sec); padding: 0 10px;">
+                <p class="mb-2">1. <b>Word Assignments:</b> Everyone receives a secret word. The Imposters get a slightly different word or no word at all.</p>
+                <p class="mb-2">2. <b>Descriptions:</b> Take turns describing your word without revealing it directly to catch the Imposters.</p>
+                <p class="mb-2">3. <b>Multi-Vote:</b> You must select <b>exact same number of suspects</b> as there are Imposters in the game.</p>
+                <p class="mb-2">4. <b>Objective:</b> Catch the Imposters by making them the most voted players. If any Imposter is caught, the group wins the round!</p>
             </div>
             <button class="btn btn-primary mt-2" onclick="Game.toggleRules()">Got It</button>
         </div>
@@ -655,15 +728,72 @@
         <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px;">
             <h2 class="text-c">PLAYERS</h2>
             
-            <!-- Error Message -->
-            <div id="setup-error" class="error-msg"></div>
-            
             <!-- List Container -->
-            <div id="players-list" style="width: 100%; max-height: 60vh; overflow-y: auto;">
+            <div id="players-list" style="width: 100%;">
                 <!-- Dynamic Inputs -->
             </div>
             
             <button class="btn" onclick="Game.addPlayer()" style="border-style: dashed;">+ Add Player</button>
+
+            <div id="setup-imposter-count-container" style="width: 100%; margin: 5px 0; padding: 18px 20px; background: var(--bg-card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.05);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="text-align: left;">
+                        <span class="text-white" style="font-size: 0.95rem; font-weight: 700; display: block; letter-spacing: 0.5px;">IMPOSTER COUNT</span>
+                    </div>
+                    <div class="stepper-control">
+                        <button id="setup-imposter-minus" class="stepper-btn" onclick="Game.adjustImposterCount(-1, 'setup')">−</button>
+                        <span id="setup-imposter-count-display" class="stepper-value">1</span>
+                        <button id="setup-imposter-plus" class="stepper-btn" onclick="Game.adjustImposterCount(1, 'setup')">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Moved Game Settings Section -->
+            <div style="width: 100%; display: flex; flex-direction: column; gap: 5px;">
+                <div class="switch-container" style="margin-bottom: 5px; padding: 12px 15px;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="font-size: 0.9rem;">Stealth Mode</span>
+                        <button class="btn-icon" style="width:20px; height:20px; min-height:0; margin:0; padding:0; border:none; background:none; color:var(--text-muted); cursor:pointer;" onclick="Game.showStealthModeInfo()">
+                            <svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        </button>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="setting-imposter-word" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="switch-container" style="margin-bottom: 5px; padding: 12px 15px;">
+                    <span style="font-size: 0.9rem;">Shuffle Player Order</span>
+                    <label class="switch">
+                        <input type="checkbox" id="setting-shuffle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div class="switch-container" style="margin-bottom: 5px; padding: 12px 15px;">
+                    <span style="font-size: 0.9rem;">Discussion Timer</span>
+                    <label class="switch">
+                        <input type="checkbox" id="setting-timer" onchange="Game.toggleTimerSettings()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div id="timer-slider-container" class="timer-control hidden" style="margin: 5px auto; padding: 15px;">
+                    <p class="text-muted" style="margin-bottom: 5px; font-size: 0.8rem;">Timer Duration</p>
+                    <div class="timer-value" id="timer-value-display" style="font-size: 1.5rem;">3 min</div>
+                    <input type="range" min="1" max="5" value="3" class="slider-input" id="timer-duration-slider" oninput="Game.updateTimerValue(this.value)" style="margin: 10px 0;">
+                    <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.7rem;">
+                        <span>1 min</span>
+                        <span>5 min</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Error Message -->
+            <div id="setup-error" class="error-msg"></div>
+            
+
             
             <button class="btn btn-primary" onclick="Game.startGame()">Start</button>
             <button class="btn" onclick="Game.goHome()">Back</button>
@@ -687,9 +817,9 @@
                         <p class="text-muted"><br>Keep it secret!</p>
                     </div>
                     <div class="card-face card-back">
-                        <p class="text-muted">Your secret word is:</p>
+                        <p id="reveal-role-label" class="text-muted">Your secret word is:</p>
                         <br>
-                        <h1 id="secret-word-display" style="font-size: 2.5rem; color: var(--primary);">WORD</h1>
+                        <h1 id="secret-word-display" style="font-size: 2.2rem; color: var(--primary); line-height: 1.2;">WORD</h1>
                     </div>
                 </div>
             </div>
@@ -699,6 +829,7 @@
 
     <!-- 4. Discussion Phase -->
     <div id="screen-discuss" class="screen">
+        <div class="close-btn" onclick="Game.askCloseReveal()" title="Close">✕</div>
         <div class="content-area">
             <div class="pulse-anim">🗣️</div>
             <h1 class="text-gold">DISCUSSION TIME</h1>
@@ -789,7 +920,7 @@
     <!-- Forgot Word Reveal Modal -->
     <div id="modal-word-reveal" class="modal">
         <div style="max-width: 400px; width: 100%; text-align: center;">
-            <h2 class="text-muted mb-2">Your word is:</h2>
+            <h2 id="forgot-word-label" class="text-muted mb-2">Your word is:</h2>
             <h1 id="forgot-word-display" class="text-primary text-glow" style="font-size: 3rem; margin: 30px 0;">WORD</h1>
             <button class="btn btn-primary" onclick="Game.closeWordReveal()">Got It</button>
         </div>
@@ -799,23 +930,142 @@
     <div id="modal-points-rules" class="modal">
         <div class="modal-content">
             <h2 class="text-primary mb-2 text-c">POINTS RULES</h2>
-            <div style="text-align: left; line-height: 1.8; color: var(--text-sec);">
-                <h3 class="text-gold" style="margin-top: 15px; margin-bottom: 10px;">Perfect Escape (Imposter)</h3>
-                <p><strong class="text-primary">+20 points</strong> - Imposter receives zero votes.</p>
-                
-                <h3 class="text-gold" style="margin-top: 15px; margin-bottom: 10px;">Imposter Caught</h3>
-                <p><strong class="text-primary">+10 points</strong> - Each player who correctly voted for the imposter.</p>
-                
-                <h3 class="text-gold" style="margin-top: 15px; margin-bottom: 10px;">Imposter Escapes</h3>
-                <p><strong class="text-primary">+15 points</strong> - Imposter (if they received at least 1 vote but not the most).</p>
-                <p><strong class="text-primary">+5 points</strong> - Each player who voted for the imposter.</p>
-                
-                <h3 class="text-gold" style="margin-top: 15px; margin-bottom: 10px;">Draw</h3>
-                <p><strong class="text-primary">+5 points</strong> - Imposter (for not getting caught).</p>
-                <p><strong class="text-primary">+5 points</strong> - Each player who voted for the imposter.</p>
-                <p><strong class="text-muted">0 points</strong> - Players who didn't vote for the imposter.</p>
+            <div style="text-align: left; line-height: 1.6; color: var(--text-sec); font-size: 0.9rem;">
+                <div style="background: rgba(107, 207, 45, 0.05); padding: 12px; border-radius: 8px; margin-top: 10px; border-left: 3px solid var(--primary);">
+                    <h3 class="text-primary" style="margin-bottom: 5px; font-size: 1rem;">IDENTIFYING SUSPECTS</h3>
+                    <p><strong>+10 Points</strong> per suspect if the imposter you voted for is <b>Caught</b> (most voted).</p>
+                    <p><strong>+5 Points</strong> per suspect if the imposter you voted for <b>Escapes</b> the majority.</p>
+                    <p class="text-gold" style="font-size: 0.8rem; margin-top: 5px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 5px;">
+                        <i><b>Betrayal:</b> If an Imposter votes for another Imposter, they receive 50% fewer points for that vote.</i>
+                    </p>
+                </div>
+
+                <div style="background: rgba(217, 58, 58, 0.05); padding: 12px; border-radius: 8px; margin-top: 15px; border-left: 3px solid var(--danger);">
+                    <h3 class="text-danger" style="margin-bottom: 5px; font-size: 1rem;">IMPOSTER REWARDS</h3>
+                    <p><strong>+15 Points</strong> if you are not the most voted player (Successful Escape).</p>
+                    <p><strong>+20 Points</strong> for a <b>Perfect Escape</b> (if you receive 0 votes from anyone).</p>
+                </div>
+
+                <p class="text-muted" style="margin-top: 15px; font-size: 0.8rem; font-style: italic;">
+                    Note: If an imposter is tied for the most votes, they are considered CAUGHT.
+                </p>
             </div>
             <button class="btn btn-primary mt-2" onclick="Game.closePointsRules()">Got it!</button>
+        </div>
+    </div>
+    <!-- Add Player Mid-game Modal -->
+    <div id="modal-add-player-midgame" class="modal">
+        <div class="modal-content">
+            <h2 class="text-primary mb-2 text-c">Add New Player</h2>
+            <div class="input-group">
+                <input type="text" id="new-player-name-midgame" placeholder="Enter player name">
+            </div>
+            <div id="add-player-midgame-error" class="error-msg"></div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn" style="flex:1" onclick="Game.closeAddPlayerMidgame()">Cancel</button>
+                <button class="btn btn-primary" style="flex:1" onclick="Game.confirmAddPlayerMidgame()">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Remove Player Mid-game Confirmation Modal -->
+    <div id="modal-remove-player-confirm" class="modal">
+        <div style="max-width: 400px; width: 100%; text-align: center;">
+            <h2 class="text-white mb-2">Remove Player?</h2>
+            <p class="text-muted mb-2">This will remove <span id="remove-player-name" class="text-danger" style="font-weight: 900;">Player</span> from the game.</p>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn" style="flex:1" onclick="Game.closeRemovePlayerConfirm()">Cancel</button>
+                <button class="btn btn-danger" style="flex:1" onclick="Game.confirmRemovePlayerMidgame()">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- General Alert Modal -->
+    <div id="modal-alert" class="modal">
+        <div class="modal-content" style="max-width: 400px; padding: 30px; text-align: center;">
+            <h2 id="alert-title" class="text-primary mb-2">Notice</h2>
+            <p id="alert-message" class="text-muted mb-2"></p>
+            <button class="btn btn-primary mt-2" onclick="Game.closeAlert()">Got It</button>
+        </div>
+    </div>
+
+    <!-- Stealth Mode Info Modal -->
+    <div id="modal-stealth-info" class="modal">
+        <div class="modal-content" style="max-width: 400px; padding: 30px;">
+            <h2 class="text-primary mb-2 text-c">Stealth Mode</h2>
+            <div style="text-align: center; line-height: 1.6; color: var(--text-sec);">
+                <p style="margin-bottom: 20px;">
+                    <strong class="text-gold">ON:</strong> The Imposter gets a secret word. They don't know they are the Imposter and must find out from the descriptions!
+                </p>
+                <p>
+                    <strong class="text-danger">OFF:</strong> The Imposter is directly told <span class="text-danger" style="font-weight:900;">IMPOSTER</span>. They must lie from the start to blend in.
+                </p>
+            </div>
+            <button class="btn btn-primary mt-2" onclick="Game.closeStealthModeInfo()">Got It</button>
+        </div>
+    </div>
+
+    <!-- Mid-game Settings Modal -->
+    <div id="modal-midgame-settings" class="modal">
+        <div class="modal-content">
+            <h2 class="text-primary mb-2 text-c">Game Settings</h2>
+            
+            <div class="switch-container">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span>Stealth Mode</span>
+                    <button class="btn-icon" style="width:20px; height:20px; min-height:0; margin:0; padding:0; border:none; background:none; color:var(--text-muted); cursor:pointer;" onclick="Game.showStealthModeInfo()">
+                        <svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                    </button>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="mid-setting-imposter-word">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="switch-container">
+                <span>Shuffle Player Order</span>
+                <label class="switch">
+                    <input type="checkbox" id="mid-setting-shuffle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="switch-container">
+                <span>Discussion Timer</span>
+                <label class="switch">
+                    <input type="checkbox" id="mid-setting-timer" onchange="Game.toggleMidTimerSettings()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div style="width: 100%; margin-bottom: 12px; padding: 18px 20px; background: var(--bg-card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.05);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="text-align: left;">
+                        <span class="text-white" style="font-size: 0.95rem; font-weight: 700; display: block; letter-spacing: 0.5px;">Imposter Count</span>
+                    </div>
+                    <div class="stepper-control">
+                        <button id="mid-imposter-minus" class="stepper-btn" onclick="Game.adjustImposterCount(-1, 'mid')">−</button>
+                        <span id="mid-imposter-count-display" class="stepper-value">1</span>
+                        <button id="mid-imposter-plus" class="stepper-btn" onclick="Game.adjustImposterCount(1, 'mid')">+</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="mid-timer-slider-container" class="timer-control hidden">
+                <p class="text-muted" style="margin-bottom: 10px;">Timer Duration</p>
+                <div class="timer-value" id="mid-timer-value-display">3 min</div>
+                <input type="range" min="1" max="5" value="3" class="slider-input" id="mid-timer-duration-slider" oninput="Game.updateMidTimerValue(this.value)">
+                <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.8rem;">
+                    <span>1 min</span>
+                    <span>5 min</span>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn" style="flex:1" onclick="Game.closeMidgameSettings()">Cancel</button>
+                <button class="btn btn-primary" style="flex:1" onclick="Game.saveMidgameSettings()">Save</button>
+            </div>
         </div>
     </div>
 
@@ -833,14 +1083,26 @@
                  <span class="text-muted">Common Word:</span>
                  <strong id="res-common-word" class="text-primary">Word</strong>
                </div>
-               <div style="display:flex; justify-content:center; gap: 20px; align-items:center; margin-top: 10px;">
+               <div id="res-odd-word-row" style="display:flex; justify-content:center; gap: 20px; align-items:center; margin-top: 10px;">
                  <span class="text-muted">Odd Word:</span>
                  <strong id="res-odd-word" class="text-danger">Word</strong>
                </div>
             </div>
 
+            <button class="btn" onclick="Game.showVotingBreakdown()">View Votes</button>
             <button class="btn" onclick="Game.showPointsRules()">Points Rules</button>
             <button class="btn btn-primary" onclick="Game.goToScoreboard()">Leaderboard</button>
+        </div>
+    </div>
+
+    <!-- Voting Breakdown Modal -->
+    <div id="modal-voting-breakdown" class="modal">
+        <div class="modal-content">
+            <h2 class="text-primary mb-2 text-c">Voting Breakdown</h2>
+            <div id="voting-breakdown-list" style="width: 100%; margin: 20px 0;">
+                <!-- Filled dynamically -->
+            </div>
+            <button class="btn btn-primary" onclick="Game.closeVotingBreakdown()">Close</button>
         </div>
     </div>
 
@@ -852,7 +1114,10 @@
                 <!-- Scores -->
             </div>
             
-            <button class="btn" onclick="Game.backToResults()">Back to Scoreboard</button>
+            <button class="btn" onclick="Game.openAddPlayerMidgame()" style="border-style: dashed; margin-top: 5px;">+ Add Player</button>
+            <button class="btn" onclick="Game.openMidgameSettings()" style="margin-top: 5px;">Game Settings</button>
+            
+            <button class="btn" onclick="Game.backToResults()">Back to Results</button>
             <button class="btn btn-primary" onclick="Game.setupNextRound()">Next Round</button>
             <button class="btn" onclick="Game.askNewGame()">New Game</button>
         </div>
@@ -874,13 +1139,15 @@ const State = {
     playerOrder: [], 
     roles: {}, 
     words: { common: "", odd: "" },
-    currentOddPlayerId: null,
+    oddPlayerIds: [], // Multiple imposters supported
     votes: {}, 
     round: 0,
-    config: { shuffle: false, timer: false, timerDuration: 3 },
+    config: { shuffle: false, timer: false, timerDuration: 3, imposterCount: 1, imposterHasWord: true },
     stepIndex: 0,
     pendingVoteTarget: null, // For vote confirmation
     pendingForgotPlayer: null, // For forgot word confirmation
+    pendingRemovePlayerId: null, // For mid-game removal
+    selectedTargets: [], // For multi-vote selection
     timerInterval: null
 };
 
@@ -915,6 +1182,7 @@ const Game = {
     saveSession: () => {
         const data = {
             players: State.players,
+            config: State.config
         };
         sessionStorage.setItem(SESSION_KEY, JSON.stringify(data));
     },
@@ -925,6 +1193,7 @@ const Game = {
             try {
                 const data = JSON.parse(raw);
                 if(data.players) State.players = data.players;
+                if(data.config) State.config = {...State.config, ...data.config};
                 // Force reset scores to 0 on reload (New User Requirement)
                 State.players.forEach(p => p.score = 0); 
             } catch(e) {
@@ -964,22 +1233,37 @@ const Game = {
     goToSetup: () => {
         Game.showScreen('setup');
         Game.renderSetupInputs();
+        Game.updateImposterUI();
     },
 
     goHome: () => Game.showScreen('landing'),
 
     addPlayer: () => {
-        if(State.players.length >= 30) return alert("Max 30 players!");
+        if(State.players.length >= 30) {
+            Game.showAlert("Max 30 players!", "Limit Reached");
+            return;
+        }
         State.players.push({ id: Date.now(), name: "", score: 0 });
         Game.saveSession();
-        Game.renderSetupInputs(true); // Pass true to indicate new player added
+        Game.renderSetupInputs(true);
+        Game.updateImposterUI();
     },
 
     removePlayer: (index) => {
-        if(State.players.length <= 3) return alert("Min 3 players required!");
+        if(State.players.length <= 3) return Game.showAlert("Min 3 players required!", "Warning");
         State.players.splice(index, 1);
+        
+        // Validation: Re-verify imposter count after removal
+        const maxImposters = Math.max(1, Math.floor(State.players.length / 3));
+        if(State.config.imposterCount > maxImposters) {
+            const oldCount = State.config.imposterCount;
+            State.config.imposterCount = maxImposters;
+            Game.showAlert(`Imposter count has been reduced from ${oldCount} to ${maxImposters} to maintain game balance for ${State.players.length} players.`, "Players Reduced");
+        }
+
         Game.saveSession();
         Game.renderSetupInputs();
+        Game.updateImposterUI();
     },
     
     // Validate player name for duplicates
@@ -1009,25 +1293,99 @@ const Game = {
         Game.saveSession();
     },
 
+    // --- Drag and Drop Logic ---
+    handleDragStart: (e, index) => {
+        e.dataTransfer.setData('text/plain', index);
+        e.currentTarget.classList.add('dragging');
+        // Mobile haptic feedback if available
+        if (window.navigator.vibrate) window.navigator.vibrate(10);
+    },
+
+    handleDragEnd: (e) => {
+        e.currentTarget.classList.remove('dragging');
+        document.querySelectorAll('#players-list .input-group').forEach(el => el.style.borderTop = 'none');
+    },
+
+    handleDragOver: (e) => {
+        e.preventDefault();
+        const afterElement = Game.getDragAfterElement(e.clientY);
+        const list = $('players-list');
+        const dragging = document.querySelector('.dragging');
+        if (afterElement == null) {
+            list.appendChild(dragging);
+        } else {
+            list.insertBefore(dragging, afterElement);
+        }
+    },
+
+    getDragAfterElement: (y) => {
+        const draggableElements = [...document.querySelectorAll('.input-group:not(.dragging)')];
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    },
+
+    handleDrop: (e) => {
+        e.preventDefault();
+        const list = $('players-list');
+        if (!list) return;
+        
+        // Update State.players based on new DOM order
+        const newList = [];
+        list.querySelectorAll('.input-group').forEach(el => {
+            const index = parseInt(el.getAttribute('data-player-index'));
+            if (!isNaN(index) && State.players[index]) {
+                newList.push(State.players[index]);
+            }
+        });
+        State.players = newList;
+        Game.saveSession();
+        Game.renderSetupInputs();
+    },
+
     renderSetupInputs: (scrollToLast = false) => {
         const list = $('players-list');
+        if (!list) return;
         list.innerHTML = "";
         
+        // Add dragover listener to container if not present
+        if (!list.ondragover) {
+            list.ondragover = (e) => Game.handleDragOver(e);
+            list.ondrop = (e) => Game.handleDrop(e);
+        }
+
         State.players.forEach((p, idx) => {
+            if (!p) return;
             const grp = document.createElement('div');
             grp.className = "input-group";
+            grp.id = `player-group-${idx}`;
             grp.setAttribute('data-player-index', idx);
+            grp.draggable = true;
+            
+            grp.ondragstart = (e) => Game.handleDragStart(e, idx);
+            grp.ondragend = (e) => Game.handleDragEnd(e);
             
             grp.innerHTML = `
+                <span class="player-num">#${idx + 1}</span>
                 <input type="text" 
                        id="player-input-${idx}"
-                       value="${p.name}" 
+                       value="${p.name || ''}" 
                        placeholder="Enter player name"
                        oninput="Game.onInputChange(this, ${idx})"
-                       required
+                       onkeydown="Game.handlePlayerEnter(event, ${idx})"
+                       autocomplete="off"
                 >
-                <button class="btn btn-icon btn-danger" onclick="Game.removePlayer(${idx})">
-                   <svg viewBox="0 0 24 24"><path d="M5 11h14v2H5z"/></svg>
+                <div class="drag-handle" title="Drag to reorder">
+                    <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:currentColor;"><path d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                </div>
+                <button class="btn btn-icon btn-danger" onclick="Game.removePlayer(${idx})" style="width:44px; height:44px; min-height:0; border-radius:12px;">
+                   <svg viewBox="0 0 24 24" style="width:20px; height:20px;"><path d="M5 11h14v2H5z" fill="currentColor"/></svg>
                 </button>
             `;
             list.appendChild(grp);
@@ -1037,7 +1395,7 @@ const Game = {
         if(scrollToLast && State.players.length > 0) {
             setTimeout(() => {
                 const lastIndex = State.players.length - 1;
-                const lastInput = $(`player-input-${lastIndex}`);
+                const lastInput = document.getElementById(`player-input-${lastIndex}`);
                 if(lastInput) {
                     lastInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     lastInput.focus();
@@ -1059,7 +1417,7 @@ const Game = {
         }
         
         // Check for duplicates
-        const names = State.players.map(p => p.name.trim().toLowerCase());
+        const names = State.players.map(p => p.name.trim().toLowerCase()).filter(n => n !== "");
         const hasDuplicates = names.some((name, idx) => names.indexOf(name) !== idx);
         if(hasDuplicates) {
             errorEl.innerText = "All player names must be unique!";
@@ -1077,9 +1435,10 @@ const Game = {
 
         Game.saveSession();
 
-        // Configs
+        // Update config from UI
         State.config.shuffle = $('setting-shuffle').checked;
         State.config.timer = $('setting-timer').checked;
+        State.config.imposterHasWord = $('setting-imposter-word').checked;
         if(State.config.timer) {
             State.config.timerDuration = parseInt($('timer-duration-slider').value);
         }
@@ -1100,12 +1459,19 @@ const Game = {
         }
 
         const pIds = State.players.map(p => p.id);
-        const oddIndex = Math.floor(Math.random() * pIds.length);
-        State.currentOddPlayerId = pIds[oddIndex];
+        
+        // Pick multiple imposters
+        State.oddPlayerIds = [];
+        const availableIndices = Array.from({length: pIds.length}, (_, i) => i);
+        for(let i = 0; i < State.config.imposterCount; i++) {
+            const idx = Math.floor(Math.random() * availableIndices.length);
+            const playerIdx = availableIndices.splice(idx, 1)[0];
+            State.oddPlayerIds.push(pIds[playerIdx]);
+        }
         
         State.roles = {};
         pIds.forEach(id => {
-            State.roles[id] = (id === State.currentOddPlayerId) ? 'odd' : 'common';
+            State.roles[id] = State.oddPlayerIds.includes(id) ? 'odd' : 'common';
         });
 
         State.playerOrder = [...pIds];
@@ -1128,7 +1494,28 @@ const Game = {
         $('word-card').classList.remove('flipped');
         
         const role = State.roles[playerId];
-        $('secret-word-display').innerText = (role === 'odd') ? State.words.odd : State.words.common;
+        const labelEl = $('reveal-role-label');
+        const wordEl = $('secret-word-display');
+        
+        if (role === 'odd') {
+            if (State.config.imposterHasWord) {
+                wordEl.innerText = State.words.odd;
+                labelEl.innerText = "Your secret word is:";
+                wordEl.classList.remove('text-danger');
+            } else {
+                labelEl.innerText = "You are the";
+                wordEl.innerText = "IMPOSTER";
+                wordEl.classList.add('text-danger');
+            }
+        } else {
+            labelEl.innerText = "Your secret word is:";
+            wordEl.innerText = State.words.common;
+            wordEl.classList.remove('text-danger');
+        }
+        
+        // Remove teammate identification as requested
+        const existingHint = document.querySelector('.team-hint');
+        if (existingHint) existingHint.remove();
         
         // Button Logic: Check if Last Player
         const nextBtn = $('btn-next-player');
@@ -1198,7 +1585,7 @@ const Game = {
                     State.timerInterval = setTimeout(tick, 1000); 
                 } else {
                     // Time's up!
-                    alert("⏰ Time's up! Start voting now.");
+                    Game.showAlert("Time's up! Start voting now.", "⌛ Time's Up");
                 }
             };
             tick();
@@ -1258,11 +1645,30 @@ const Game = {
     showForgotWordReveal: () => {
         const playerId = State.pendingForgotPlayer;
         const role = State.roles[playerId];
-        const word = (role === 'odd') ? State.words.odd : State.words.common;
+        const labelEl = $('forgot-word-label');
+        const wordEl = $('forgot-word-display');
         
-        $('forgot-word-display').innerText = word;
-        $('modal-confirm-forgot').classList.remove('open');
+        if (role === 'odd') {
+            if (State.config.imposterHasWord) {
+                wordEl.innerText = State.words.odd;
+                labelEl.innerText = "Your word is:";
+                wordEl.classList.remove('text-danger');
+                wordEl.classList.add('text-primary');
+            } else {
+                labelEl.innerText = "You are the";
+                wordEl.innerText = "IMPOSTER";
+                wordEl.classList.add('text-danger');
+                wordEl.classList.remove('text-primary');
+            }
+        } else {
+            labelEl.innerText = "Your word is:";
+            wordEl.innerText = State.words.common;
+            wordEl.classList.remove('text-danger');
+            wordEl.classList.add('text-primary');
+        }
+        
         $('modal-word-reveal').classList.add('open');
+        $('modal-confirm-forgot').classList.remove('open');
     },
 
     closeWordReveal: () => {
@@ -1284,12 +1690,14 @@ const Game = {
         clearTimeout(State.timerInterval);
         State.stepIndex = 0;
         State.votes = {};
+        State.selectedTargets = [];
         Game.showVotingScreen();
     },
 
     showVotingScreen: () => {
         const voterId = State.playerOrder[State.stepIndex];
         const voter = State.players.find(p => p.id === voterId);
+        State.selectedTargets = [];
         
         $('voter-name').innerText = voter.name;
         
@@ -1301,37 +1709,78 @@ const Game = {
             
             const btn = document.createElement('BUTTON');
             btn.className = "btn";
+            btn.id = `vote-btn-${p.id}`;
             btn.innerText = p.name; 
-            // Change to ask for confirmation
-            btn.onclick = () => Game.askConfirmVote(voterId, p.id);
+            btn.onclick = () => Game.toggleVoteSelect(p.id);
             list.appendChild(btn);
         });
+
+        // Use the actual number of imposters assigned at round start
+        const activeImposterCount = State.oddPlayerIds.length;
+
+        // Add Multi-vote Counter and Confirm Button
+        const controls = document.createElement('div');
+        controls.className = "content-area";
+        controls.innerHTML = `
+            <p class="text-muted" style="margin-top: 10px;">Select ${activeImposterCount} player${activeImposterCount > 1 ? 's' : ''}</p>
+            <button id="btn-confirm-votes" class="btn btn-primary" style="opacity: 0.5; pointer-events: none;" onclick="Game.confirmMultiVotes()">Submit Votes</button>
+        `;
+        list.appendChild(controls);
         
         Game.showScreen('voting');
     },
 
-    askConfirmVote: (voterId, targetId) => {
-        State.pendingVoteTarget = targetId;
-        const targetName = State.players.find(p => p.id === targetId).name;
-        $('confirm-vote-name').innerText = targetName;
-        $('modal-vote-confirm').classList.add('open');
+    toggleVoteSelect: (targetId) => {
+        const idx = State.selectedTargets.indexOf(targetId);
+        const max = State.oddPlayerIds.length; // Use active count for the round
+        const btn = $(`vote-btn-${targetId}`);
+
+        if (idx > -1) {
+            State.selectedTargets.splice(idx, 1);
+            btn.style.borderColor = "var(--text-muted)";
+            btn.style.background = "var(--bg-card)";
+        } else {
+            if (State.selectedTargets.length >= max) {
+                // If only 1 imposter, just replace
+                if (max === 1) {
+                    const oldId = State.selectedTargets[0];
+                    const oldBtn = $(`vote-btn-${oldId}`);
+                    if (oldBtn) {
+                        oldBtn.style.borderColor = "var(--text-muted)";
+                        oldBtn.style.background = "var(--bg-card)";
+                    }
+                    State.selectedTargets = [targetId];
+                    btn.style.borderColor = "var(--primary)";
+                    btn.style.background = "rgba(107, 207, 45, 0.1)";
+                } else {
+                    return; // Max reached
+                }
+            } else {
+                State.selectedTargets.push(targetId);
+                btn.style.borderColor = "var(--primary)";
+                btn.style.background = "rgba(107, 207, 45, 0.1)";
+            }
+        }
+
+        const confirmBtn = $('btn-confirm-votes');
+        if (State.selectedTargets.length === max) {
+            confirmBtn.style.opacity = "1";
+            confirmBtn.style.pointerEvents = "auto";
+        } else {
+            confirmBtn.style.opacity = "0.5";
+            confirmBtn.style.pointerEvents = "none";
+        }
     },
 
-    confirmVote: () => {
+    confirmMultiVotes: () => {
         const voterId = State.playerOrder[State.stepIndex];
-        const targetId = State.pendingVoteTarget;
-        
-        $('modal-vote-confirm').classList.remove('open');
-        Game.submitVote(voterId, targetId);
+        Game.submitVote(voterId, [...State.selectedTargets]);
     },
 
-    cancelVote: () => {
-        $('modal-vote-confirm').classList.remove('open');
-        State.pendingVoteTarget = null;
-    },
 
-    submitVote: (voterId, targetId) => {
-        State.votes[voterId] = targetId;
+
+    submitVote: (voterId, targetIds) => {
+        State.votes[voterId] = targetIds;
         State.stepIndex++;
         
         if(State.stepIndex < State.players.length) {
@@ -1342,97 +1791,100 @@ const Game = {
     },
 
     // --- Results ---
-    // --- Results ---
     calculateResults: () => {
         const voteCounts = {}; 
         let maxVotes = 0;
         
-        // Reset Round Scores (temp property)
         State.players.forEach(p => { 
             voteCounts[p.id] = 0; 
             p.roundScore = 0; 
         });
         
-        Object.values(State.votes).forEach(targetId => {
-            voteCounts[targetId] = (voteCounts[targetId] || 0) + 1;
-            if(voteCounts[targetId] > maxVotes) maxVotes = voteCounts[targetId];
+        // Count all votes (each player might have multiple)
+        Object.values(State.votes).forEach(targetIds => {
+            targetIds.forEach(targetId => {
+                voteCounts[targetId] = (voteCounts[targetId] || 0) + 1;
+            });
         });
-        
-        const oddId = State.currentOddPlayerId;
-        const oddVotes = voteCounts[oddId] || 0;
-        const oddPlayer = State.players.find(p => p.id === oddId);
-        let roundStatus = "";
 
-        // --- 1. PERFECT DECEPTION ---
-        // Condition: VoteCount[OddPlayer] == 0
-        if (oddVotes === 0) {
-             oddPlayer.roundScore = 20;
-             roundStatus = "Perfect Escape!";
+        for (const pid in voteCounts) {
+            if (voteCounts[pid] > maxVotes) maxVotes = voteCounts[pid];
         }
-        else {
-            // --- 2. ODD PLAYER CAUGHT ---
-            // Condition: VoteCount[OddPlayer] is STRICTLY greater than any other player
-            // This means oddVotes MUST be > all others.
-            // If there is a tie for max votes, and odd player is one of them, it is NOT strictly greater.
-            let isStrictlyHighest = true;
-            for (const pid in voteCounts) {
-                if (pid != oddId && voteCounts[pid] >= oddVotes) {
-                    isStrictlyHighest = false;
-                    break;
+
+        const mostVotedIds = Object.keys(voteCounts).filter(pid => voteCounts[pid] === maxVotes && maxVotes > 0);
+        const oddIds = State.oddPlayerIds;
+        
+        // 1. Identify Suspects Scoring
+        State.players.forEach(p => {
+            const playerVotes = State.votes[p.id] || [];
+            const isVoterImposter = oddIds.includes(p.id);
+
+            playerVotes.forEach(vId => {
+                const targetId = parseInt(vId); // vId is from State.votes which stores numbers or strings? 
+                // State.selectedTargets stores numbers from toggleVoteSelect(p.id)
+                // So targetId is already a number. Let's be safe.
+                if (oddIds.includes(targetId)) {
+                    // Correct identification, check if it's a 'Betrayal'
+                    let scoreAward = 10; // Base: Majority Hit
+                    let minorityAward = 5; // Base: Minority Hit
+
+                    if (isVoterImposter) {
+                        scoreAward = 5; // Betrayal Penalty (Caught)
+                        minorityAward = 2; // Betrayal Penalty (Escaped)
+                    }
+
+                    if (mostVotedIds.includes(targetId.toString())) {
+                        p.roundScore += scoreAward;
+                    } else {
+                        p.roundScore += minorityAward;
+                    }
+                }
+            });
+        });
+
+        // 2. Imposter Rewards
+        const caughtImposters = oddIds.filter(id => mostVotedIds.includes(id.toString()));
+        const isAnyCaught = caughtImposters.length > 0;
+        
+        oddIds.forEach(id => {
+            const votesOnMe = voteCounts[id] || 0;
+            const imposterPlayer = State.players.find(p => p.id == id);
+            
+            if (!mostVotedIds.includes(id.toString())) {
+                if (votesOnMe === 0) {
+                    imposterPlayer.roundScore += 20; // Perfect Escape
+                } else {
+                    imposterPlayer.roundScore += 15; // Standard Escape
                 }
             }
-
-            if (isStrictlyHighest) {
-                // Actions:
-                // For each player p where Votes[p] == OddPlayer → Score[p] += 10
-                Object.entries(State.votes).forEach(([voterId, targetId]) => {
-                    if(targetId == oddId) {
-                         State.players.find(p => p.id == voterId).roundScore += 10;
-                    }
-                });
-                roundStatus = "Imposter Caught!";
-            }
-            // --- 3. ODD PLAYER ESCAPES ---
-            // Condition: VoteCount[OddPlayer] is NOT the highest among all players
-            // Let's interpret "NOT the highest" as: oddVotes < maxVotes.
-            else if (oddVotes < maxVotes) {
-                 // Actions:
-                 if (oddVotes > 0) {
-                     oddPlayer.roundScore += 15;
-                 }
-                 // For each player p where Votes[p] == OddPlayer → Score[p] += 5
-                 Object.entries(State.votes).forEach(([voterId, targetId]) => {
-                    if(targetId == oddId) {
-                        State.players.find(p => p.id == voterId).roundScore += 5;
-                    }
-                 });
-                 roundStatus = "Imposter Escaped!";
-            }
-            // --- 4. TIE (Implicit) ---
-            else {
-                // Award +5 points to the imposter for not getting caught
-                oddPlayer.roundScore += 5;
-                
-                // Award +5 points to players who voted for the imposter even in a draw
-                Object.entries(State.votes).forEach(([voterId, targetId]) => {
-                    if(targetId == oddId) {
-                        State.players.find(p => p.id == voterId).roundScore += 5;
-                    }
-                });
-                roundStatus = "Draw!";
-            }
-        }
-        
-        // Accumulate and Save
-        State.players.forEach(p => {
-             p.score += p.roundScore;
         });
+
+        let roundStatus = isAnyCaught ? (caughtImposters.length > 1 ? "Imposters Caught!" : "Imposter Caught!") : "Imposters Escaped!";
+        let winner = isAnyCaught ? "players" : "imposters";
+        
+        State.players.forEach(p => p.score += p.roundScore);
         Game.saveSession();
 
-        Game.renderResults(voteCounts, oddPlayer, roundStatus);
+        if (winner === "players") {
+             Game.launchConfetti("#6BCF2D");
+        } else {
+             Game.launchConfetti("#D93A3A");
+        }
+
+        Game.renderResults(voteCounts, roundStatus);
     },
     
-    renderResults: (voteCounts, oddPlayer, roundStatus) => {
+    launchConfetti: (color) => {
+        if (typeof confetti !== 'function') return;
+        confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: [color, "#ffffff"]
+        });
+    },
+
+    renderResults: (voteCounts, roundStatus) => {
         const area = $('results-area');
         area.innerHTML = "";
         
@@ -1449,10 +1901,10 @@ const Game = {
         subH.className = "text-gold";
         area.appendChild(subH);
         
-        const sortedPlayers = [...State.players].sort((a,b) => voteCounts[b.id] - voteCounts[a.id]);
+        const sortedPlayers = [...State.players].sort((a,b) => (voteCounts[b.id] || 0) - (voteCounts[a.id] || 0));
         
         sortedPlayers.forEach(p => {
-             const count = voteCounts[p.id];
+             const count = voteCounts[p.id] || 0;
              const rScore = p.roundScore > 0 ? `+${p.roundScore}` : `0`;
              const rClass = p.roundScore > 0 ? `text-primary` : `text-muted`;
              
@@ -1473,11 +1925,23 @@ const Game = {
              area.appendChild(wrap);
         });
         
-        // Imposter Reveal Text
-        $('imposter-reveal-text').innerText = `${oddPlayer.name} was the Imposter!`;
+        // Imposter Reveal Text - Support multi
+        const names = State.oddPlayerIds.map(id => State.players.find(p => p.id === id).name);
+        if (names.length > 1) {
+            $('imposter-reveal-text').innerText = `Imposters: ${names.join(', ')}`;
+        } else {
+            $('imposter-reveal-text').innerText = `Imposter: ${names[0]}`;
+        }
         
         $('res-common-word').innerText = State.words.common;
-        $('res-odd-word').innerText = State.words.odd;
+        
+        const oddWordRow = $('res-odd-word-row');
+        if (State.config.imposterHasWord) {
+            oddWordRow.classList.remove('hidden');
+            $('res-odd-word').innerText = State.words.odd;
+        } else {
+            oddWordRow.classList.add('hidden');
+        }
         
         Game.showScreen('results');
         
@@ -1500,13 +1964,17 @@ const Game = {
             if(idx === 0) item.style.borderColor = "var(--accent-gold)";
             
             item.innerHTML = `
-                <div style="display:flex; align-items:center;">
+                <div style="display:flex; align-items:center; flex: 1;">
                     <span style="font-weight:900; color:var(--text-muted); width:30px; text-align:right; margin-right:10px;">#${idx+1}</span>
-                    <span style="font-size:1.2rem; font-weight:bold;">${p.name}</span>
+                    <span style="font-size:1.2rem; font-weight:bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">${p.name}</span>
                 </div>
-                <div style="text-align:right;">
-                    <span class="text-primary" style="font-weight:900; font-size:1.2rem; display:block;">${p.score}</span>
-                    <span class="text-muted" style="font-size:0.7rem;"></span>
+                <div style="display:flex; align-items:center; gap: 15px;">
+                    <div style="text-align:right;">
+                        <span class="text-primary" style="font-weight:900; font-size:1.2rem; display:block;">${p.score}</span>
+                    </div>
+                    <button class="btn btn-icon btn-danger" style="margin: 0; width: 36px; min-height: 36px; border-radius: 50%; padding: 0;" onclick="Game.openRemovePlayerConfirm(${p.id})">
+                        <svg viewBox="0 0 24 24" style="width: 18px; height: 18px;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                    </button>
                 </div>
             `;
             area.appendChild(item);
@@ -1514,7 +1982,270 @@ const Game = {
         
         Game.showScreen('scoreboard');
     },
-    
+
+    // --- Mid-game Player Management ---
+    openAddPlayerMidgame: () => {
+        $('new-player-name-midgame').value = "";
+        $('add-player-midgame-error').classList.remove('show');
+        $('modal-add-player-midgame').classList.add('open');
+        setTimeout(() => $('new-player-name-midgame').focus(), 100);
+    },
+
+    closeAddPlayerMidgame: () => {
+        $('modal-add-player-midgame').classList.remove('open');
+    },
+
+    confirmAddPlayerMidgame: () => {
+        const nameInput = $('new-player-name-midgame');
+        const name = nameInput.value.trim();
+        const errorEl = $('add-player-midgame-error');
+
+        if(!name) {
+            errorEl.innerText = "Please enter a name.";
+            errorEl.classList.add('show');
+            return;
+        }
+
+        const isDuplicate = State.players.some(p => p.name.trim().toLowerCase() === name.toLowerCase());
+        if(isDuplicate) {
+            errorEl.innerText = "Duplicate name! Please use a unique name.";
+            errorEl.classList.add('show');
+            return;
+        }
+
+        if(State.players.length >= 30) {
+            errorEl.innerText = "Max 30 players!";
+            errorEl.classList.add('show');
+            return;
+        }
+
+        State.players.push({ id: Date.now(), name: name, score: 0 });
+        Game.saveSession();
+        Game.closeAddPlayerMidgame();
+        Game.goToScoreboard();
+        Game.updateImposterUI();
+    },
+
+    openRemovePlayerConfirm: (playerId) => {
+        if(State.players.length <= 3) {
+            Game.showAlert("Min 3 players required!", "Warning");
+            return;
+        }
+        State.pendingRemovePlayerId = playerId;
+        const player = State.players.find(p => p.id === playerId);
+        $('remove-player-name').innerText = player.name;
+        $('modal-remove-player-confirm').classList.add('open');
+    },
+
+    closeRemovePlayerConfirm: () => {
+        $('modal-remove-player-confirm').classList.remove('open');
+        State.pendingRemovePlayerId = null;
+    },
+
+    confirmRemovePlayerMidgame: () => {
+        const playerId = State.pendingRemovePlayerId;
+        State.players = State.players.filter(p => p.id !== playerId);
+        
+        // Validation: Re-verify imposter count after removal
+        const maxImposters = Math.max(1, Math.floor(State.players.length / 3));
+        if(State.config.imposterCount > maxImposters) {
+            const oldCount = State.config.imposterCount;
+            State.config.imposterCount = maxImposters;
+            Game.showAlert(`Imposter count has been reduced from ${oldCount} to ${maxImposters} to maintain game balance for ${State.players.length} players.`, "Players Reduced");
+        }
+
+        Game.saveSession();
+        Game.closeRemovePlayerConfirm();
+        Game.goToScoreboard();
+        Game.updateImposterUI();
+    },
+
+    // --- Mid-game Settings Logic ---
+    openMidgameSettings: () => {
+        // Sync modal from State.config
+        $('mid-setting-shuffle').checked = State.config.shuffle;
+        $('mid-setting-timer').checked = State.config.timer;
+        $('mid-timer-duration-slider').value = State.config.timerDuration;
+        $('mid-timer-value-display').innerText = `${State.config.timerDuration} min`;
+        $(`mid-imposter-count-display`).innerText = State.config.imposterCount;
+        $(`mid-setting-imposter-word`).checked = State.config.imposterHasWord;
+        
+        Game.updateImposterUI();
+        Game.toggleMidTimerSettings();
+        $('modal-midgame-settings').classList.add('open');
+    },
+
+    closeMidgameSettings: () => {
+        $('modal-midgame-settings').classList.remove('open');
+    },
+
+    toggleMidTimerSettings: () => {
+        const enabled = $('mid-setting-timer').checked;
+        const sliderContainer = $('mid-timer-slider-container');
+        if(enabled) {
+            sliderContainer.classList.remove('hidden');
+        } else {
+            sliderContainer.classList.add('hidden');
+        }
+    },
+
+    updateMidTimerValue: (value) => {
+        $('mid-timer-value-display').innerText = `${value} min`;
+    },
+
+    saveMidgameSettings: () => {
+        State.config.shuffle = $('mid-setting-shuffle').checked;
+        State.config.timer = $('mid-setting-timer').checked;
+        State.config.timerDuration = parseInt($('mid-timer-duration-slider').value);
+        State.config.imposterCount = parseInt($('mid-imposter-count-display').innerText);
+        State.config.imposterHasWord = $('mid-setting-imposter-word').checked;
+        
+        // Also sync back to landing screen UI just in case they go back
+        $('setting-shuffle').checked = State.config.shuffle;
+        $('setting-timer').checked = State.config.timer;
+        $('timer-duration-slider').value = State.config.timerDuration;
+        $('timer-value-display').innerText = `${State.config.timerDuration} min`;
+        $('setting-imposter-word').checked = State.config.imposterHasWord;
+        
+        // Sync setup screen imposter count if it exists
+        const setupCount = $('setup-imposter-count-display');
+        if(setupCount) setupCount.innerText = State.config.imposterCount;
+        
+        Game.toggleTimerSettings(); // Update landing timer slider visibility
+        
+        Game.saveSession();
+        Game.closeMidgameSettings();
+    },
+
+    showStealthModeInfo: () => {
+        $('modal-stealth-info').classList.add('open');
+    },
+
+    closeStealthModeInfo: () => {
+        $('modal-stealth-info').classList.remove('open');
+    },
+
+    handlePlayerEnter: (e, idx) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const nextInput = document.getElementById(`player-input-${idx + 1}`);
+            if (nextInput) {
+                nextInput.focus();
+            } else if (State.players[idx].name.trim() !== "") {
+                Game.addPlayer();
+            }
+        }
+    },
+
+    adjustImposterCount: (delta, screenType = 'setup') => {
+        const maxImposters = Math.max(1, Math.floor(State.players.length / 3)); 
+        let newCount = State.config.imposterCount + delta;
+        
+        if (newCount < 1 || newCount > maxImposters) return;
+        
+        State.config.imposterCount = newCount;
+        Game.updateImposterUI();
+        Game.saveSession();
+    },
+
+    updateImposterUI: () => {
+        const count = State.config.imposterCount;
+        const total = State.players.length;
+        const maxImposters = Math.max(1, Math.floor(total / 3));
+
+        const screens = ['setup', 'mid'];
+        screens.forEach(s => {
+            const display = $(`${s}-imposter-count-display`);
+            const plusBtn = $(`${s}-imposter-plus`);
+            const minusBtn = $(`${s}-imposter-minus`);
+
+            if (display) display.innerText = count;
+            
+            if (plusBtn) {
+                if (count >= maxImposters) {
+                    plusBtn.style.opacity = "0.2";
+                    plusBtn.style.pointerEvents = "none";
+                    plusBtn.style.filter = "grayscale(1)";
+                } else {
+                    plusBtn.style.opacity = "1";
+                    plusBtn.style.pointerEvents = "auto";
+                    plusBtn.style.filter = "none";
+                }
+            }
+
+            if (minusBtn) {
+                if (count <= 1) {
+                    minusBtn.style.opacity = "0.2";
+                    minusBtn.style.pointerEvents = "none";
+                    minusBtn.style.filter = "grayscale(1)";
+                } else {
+                    minusBtn.style.opacity = "1";
+                    minusBtn.style.pointerEvents = "auto";
+                    minusBtn.style.filter = "none";
+                }
+            }
+        });
+    },
+
+    showVotingBreakdown: () => {
+        const list = $('voting-breakdown-list');
+        list.innerHTML = "";
+        
+        const table = document.createElement('table');
+        table.style.width = "100%";
+        table.style.borderCollapse = "collapse";
+        table.style.marginTop = "10px";
+        
+        table.innerHTML = `
+            <thead>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <th style="padding: 12px; text-align: left; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">Voter</th>
+                    <th style="padding: 12px; text-align: right; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">Suspects</th>
+                </tr>
+            </thead>
+            <tbody id="voting-table-body"></tbody>
+        `;
+        list.appendChild(table);
+        const tbody = $('voting-table-body');
+
+        State.players.forEach(voter => {
+            const targetIds = State.votes[voter.id] || [];
+            if (targetIds.length === 0) return;
+
+            const targetChips = targetIds.map(id => {
+                const p = State.players.find(player => player.id == id);
+                if (!p) return 'Unknown';
+                const isImposter = State.oddPlayerIds.includes(p.id);
+                return `<span class="${isImposter ? 'text-danger' : 'text-white'}" style="font-weight: 900;">${p.name}</span>`;
+            }).join('<br>'); // List vertically in the cell
+
+            const row = document.createElement('tr');
+            row.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
+            row.innerHTML = `
+                <td style="padding: 12px; text-align: left; vertical-align: middle; font-weight: 600;">${voter.name}</td>
+                <td style="padding: 12px; text-align: right; vertical-align: middle; line-height: 1.4;">${targetChips}</td>
+            `;
+            tbody.appendChild(row);
+        });
+        
+        $('modal-voting-breakdown').classList.add('open');
+    },
+
+    closeVotingBreakdown: () => {
+        $('modal-voting-breakdown').classList.remove('open');
+    },
+
+    // --- Alert System ---
+    showAlert: (message, title = "Notice") => {
+        $('alert-title').innerText = title;
+        $('alert-message').innerText = message;
+        $('modal-alert').classList.add('open');
+    },
+
+    closeAlert: () => {
+        $('modal-alert').classList.remove('open');
+    },
+
     backToResults: () => {
         Game.showScreen('results');
     },
