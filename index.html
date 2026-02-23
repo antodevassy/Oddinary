@@ -712,29 +712,6 @@
             .logo-img { margin-bottom: 0; }
         }
 
-        /* Button Groups - compact and responsive */
-        .btn-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            width: 100%;
-        }
-        .btn-group .btn {
-            flex: 1 1 auto;
-            min-width: 120px;
-            max-width: 200px;
-            width: auto;
-            margin-bottom: 0;
-            padding: 14px 10px;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-        }
-        .btn-group .btn-primary {
-            flex: 1 1 100%;
-            max-width: 100%;
-        }
-
         /* Extra small devices */
         @media (max-width: 320px) {
             h1 { font-size: 1.4rem !important; }
@@ -1161,11 +1138,9 @@
                </div>
             </div>
 
+            <button class="btn" onclick="Game.showVotingBreakdown()">View Votes</button>
+            <button class="btn" onclick="Game.showPointsRules()">Points Rules</button>
             <button class="btn btn-primary" onclick="Game.goToScoreboard()">Leaderboard</button>
-            <div class="btn-group" style="margin-top: 0;">
-                <button class="btn" onclick="Game.showVotingBreakdown()">View Votes</button>
-                <button class="btn" onclick="Game.showPointsRules()">Points Rules</button>
-            </div>
         </div>
     </div>
 
@@ -1188,13 +1163,12 @@
                 <!-- Scores -->
             </div>
             
+            <button class="btn" onclick="Game.openAddPlayerMidgame()" style="border-style: dashed; margin-top: 5px;">+ Add Player</button>
+            <button class="btn" onclick="Game.openMidgameSettings()" style="margin-top: 5px;">Game Settings</button>
+            
+            <button class="btn" onclick="Game.backToResults()">Back to Results</button>
             <button class="btn btn-primary" onclick="Game.setupNextRound()">Next Round</button>
-            <div class="btn-group" style="margin-top: 0;">
-                <button class="btn" onclick="Game.backToResults()">Back to Results</button>
-                <button class="btn" onclick="Game.openMidgameSettings()">Settings</button>
-                <button class="btn" onclick="Game.openAddPlayerMidgame()" style="border-style: dashed;">+ Add Player</button>
-                <button class="btn" onclick="Game.askNewGame()">New Game</button>
-            </div>
+            <button class="btn" onclick="Game.askNewGame()">New Game</button>
         </div>
     </div>
 </div>
