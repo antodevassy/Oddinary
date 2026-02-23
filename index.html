@@ -87,12 +87,12 @@
         .screen {
             display: none;
             flex-direction: column;
-            min-height: calc(100vh - 40px);
+            min-height: 100svh; /* Modern small viewport height */
+            padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));
             animation: fadeIn 0.25s ease-out;
             justify-content: center;
             align-items: center;
-            gap: 0;
-            padding: 20px 0;
+            gap: 20px;
         }
         .screen.active { display: flex; }
         
@@ -400,11 +400,12 @@
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(14,15,19,0.95);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             z-index: 1000;
-            display: none; /* Default hidden */
+            display: none;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
         .modal.open { display: flex; animation: fadeIn 0.15s ease-out; } 
 
@@ -417,13 +418,14 @@
 
         .modal-content {
             max-width: 500px;
-            width: 100%;
+            width: 95%; /* More width on mobile */
             background: var(--bg-card);
-            padding: 30px;
+            padding: 25px;
             border-radius: var(--radius);
-            border: 2px solid var(--text-muted);
-            max-height: 80vh;
+            border: 1px solid var(--text-muted);
+            max-height: 90vh; /* More height on mobile */
             overflow-y: auto;
+            position: relative;
         }
 
         /* Stepper Control */
@@ -661,35 +663,53 @@
 
         /* --- MOBILE OPTIMIZATION --- */
         @media (max-width: 480px) {
-            h1 { font-size: 1.8rem !important; }
-            h2 { font-size: 1.5rem !important; }
-            h3 { font-size: 1.1rem !important; }
+            h1 { font-size: 1.6rem !important; }
+            h2 { font-size: 1.4rem !important; }
+            h3 { font-size: 1.0rem !important; }
             
+            #app { padding: 15px; }
+
             .btn {
-                padding: 14px;
-                font-size: 1rem;
-                border-width: 1px;
+                padding: 16px;
+                font-size: 0.95rem;
+                border-width: 1.5px;
+                min-height: 50px;
             }
             
             .input-group input { padding: 12px; font-size: 1rem; }
-            .btn-icon { width: 44px; }
+            .btn-icon { width: 48px; min-height: 48px; }
             
             .card-container {
-                height: 340px;
-                max-width: 280px;
+                height: clamp(300px, 70vh, 400px);
+                max-width: 90%;
             }
-            .card-face h1 { font-size: 2rem !important; }
+            .card-face h1 { font-size: 1.8rem !important; }
             
-            .pulse-anim { width: 80px; height: 80px; font-size: 2.2rem; }
+            .pulse-anim { width: 70px; height: 70px; font-size: 1.8rem; }
             .vote-bar-container { height: 32px; }
-            .vote-count-text { font-size: 0.9rem; }
+            .vote-count-text { font-size: 0.85rem; }
             
-            .list-item { padding: 12px 15px; }
-            .list-item span { font-size: 1rem !important; }
+            .list-item { padding: 10px 15px; }
+            .list-item span { font-size: 0.95rem !important; }
 
-            /* Ensure highlight text scales but stays relatively large */
-            #voter-name { font-size: 2rem !important; }
-            #confirm-vote-name { font-size: 1.3rem !important; }
+            /* Voting Table Mobile Fix */
+            table th, table td { padding: 8px !important; font-size: 0.85rem; }
+            
+            #voter-name { font-size: 1.8rem !important; }
+            #confirm-vote-name { font-size: 1.2rem !important; }
+
+            /* Ensure content area fills screen better */
+            .content-area { gap: 10px; }
+            
+            /* Logo sizing for small screens */
+            .logo-img { margin-bottom: 0; }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 320px) {
+            h1 { font-size: 1.4rem !important; }
+            .btn { font-size: 0.85rem; padding: 12px; }
+            .input-group { gap: 5px; }
         }
     </style>
 </head>
