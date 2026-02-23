@@ -128,10 +128,9 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.15s cubic-bezier(0.25, 0.8, 0.25, 1); /* Faster */
-            width: 90%;
-            max-width: 320px;
-            margin: 0 auto 12px auto;
-            min-height: 52px; /* Accessibility: minimum tap target */
+            width: 100%;
+            min-height: 54px; /* Accessibility: minimum tap target */
+            margin-bottom: 12px;
             text-transform: uppercase;
             letter-spacing: 1px;
             /* Center text in button */
@@ -668,22 +667,17 @@
             h2 { font-size: 1.4rem !important; }
             h3 { font-size: 1.0rem !important; }
             
-            #app { 
-                padding: 15px env(safe-area-inset-right) 15px env(safe-area-inset-left);
-                box-sizing: border-box;
-            }
+            #app { padding: 15px; }
 
             .btn {
-                width: 85%;
-                max-width: 280px;
-                padding: 14px;
-                font-size: 0.9rem;
+                padding: 16px;
+                font-size: 0.95rem;
                 border-width: 1.5px;
-                min-height: 48px;
+                min-height: 50px;
             }
             
-            .input-group input { padding: 12px 8px; font-size: 0.95rem; min-width: 0; }
-            .btn-icon { width: 44px; min-height: 44px; flex-shrink: 0; }
+            .input-group input { padding: 12px; font-size: 1rem; }
+            .btn-icon { width: 48px; min-height: 48px; }
             
             .card-container {
                 height: clamp(300px, 70vh, 400px);
@@ -716,6 +710,29 @@
             
             /* Logo sizing for small screens */
             .logo-img { margin-bottom: 0; }
+        }
+
+        /* Button Groups - compact and responsive */
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            width: 100%;
+        }
+        .btn-group .btn {
+            flex: 1 1 auto;
+            min-width: 120px;
+            max-width: 200px;
+            width: auto;
+            margin-bottom: 0;
+            padding: 14px 10px;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+        .btn-group .btn-primary {
+            flex: 1 1 100%;
+            max-width: 100%;
         }
 
         /* Extra small devices */
@@ -1144,9 +1161,11 @@
                </div>
             </div>
 
-            <button class="btn" onclick="Game.showVotingBreakdown()">View Votes</button>
-            <button class="btn" onclick="Game.showPointsRules()">Points Rules</button>
             <button class="btn btn-primary" onclick="Game.goToScoreboard()">Leaderboard</button>
+            <div class="btn-group" style="margin-top: 0;">
+                <button class="btn" onclick="Game.showVotingBreakdown()">View Votes</button>
+                <button class="btn" onclick="Game.showPointsRules()">Points Rules</button>
+            </div>
         </div>
     </div>
 
@@ -1169,12 +1188,13 @@
                 <!-- Scores -->
             </div>
             
-            <button class="btn" onclick="Game.openAddPlayerMidgame()" style="border-style: dashed; margin-top: 5px;">+ Add Player</button>
-            <button class="btn" onclick="Game.openMidgameSettings()" style="margin-top: 5px;">Game Settings</button>
-            
-            <button class="btn" onclick="Game.backToResults()">Back to Results</button>
             <button class="btn btn-primary" onclick="Game.setupNextRound()">Next Round</button>
-            <button class="btn" onclick="Game.askNewGame()">New Game</button>
+            <div class="btn-group" style="margin-top: 0;">
+                <button class="btn" onclick="Game.backToResults()">Back to Results</button>
+                <button class="btn" onclick="Game.openMidgameSettings()">Settings</button>
+                <button class="btn" onclick="Game.openAddPlayerMidgame()" style="border-style: dashed;">+ Add Player</button>
+                <button class="btn" onclick="Game.askNewGame()">New Game</button>
+            </div>
         </div>
     </div>
 </div>
@@ -1959,6 +1979,12 @@ const Game = {
         
         State.players.forEach(p => p.score += p.roundScore);
         Game.saveSession();
+
+        if (winner === "players") {
+             Game.launchConfetti("#6BCF2D");
+        } else {
+             Game.launchConfetti("#D93A3A");
+        }
 
         Game.renderResults(voteCounts, roundStatus);
     },
