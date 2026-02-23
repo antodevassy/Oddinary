@@ -128,9 +128,10 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.15s cubic-bezier(0.25, 0.8, 0.25, 1); /* Faster */
-            width: 100%;
-            min-height: 54px; /* Accessibility: minimum tap target */
-            margin-bottom: 12px;
+            width: 90%;
+            max-width: 320px;
+            margin: 0 auto 12px auto;
+            min-height: 52px; /* Accessibility: minimum tap target */
             text-transform: uppercase;
             letter-spacing: 1px;
             /* Center text in button */
@@ -667,17 +668,22 @@
             h2 { font-size: 1.4rem !important; }
             h3 { font-size: 1.0rem !important; }
             
-            #app { padding: 15px; }
+            #app { 
+                padding: 15px env(safe-area-inset-right) 15px env(safe-area-inset-left);
+                box-sizing: border-box;
+            }
 
             .btn {
-                padding: 16px;
-                font-size: 0.95rem;
+                width: 85%;
+                max-width: 280px;
+                padding: 14px;
+                font-size: 0.9rem;
                 border-width: 1.5px;
-                min-height: 50px;
+                min-height: 48px;
             }
             
-            .input-group input { padding: 12px; font-size: 1rem; }
-            .btn-icon { width: 48px; min-height: 48px; }
+            .input-group input { padding: 12px 8px; font-size: 0.95rem; min-width: 0; }
+            .btn-icon { width: 44px; min-height: 44px; flex-shrink: 0; }
             
             .card-container {
                 height: clamp(300px, 70vh, 400px);
@@ -864,6 +870,28 @@
             <br>
             <div id="timer-display" class="hidden" style="font-size: 3rem; font-weight: 900; color: var(--text-main); margin: 30px 0;">
                 03:00
+            </div>
+
+            <!-- New: Discussion Timer Toggle (if not enabled at start) -->
+            <div id="discuss-timer-settings" class="content-area hidden" style="width: 100%; max-width: 400px; margin-bottom: 20px;">
+                <div class="switch-container" style="margin-bottom: 5px; padding: 12px 15px;">
+                    <span style="font-size: 0.9rem;">Discussion Timer</span>
+                    <label class="switch">
+                        <input type="checkbox" id="discuss-setting-timer" onchange="Game.toggleDiscussTimerSettings()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div id="discuss-timer-slider-container" class="timer-control hidden" style="margin: 5px auto; padding: 15px; width: 100%;">
+                    <p class="text-muted" style="margin-bottom: 5px; font-size: 0.8rem;">Timer Duration</p>
+                    <div class="timer-value" id="discuss-timer-value-display" style="font-size: 1.5rem; margin: 10px 0;">3 min</div>
+                    <input type="range" min="1" max="5" value="3" class="slider-input" id="discuss-timer-duration-slider" oninput="Game.updateDiscussTimerValue(this.value)" style="margin: 10px 0;">
+                    <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.7rem; margin-bottom: 20px;">
+                        <span>1 min</span>
+                        <span>5 min</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="Game.runLocalTimer()">Start Timer</button>
+                </div>
             </div>
             
             <button class="btn" onclick="Game.showForgotWord()">Forgot Your Word?</button>
@@ -1599,9 +1627,11 @@ const Game = {
     startDiscussion: () => {
         Game.showScreen('discuss');
         const timerDisplay = $('timer-display');
+        const discussTimerSettings = $('discuss-timer-settings');
         
         if(State.config.timer) {
             timerDisplay.classList.remove('hidden');
+            discussTimerSettings.classList.add('hidden');
             let timeLeft = State.config.timerDuration * 60; // Convert minutes to seconds
             const tick = () => {
                 const m = Math.floor(timeLeft / 60).toString().padStart(2,'0');
@@ -1618,7 +1648,45 @@ const Game = {
             tick();
         } else {
             timerDisplay.classList.add('hidden');
+            discussTimerSettings.classList.remove('hidden');
         }
+    },
+
+    toggleDiscussTimerSettings: () => {
+        const enabled = $('discuss-setting-timer').checked;
+        const sliderContainer = $('discuss-timer-slider-container');
+        if(enabled) {
+            sliderContainer.classList.remove('hidden');
+        } else {
+            sliderContainer.classList.add('hidden');
+        }
+    },
+
+    updateDiscussTimerValue: (val) => {
+        $('discuss-timer-value-display').innerText = `${val} min`;
+    },
+
+    runLocalTimer: () => {
+        const duration = parseInt($('discuss-timer-duration-slider').value);
+        const timerDisplay = $('timer-display');
+        const discussTimerSettings = $('discuss-timer-settings');
+        
+        timerDisplay.classList.remove('hidden');
+        discussTimerSettings.classList.add('hidden');
+        
+        let timeLeft = duration * 60;
+        const tick = () => {
+            const m = Math.floor(timeLeft / 60).toString().padStart(2,'0');
+            const s = (timeLeft % 60).toString().padStart(2,'0');
+            timerDisplay.innerText = `${m}:${s}`;
+            if(timeLeft > 0) {
+                timeLeft--;
+                State.timerInterval = setTimeout(tick, 1000); 
+            } else {
+                Game.showAlert("Time's up! Start voting now.", "⌛ Time's Up");
+            }
+        };
+        tick();
     },
 
     // --- Close Reveal Modal ---
@@ -1891,12 +1959,6 @@ const Game = {
         
         State.players.forEach(p => p.score += p.roundScore);
         Game.saveSession();
-
-        if (winner === "players") {
-             Game.launchConfetti("#6BCF2D");
-        } else {
-             Game.launchConfetti("#D93A3A");
-        }
 
         Game.renderResults(voteCounts, roundStatus);
     },
