@@ -737,13 +737,13 @@
 
     <!-- How To Play Modal Overlay -->
     <div id="modal-rules" class="modal">
-        <div style="max-width: 500px; width: 100%;">
+        <div class="modal-content">
             <h2 class="text-primary mb-2 text-c">How to Play?</h2>
-            <div style="text-align: left; line-height: 1.6; color: var(--text-sec); padding: 0 10px;">
+            <div style="text-align: left; line-height: 1.6; color: var(--text-sec); font-size: 0.95rem;">
                 <p class="mb-2">1. <b>Word Assignments:</b> Everyone receives a secret word. The Imposters get a slightly different word or no word at all.</p>
                 <p class="mb-2">2. <b>Descriptions:</b> Take turns describing your word without revealing it directly to find the Imposters.</p>
                 <p class="mb-2">3. <b>Voting:</b> You must vote for the <b>exact number of suspects</b> as there are Imposters in the game.</p>
-                <p class="mb-2">4. <b>Scoring:</b> Detectives earn points for each correct vote. Imposters earn points for remaining hidden. Use the leaderboard to track the best player!</p>
+                <p class="mb-2" style="margin-bottom: 0;">4. <b>Scoring:</b> Detectives earn points for each correct vote. Imposters earn points for remaining hidden. Use the leaderboard to track the best player!</p>
             </div>
             <button class="btn btn-primary mt-2" onclick="Game.toggleRules()">Got It</button>
         </div>
