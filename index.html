@@ -1317,7 +1317,7 @@ const Game = {
 
     addPlayer: () => {
         if(State.players.length >= 30) {
-            Game.showAlert("Max 30 players!", "Limit Reached");
+            Game.showAlert("Maximum 30 players!", "Limit Reached");
             return;
         }
         State.players.push({ id: Date.now(), name: "", score: 0 });
@@ -1506,7 +1506,7 @@ const Game = {
         }
         
         if(State.players.length < 3) {
-            errorEl.innerText = "Min 3 players required!";
+            errorEl.innerText = "Minimum 3 players required!";
             errorEl.classList.add('show');
             setTimeout(() => errorEl.classList.remove('show'), 3000);
             return;
@@ -2118,7 +2118,7 @@ const Game = {
         }
 
         if(State.players.length >= 30) {
-            errorEl.innerText = "Max 30 players!";
+            errorEl.innerText = "Maximum 30 players!";
             errorEl.classList.add('show');
             return;
         }
@@ -2132,7 +2132,7 @@ const Game = {
 
     openRemovePlayerConfirm: (playerId) => {
         if(State.players.length <= 3) {
-            Game.showAlert("Min 3 players required!", "Warning");
+            Game.showAlert("Minimum 3 players required!", "Warning");
             return;
         }
         State.pendingRemovePlayerId = playerId;
