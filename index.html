@@ -11,7 +11,6 @@
     <script src="words-data.js"></script>
     <style>
         :root {
-            /* Palette */
             --bg-dark: #0E0F13;
             --bg-card: #181A20;
             --primary: #6BCF2D;
@@ -24,7 +23,8 @@
             --text-sec: #B6B8C0;
             --text-muted: #6C6F78;
 
-            /* Effects */
+
+
             --shadow-card: 0 10px 30px rgba(0,0,0,0.5);
             --glow-primary: 0 0 20px rgba(107, 207, 45, 0.3);
             --glow-danger: 0 0 20px rgba(217, 58, 58, 0.3);
@@ -38,13 +38,12 @@
             -webkit-tap-highlight-color: transparent; 
         }
         
-        /* Hide scrollbar but keep scroll functionality */
         * {
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
         *::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, Opera */
+            display: none;
         }
         
         html {
@@ -56,21 +55,19 @@
             background-color: var(--bg-dark);
             color: var(--text-main);
             min-height: 100vh;
-            overflow-x: hidden; /* Prevent horizontal scroll only */
-            overflow-y: auto; /* Allow vertical scroll */
+            overflow-x: hidden;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            text-align: center; /* Global center text */
+            text-align: center;
         }
 
-        /* Typography */
         h1, h2, h3 { font-weight: 900; letter-spacing: -0.5px; }
         .text-glow { text-shadow: 0 0 15px rgba(156, 255, 58, 0.5); }
         .text-primary { color: var(--primary); }
         .text-danger { color: var(--danger); text-shadow: 0 0 15px rgba(217, 58, 58, 0.5); }
         .text-gold { color: var(--accent-gold); }
         
-        /* Layout Containers */
         #app {
             flex: 1;
             display: flex;
@@ -86,7 +83,7 @@
         .screen {
             display: none;
             flex-direction: column;
-            min-height: 100svh; /* Modern small viewport height */
+            min-height: 100svh;
             padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));
             animation: fadeIn 0.25s ease-out;
             justify-content: center;
@@ -112,7 +109,7 @@
 
         /* Specific fix for Reveal Screen scrollbar */
         #screen-reveal .content-area {
-            overflow: hidden !important; /* Force no scroll during animation */
+            overflow: hidden !important;
             justify-content: center;
         }
 
@@ -126,20 +123,19 @@
             font-size: 1.1rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.15s cubic-bezier(0.25, 0.8, 0.25, 1); /* Faster */
+            transition: all 0.15s cubic-bezier(0.25, 0.8, 0.25, 1);
             width: 100%;
-            min-height: 54px; /* Accessibility: minimum tap target */
+            min-height: 54px;
             margin-bottom: 12px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            /* Center text in button */
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
             user-select: none;
             -webkit-user-select: none;
-            touch-action: manipulation; /* Prevent double-tap zoom */
+            touch-action: manipulation;
         }
 
         .btn:active { 
@@ -173,16 +169,15 @@
         }
         
         .btn-icon {
-            width: 54px; /* Increased for better tap target */
+            width: 54px;
             min-height: 54px;
             padding: 0;
             display: flex;
-            justify-content: center; /* Center icon */
+            justify-content: center;
             align-items: center;
             margin-left: 10px;
-            /* color: var(--danger);  REMOVED to inherit white from btn-danger */
             border-color: var(--danger);
-            margin-bottom: 0; /* Align with input */
+            margin-bottom: 0;
         }
 
         .btn-icon svg {
@@ -217,8 +212,8 @@
             color: white;
             font-size: 1.1rem;
             outline: none;
-            transition: border-color 0.15s; /* Faster */
-            text-align: center; /* Center input text */
+            transition: border-color 0.15s;
+            text-align: center;
         }
         input:focus { border-color: var(--primary); box-shadow: var(--glow-primary); }
 
@@ -273,11 +268,11 @@
 
         .list-item {
             background: var(--bg-card);
-            padding: 15px 25px; /* Added horizontal padding */
+            padding: 15px 25px;
             border-radius: var(--radius);
             margin-bottom: 10px;
             display: flex;
-            justify-content: space-between; /* WIDE separation */
+            justify-content: space-between;
             align-items: center;
             width: 100%;
             border: 1px solid rgba(255,255,255,0.05);
@@ -286,9 +281,9 @@
 
         .logo-img {
             width: 100%; 
-            max-width: 600px; /* Even Bigger */
+            max-width: 600px;
             height: auto;
-            margin-bottom: -10px; /* NEGATIVE margin to pull buttons up */
+            margin-bottom: -10px;
             filter: drop-shadow(0 0 25px rgba(107, 207, 45, 0.4));
         }
 
@@ -325,7 +320,6 @@
             color: var(--text-muted);
             font-size: 0.8rem;
             width: 100%;
-            /* Not pushing to bottom anymore, just part of flow */
         }
 
         /* Animations */
@@ -346,7 +340,7 @@
             display: flex; justify-content: center; align-items: center;
             font-size: 3rem;
             margin: 40px auto;
-            animation: pulse-ring 1.5s infinite; /* Faster */
+            animation: pulse-ring 1.5s infinite;
         }
 
         /* Utilities */
@@ -364,8 +358,8 @@
 
         .switch-container {
             display: flex;
-            justify-content: center; /* Centered items */
-            gap: 20px; /* Spacing */
+            justify-content: center;
+            gap: 20px;
             align-items: center;
             width: 100%;
             margin-bottom: 12px;
@@ -380,14 +374,14 @@
         .slider {
             position: absolute; cursor: pointer;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #333; transition: .3s; /* Faster */
+            background-color: #333; transition: .3s;
             border-radius: 34px;
         }
         .slider:before {
             position: absolute; content: "";
             height: 20px; width: 20px;
             left: 4px; bottom: 4px;
-            background-color: white; transition: .3s; /* Faster */
+            background-color: white; transition: .3s;
             border-radius: 50%;
         }
         input:checked + .slider { background-color: var(--primary); }
@@ -417,12 +411,12 @@
 
         .modal-content {
             max-width: 500px;
-            width: 95%; /* More width on mobile */
+            width: 95%;
             background: var(--bg-card);
             padding: 25px;
             border-radius: var(--radius);
             border: 1px solid var(--text-muted);
-            max-height: 90vh; /* More height on mobile */
+            max-height: 90vh;
             overflow-y: auto;
             position: relative;
         }
@@ -525,7 +519,7 @@
             background: linear-gradient(to right, #2a2d35, #1f2128);
             outline: none;
             -webkit-appearance: none;
-            appearance: none; /* Added for compatibility */
+            appearance: none;
             margin: 15px 0;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
         }
@@ -583,7 +577,7 @@
             width: 100%;
             max-height: 60vh;
             overflow-y: auto;
-            padding-right: 5px; /* Space for scrollbar if it were visible */
+            padding-right: 5px;
         }
         
         .input-group {
@@ -984,7 +978,7 @@
             <div style="text-align: left; line-height: 1.6; color: var(--text-sec); font-size: 0.9rem;">
                 <div style="background: rgba(107, 207, 45, 0.05); padding: 12px; border-radius: 8px; margin-top: 10px; border-left: 3px solid var(--primary);">
                     <h3 class="text-primary" style="margin-bottom: 5px; font-size: 1rem;">DETECTIVES</h3>
-                    <p><strong>+10 Points</strong> for correctly voting for an Imposter.</p>
+                    <p><strong>+15 Points</strong> for correctly voting for an Imposter.</p>
                     <p><strong>0 Points</strong> for an incorrect vote.</p>
                 </div>
 
@@ -1224,17 +1218,17 @@ const State = {
     playerOrder: [], 
     roles: {}, 
     words: { common: "", odd: "" },
-    oddPlayerIds: [], // Multiple imposters supported
+    oddPlayerIds: [],
     votes: {}, 
     round: 0,
     config: { shuffle: false, timer: false, timerDuration: 3, imposterCount: 1, imposterHasWord: true },
     stepIndex: 0,
-    pendingVoteTarget: null, // For vote confirmation
-    pendingForgotPlayer: null, // For forgot word confirmation
-    pendingRemovePlayerId: null, // For mid-game removal
-    selectedTargets: [], // For multi-vote selection
+    pendingVoteTarget: null,
+    pendingForgotPlayer: null,
+    pendingRemovePlayerId: null,
+    selectedTargets: [],
     timerInterval: null,
-    discussionTimeLeft: 0 // For extending timer
+    discussionTimeLeft: 0
 };
 
 const $ = (id) => document.getElementById(id);
@@ -1244,7 +1238,6 @@ const SESSION_KEY = 'oddinary_session_v1';
 
 // --- Safety: Prevent Refresh ---
 window.addEventListener('beforeunload', (e) => {
-    // Only prompt if game is in progress
     if(shouldPreventRefresh && (State.round > 0)) {
         e.preventDefault();
         e.returnValue = '';
@@ -1255,7 +1248,6 @@ window.addEventListener('beforeunload', (e) => {
 const Game = {
     init: () => {
         Game.loadSession();
-        // If no players loaded (fresh session), start with empty names
         if(State.players.length === 0) {
             State.players = [
                 { id: 101, name: "", score: 0 },
@@ -1280,7 +1272,6 @@ const Game = {
                 const data = JSON.parse(raw);
                 if(data.players) State.players = data.players;
                 if(data.config) State.config = {...State.config, ...data.config};
-                // Force reset scores to 0 on reload (New User Requirement)
                 State.players.forEach(p => p.score = 0); 
             } catch(e) {
                 console.error("Failed to load session", e);
@@ -1382,7 +1373,6 @@ const Game = {
     handleDragStart: (e, index) => {
         e.dataTransfer.setData('text/plain', index);
         e.currentTarget.classList.add('dragging');
-        // Mobile haptic feedback if available
         if (window.navigator.vibrate) window.navigator.vibrate(10);
     },
 
@@ -1628,7 +1618,7 @@ const Game = {
     },
 
     flipCard: () => {
-        if(!State.canFlip) return; // Prevent flip before player name is shown
+        if(!State.canFlip) return;
         
         const card = $('word-card');
         if(card.classList.contains('flipped')) return;
@@ -1646,7 +1636,6 @@ const Game = {
         // Flip card back first
         $('word-card').classList.remove('flipped');
         
-        // Wait for animation (600ms) before changing content
         setTimeout(() => {
             State.stepIndex++;
             if(State.stepIndex < State.players.length) {
@@ -1666,7 +1655,7 @@ const Game = {
         if(State.config.timer) {
             timerContainer.classList.remove('hidden');
             discussTimerSettings.classList.add('hidden');
-            State.discussionTimeLeft = State.config.timerDuration * 60; // Convert minutes to seconds
+            State.discussionTimeLeft = State.config.timerDuration * 60;
             Game.tickDiscussionTimer();
         } else {
             timerContainer.classList.add('hidden');
@@ -1890,7 +1879,7 @@ const Game = {
                     btn.style.borderColor = "var(--primary)";
                     btn.style.background = "rgba(107, 207, 45, 0.1)";
                 } else {
-                    return; // Max reached
+                    return;
                 }
             } else {
                 State.selectedTargets.push(targetId);
@@ -1962,7 +1951,7 @@ const Game = {
                     if (isVoterImposter) {
                         p.roundScore += 5; // Betrayal Penalty
                     } else {
-                        p.roundScore += 10; // Detective Points
+                        p.roundScore += 15; // Detective Points
                     }
                 }
             });
@@ -2285,7 +2274,7 @@ const Game = {
         const setupCount = $('setup-imposter-count-display');
         if(setupCount) setupCount.innerText = State.config.imposterCount;
         
-        Game.toggleTimerSettings(); // Update landing timer slider visibility
+        Game.toggleTimerSettings();
         
         Game.saveSession();
         Game.closeMidgameSettings();
@@ -2391,7 +2380,7 @@ const Game = {
                 if (!p) return 'Unknown';
                 const isImposter = State.oddPlayerIds.includes(p.id);
                 return `<span class="${isImposter ? 'text-danger' : 'text-white'}" style="font-weight: 900;">${p.name}</span>`;
-            }).join('<br>'); // List vertically in the cell
+            }).join('<br>');
 
             const isVoterImposter = State.oddPlayerIds.includes(voter.id);
             const voterNameDisplay = isVoterImposter ? `<span class="text-danger" style="font-weight: 900;">${voter.name}</span>` : voter.name;
@@ -2444,9 +2433,7 @@ const Game = {
         location.reload();
     },
 
-    resetGame: () => {
-         // Deprecated
-    }
+
 };
 
 Game.init();
