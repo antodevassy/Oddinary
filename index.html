@@ -1327,7 +1327,7 @@ const Game = {
     },
 
     removePlayer: (index) => {
-        if(State.players.length <= 3) return Game.showAlert("Min 3 players required!", "Warning");
+        if(State.players.length <= 3) return Game.showAlert("Minimum 3 players required!", "Warning");
         State.players.splice(index, 1);
         
         // Validation: Re-verify imposter count after removal
