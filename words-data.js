@@ -4,6 +4,7 @@
  */
 
 const WORD_PAIRS = [
+  // Original Pairs
   ["Sun", "Moon"], ["Pizza", "Burger"], ["Nail", "Hammer"], ["Cherry", "Strawberry"],
   ["Pen", "Pencil"], ["Love", "Happiness"], ["Chair", "Sofa"], ["Dolphin", "Whale"],
   ["Lightning", "Thunder"], ["Boat", "Ship"], ["Ice cream", "Cake"], ["Crayon", "Marker"],
@@ -48,17 +49,18 @@ const WORD_PAIRS = [
   ["Snake", "Lizard"], ["Gold", "Silver"], ["Ludo", "Carrom"],
   ["Projector", "Television"], ["Cellotape", "Glue"], ["Mosquito", "Housefly"],
   ["Movie", "Series"], ["Compass", "Map"], ["Rocket", "Missile"], ["Helmet", "Cap"],
-  ["Ring", "Bracelet"], ["Earthquake", "Tsunami"]
+  ["Ring", "Bracelet"], ["Earthquake", "Tsunami"], ["Bus", "Train"],["Rocket", "Satellite"],
+  ["Desert", "Beach"], ["Thunder", "Lightning"], ["Ghost", "Zombie"], ["Smartphone", "Smartwatch"],
+  ["Sneakers", "Sandals"], ["Spider", "Scorpion"], ["Jellyfish", "Starfish"]
 ];
 
 /**
  * Word Selection Manager
- * Tracks recently used words to avoid repetition
  */
 class WordSelector {
     constructor() {
         this.recentWords = [];
-        this.maxRecent = Math.min(10, Math.floor(WORD_PAIRS.length * 0.2)); // Track 20% of dataset
+        this.maxRecent = Math.min(60, Math.floor(WORD_PAIRS.length * 0.2)); // Track 20% of dataset
     }
 
     /**
@@ -73,9 +75,8 @@ class WordSelector {
             pair = WORD_PAIRS[randomIndex];
             attempts++;
             
-            // If we've tried too many times, just use any pair (prevents infinite loop)
             if (attempts > 50) {
-                this.recentWords = []; // Reset recent words
+                this.recentWords = [];
                 break;
             }
         } while (this.isRecentlyUsed(pair));
@@ -83,7 +84,7 @@ class WordSelector {
         // Add to recent words
         this.recentWords.push(pair);
         if (this.recentWords.length > this.maxRecent) {
-            this.recentWords.shift(); // Remove oldest
+            this.recentWords.shift();
         }
         
         return pair;
