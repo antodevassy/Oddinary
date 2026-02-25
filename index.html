@@ -1334,7 +1334,7 @@ const Game = {
         const maxImposters = Math.max(1, Math.floor(State.players.length / 3));
         if(State.config.imposterCount > maxImposters) {
             State.config.imposterCount = maxImposters;
-            Game.showAlert(`Max imposters set to ${maxImposters} for ${State.players.length} players.`, "Game Balance");
+            Game.showAlert(`Maximum imposters set to ${maxImposters} for ${State.players.length} players.`, "Game Balance");
         }
 
         Game.saveSession();
@@ -2154,7 +2154,7 @@ const Game = {
         const maxImposters = Math.max(1, Math.floor(State.players.length / 3));
         if(State.config.imposterCount > maxImposters) {
             State.config.imposterCount = maxImposters;
-            Game.showAlert(`Max imposters set to ${maxImposters} for ${State.players.length} players.`, "Game Balance");
+            Game.showAlert(`Maximum imposters set to ${maxImposters} for ${State.players.length} players.`, "Game Balance");
         }
 
         Game.saveSession();
