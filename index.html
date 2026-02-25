@@ -978,22 +978,22 @@
             <div style="text-align: left; line-height: 1.6; color: var(--text-sec); font-size: 0.9rem;">
                 <div style="background: rgba(107, 207, 45, 0.05); padding: 12px; border-radius: 8px; margin-top: 10px; border-left: 3px solid var(--primary);">
                     <h3 class="text-primary" style="margin-bottom: 5px; font-size: 1rem;">DETECTIVES</h3>
-                    <p><strong>+15 Points</strong> for correctly voting for an Imposter.</p>
-                    <p><strong>0 Points</strong> for an incorrect vote.</p>
+                    <p><strong>+15 Points</strong> for each correctly identified Imposter.</p>
+                    <p><strong>0 Points</strong> for an incorrect identification.</p>
                 </div>
 
                 <div style="background: rgba(217, 58, 58, 0.05); padding: 12px; border-radius: 8px; margin-top: 15px; border-left: 3px solid var(--danger);">
                     <h3 class="text-danger" style="margin-bottom: 5px; font-size: 1rem;">IMPOSTERS</h3>
-                    <p><strong>0 Points</strong> if Caught (Most voted player(s)).</p>
-                    <p><strong>+10 Points</strong> if Suspected (Got votes, but survived).</p>
-                    <p><strong>+20 Points</strong> for a <b>Perfect Escape</b> (0 votes).</p>
-                    <p class="text-gold" style="font-size: 0.8rem; margin-top: 5px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 5px;">
-                        <i><b>Betrayal:</b> +5 points for throwing a fellow Imposter under the bus.</i>
+                    <p><strong>0 Points</strong> if caught by receiving the most votes.</p>
+                    <p><strong>+10 Points</strong> if suspected but successfully survived.</p>
+                    <p><strong>+20 Points</strong> if received zero votes.</p>
+                    <p class="text-gold" style="font-size: 0.8rem; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
+                        <strong>Betrayal:</strong> +5 points for voting against a fellow Imposter.
                     </p>
                 </div>
 
                 <p class="text-muted" style="margin-top: 15px; font-size: 0.8rem; font-style: italic;">
-                    Note: If an imposter is tied for the most votes, they are considered CAUGHT.
+                    Note: Imposters are considered caught if they receive the most votes or are tied for the highest count.
                 </p>
             </div>
             <button class="btn btn-primary mt-2" onclick="Game.closePointsRules()">Got it!</button>
@@ -1976,9 +1976,10 @@ const Game = {
             }
         });
 
+        let isPerfectEscape = oddIds.every(id => (voteCounts[id] || 0) === 0);
         let roundStatus = isAnyCaught ? 
             (caughtImposters.length > 1 ? "Imposters Caught!" : "Imposter Caught!") : 
-            (oddIds.length > 1 ? "Imposters Escaped!" : "Imposter Escaped!");
+            (isPerfectEscape ? "Perfect Escape!" : (oddIds.length > 1 ? "Imposters Escaped!" : "Imposter Escaped!"));
         let winner = isAnyCaught ? "players" : "imposters";
         
         State.players.forEach(p => p.score += p.roundScore);
