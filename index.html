@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <script src="words-data.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
             /* Palette */
@@ -726,7 +725,7 @@
     <!-- 1. Landing Screen -->
     <div id="screen-landing" class="screen active">
         <!-- Center Stack -->
-        <img src="logo.png" alt="Oddinary" class="logo-img" onerror="this.src='';this.innerHTML='<h1>Oddinary</h1>'">
+        <img src="logo.png" alt="Oddinary" class="logo-img" style="transform: scale(1.15); margin-bottom: 40px;" onerror="this.src='';this.innerHTML='<h1>Oddinary</h1>'">
         
         <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 10px;">
             <button class="btn btn-primary" onclick="Game.goToSetup()">Start Game</button>
@@ -742,9 +741,9 @@
             <h2 class="text-primary mb-2 text-c">How to Play?</h2>
             <div style="text-align: left; line-height: 1.6; color: var(--text-sec); padding: 0 10px;">
                 <p class="mb-2">1. <b>Word Assignments:</b> Everyone receives a secret word. The Imposters get a slightly different word or no word at all.</p>
-                <p class="mb-2">2. <b>Descriptions:</b> Take turns describing your word without revealing it directly to catch the Imposters.</p>
-                <p class="mb-2">3. <b>Multi-Vote:</b> You must select <b>exact same number of suspects</b> as there are Imposters in the game.</p>
-                <p class="mb-2">4. <b>Objective:</b> Catch the Imposters by making them the most voted players. If any Imposter is caught, the group wins the round!</p>
+                <p class="mb-2">2. <b>Descriptions:</b> Take turns describing your word without revealing it directly to find the Imposters.</p>
+                <p class="mb-2">3. <b>Voting:</b> You must vote for the <b>exact number of suspects</b> as there are Imposters in the game.</p>
+                <p class="mb-2">4. <b>Scoring:</b> Detectives earn points for each correct vote. Imposters earn points for remaining hidden. Use the leaderboard to track the best player!</p>
             </div>
             <button class="btn btn-primary mt-2" onclick="Game.toggleRules()">Got It</button>
         </div>
@@ -862,8 +861,11 @@
             <h1 class="text-gold">DISCUSSION TIME</h1>
             <p class="text-c text-muted">Describe your word, but don't say it directly. Find the Imposter.</p>
             <br>
-            <div id="timer-display" class="hidden" style="font-size: 3rem; font-weight: 900; color: var(--text-main); margin: 30px 0;">
-                03:00
+            <div id="timer-container" class="hidden" style="margin: 30px 0; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+                <div id="timer-display" style="font-size: 3rem; font-weight: 900; color: var(--text-main); line-height: 1;">
+                    03:00
+                </div>
+                <button id="btn-add-time" class="btn" style="padding: 10px 20px; font-size: 0.95rem; width: auto; min-height: 0; border-radius: 20px;" onclick="Game.addDiscussionTime(60)">+ 1 Min</button>
             </div>
 
             <!-- New: Discussion Timer Toggle (if not enabled at start) -->
@@ -981,18 +983,19 @@
             <h2 class="text-primary mb-2 text-c">POINTS RULES</h2>
             <div style="text-align: left; line-height: 1.6; color: var(--text-sec); font-size: 0.9rem;">
                 <div style="background: rgba(107, 207, 45, 0.05); padding: 12px; border-radius: 8px; margin-top: 10px; border-left: 3px solid var(--primary);">
-                    <h3 class="text-primary" style="margin-bottom: 5px; font-size: 1rem;">IDENTIFYING SUSPECTS</h3>
-                    <p><strong>+10 Points</strong> per suspect if the imposter you voted for is <b>Caught</b> (most voted).</p>
-                    <p><strong>+5 Points</strong> per suspect if the imposter you voted for <b>Escapes</b> the majority.</p>
-                    <p class="text-gold" style="font-size: 0.8rem; margin-top: 5px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 5px;">
-                        <i><b>Betrayal:</b> If an Imposter votes for another Imposter, they receive 50% fewer points for that vote.</i>
-                    </p>
+                    <h3 class="text-primary" style="margin-bottom: 5px; font-size: 1rem;">DETECTIVES</h3>
+                    <p><strong>+10 Points</strong> for correctly voting for an Imposter.</p>
+                    <p><strong>0 Points</strong> for an incorrect vote.</p>
                 </div>
 
                 <div style="background: rgba(217, 58, 58, 0.05); padding: 12px; border-radius: 8px; margin-top: 15px; border-left: 3px solid var(--danger);">
-                    <h3 class="text-danger" style="margin-bottom: 5px; font-size: 1rem;">IMPOSTER REWARDS</h3>
-                    <p><strong>+15 Points</strong> if you are not the most voted player (Successful Escape).</p>
-                    <p><strong>+20 Points</strong> for a <b>Perfect Escape</b> (if you receive 0 votes from anyone).</p>
+                    <h3 class="text-danger" style="margin-bottom: 5px; font-size: 1rem;">IMPOSTERS</h3>
+                    <p><strong>0 Points</strong> if Caught (Most voted player(s)).</p>
+                    <p><strong>+10 Points</strong> if Suspected (Got votes, but survived).</p>
+                    <p><strong>+20 Points</strong> for a <b>Perfect Escape</b> (0 votes).</p>
+                    <p class="text-gold" style="font-size: 0.8rem; margin-top: 5px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 5px;">
+                        <i><b>Betrayal:</b> +5 points for throwing a fellow Imposter under the bus.</i>
+                    </p>
                 </div>
 
                 <p class="text-muted" style="margin-top: 15px; font-size: 0.8rem; font-style: italic;">
@@ -1025,6 +1028,31 @@
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button class="btn" style="flex:1" onclick="Game.closeRemovePlayerConfirm()">Cancel</button>
                 <button class="btn btn-danger" style="flex:1" onclick="Game.confirmRemovePlayerMidgame()">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Scores Confirmation Modal -->
+    <div id="modal-reset-scores-confirm" class="modal">
+        <div style="max-width: 400px; width: 100%; text-align: center;">
+            <h2 class="text-white mb-2">Reset All Scores?</h2>
+            <p class="text-muted mb-2">This will reset every player's score to zero.</p>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn" style="flex:1" onclick="Game.cancelResetScores()">Cancel</button>
+                <button class="btn btn-danger" style="flex:1" onclick="Game.confirmResetScores()">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rearrange Players Modal -->
+    <div id="modal-rearrange-players" class="modal">
+        <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
+            <h2 class="text-primary mb-2 text-c">Rearrange Players</h2>
+            <div id="rearrange-players-list" style="width: 100%; margin-top: 15px;">
+                <!-- Filled dynamically -->
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-primary" style="flex:1" onclick="Game.closeRearrangePlayers()">Done</button>
             </div>
         </div>
     </div>
@@ -1163,10 +1191,18 @@
                 <!-- Scores -->
             </div>
             
-            <button class="btn" onclick="Game.openAddPlayerMidgame()" style="border-style: dashed; margin-top: 5px;">+ Add Player</button>
-            <button class="btn" onclick="Game.openMidgameSettings()" style="margin-top: 5px;">Game Settings</button>
+            <div style="display: flex; gap: 10px; width: 100%; margin-top: 5px;">
+                <button class="btn" onclick="Game.openAddPlayerMidgame()" style="border-style: dashed; flex: 1; margin: 0;">+ Add Player</button>
+                <button class="btn btn-icon btn-danger" onclick="Game.askResetScores()" style="margin: 0; border-radius: var(--radius);" title="Reset Scores">
+                    <svg viewBox="0 0 24 24" style="width: 22px; height: 22px; fill: currentColor;"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+                </button>
+            </div>
+            <div style="display: flex; gap: 10px; width: 100%; margin-top: 5px;">
+                <button class="btn" onclick="Game.openRearrangePlayers()" style="flex: 1; margin: 0;">Rearrange</button>
+                <button class="btn" onclick="Game.openMidgameSettings()" style="flex: 1; margin: 0;">Game Settings</button>
+            </div>
             
-            <button class="btn" onclick="Game.backToResults()">Back to Results</button>
+            <button class="btn" onclick="Game.backToResults()">Back to Scoreboard</button>
             <button class="btn btn-primary" onclick="Game.setupNextRound()">Next Round</button>
             <button class="btn" onclick="Game.askNewGame()">New Game</button>
         </div>
@@ -1197,7 +1233,8 @@ const State = {
     pendingForgotPlayer: null, // For forgot word confirmation
     pendingRemovePlayerId: null, // For mid-game removal
     selectedTargets: [], // For multi-vote selection
-    timerInterval: null
+    timerInterval: null,
+    discussionTimeLeft: 0 // For extending timer
 };
 
 const $ = (id) => document.getElementById(id);
@@ -1305,9 +1342,8 @@ const Game = {
         // Validation: Re-verify imposter count after removal
         const maxImposters = Math.max(1, Math.floor(State.players.length / 3));
         if(State.config.imposterCount > maxImposters) {
-            const oldCount = State.config.imposterCount;
             State.config.imposterCount = maxImposters;
-            Game.showAlert(`Imposter count has been reduced from ${oldCount} to ${maxImposters} to maintain game balance for ${State.players.length} players.`, "Players Reduced");
+            Game.showAlert(`Max imposters set to ${maxImposters} for ${State.players.length} players.`, "Game Balance");
         }
 
         Game.saveSession();
@@ -1352,13 +1388,13 @@ const Game = {
 
     handleDragEnd: (e) => {
         e.currentTarget.classList.remove('dragging');
-        document.querySelectorAll('#players-list .input-group').forEach(el => el.style.borderTop = 'none');
+        document.querySelectorAll('.input-group').forEach(el => el.style.borderTop = 'none');
     },
 
-    handleDragOver: (e) => {
+    handleDragOver: (e, listId = 'players-list') => {
         e.preventDefault();
-        const afterElement = Game.getDragAfterElement(e.clientY);
-        const list = $('players-list');
+        const list = $(listId);
+        const afterElement = Game.getDragAfterElement(e.clientY, list);
         const dragging = document.querySelector('.dragging');
         if (afterElement == null) {
             list.appendChild(dragging);
@@ -1367,8 +1403,8 @@ const Game = {
         }
     },
 
-    getDragAfterElement: (y) => {
-        const draggableElements = [...document.querySelectorAll('.input-group:not(.dragging)')];
+    getDragAfterElement: (y, list) => {
+        const draggableElements = [...list.querySelectorAll('.input-group:not(.dragging)')];
         return draggableElements.reduce((closest, child) => {
             const box = child.getBoundingClientRect();
             const offset = y - box.top - box.height / 2;
@@ -1380,9 +1416,9 @@ const Game = {
         }, { offset: Number.NEGATIVE_INFINITY }).element;
     },
 
-    handleDrop: (e) => {
+    handleDrop: (e, listId = 'players-list', isMidgame = false) => {
         e.preventDefault();
-        const list = $('players-list');
+        const list = $(listId);
         if (!list) return;
         
         // Update State.players based on new DOM order
@@ -1395,7 +1431,11 @@ const Game = {
         });
         State.players = newList;
         Game.saveSession();
-        Game.renderSetupInputs();
+        if (isMidgame) {
+            Game.renderRearrangeInputs();
+        } else {
+            Game.renderSetupInputs();
+        }
     },
 
     renderSetupInputs: (scrollToLast = false) => {
@@ -1405,8 +1445,8 @@ const Game = {
         
         // Add dragover listener to container if not present
         if (!list.ondragover) {
-            list.ondragover = (e) => Game.handleDragOver(e);
-            list.ondrop = (e) => Game.handleDrop(e);
+            list.ondragover = (e) => Game.handleDragOver(e, 'players-list');
+            list.ondrop = (e) => Game.handleDrop(e, 'players-list', false);
         }
 
         State.players.forEach((p, idx) => {
@@ -1620,29 +1660,48 @@ const Game = {
     // --- Discussion ---
     startDiscussion: () => {
         Game.showScreen('discuss');
-        const timerDisplay = $('timer-display');
+        const timerContainer = $('timer-container');
         const discussTimerSettings = $('discuss-timer-settings');
         
         if(State.config.timer) {
-            timerDisplay.classList.remove('hidden');
+            timerContainer.classList.remove('hidden');
             discussTimerSettings.classList.add('hidden');
-            let timeLeft = State.config.timerDuration * 60; // Convert minutes to seconds
-            const tick = () => {
-                const m = Math.floor(timeLeft / 60).toString().padStart(2,'0');
-                const s = (timeLeft % 60).toString().padStart(2,'0');
-                timerDisplay.innerText = `${m}:${s}`;
-                if(timeLeft > 0) {
-                    timeLeft--;
-                    State.timerInterval = setTimeout(tick, 1000); 
-                } else {
-                    // Time's up!
-                    Game.showAlert("Time's up! Start voting now.", "⌛ Time's Up");
-                }
-            };
-            tick();
+            State.discussionTimeLeft = State.config.timerDuration * 60; // Convert minutes to seconds
+            Game.tickDiscussionTimer();
         } else {
-            timerDisplay.classList.add('hidden');
+            timerContainer.classList.add('hidden');
             discussTimerSettings.classList.remove('hidden');
+        }
+    },
+
+    tickDiscussionTimer: () => {
+        clearTimeout(State.timerInterval);
+        const timerDisplay = $('timer-display');
+        const tick = () => {
+            if (State.discussionTimeLeft < 0) return;
+            const m = Math.floor(State.discussionTimeLeft / 60).toString().padStart(2,'0');
+            const s = (State.discussionTimeLeft % 60).toString().padStart(2,'0');
+            timerDisplay.innerText = `${m}:${s}`;
+            
+            if(State.discussionTimeLeft > 0) {
+                State.discussionTimeLeft--;
+                State.timerInterval = setTimeout(tick, 1000); 
+            } else {
+                Game.showAlert("Time's up! Start voting now.", "⌛ Time's Up");
+            }
+        };
+        tick();
+    },
+
+    addDiscussionTime: (seconds) => {
+        const wasStopped = State.discussionTimeLeft <= 0;
+        State.discussionTimeLeft += seconds;
+        if (wasStopped) {
+            Game.tickDiscussionTimer();
+        } else {
+            const m = Math.floor(State.discussionTimeLeft / 60).toString().padStart(2,'0');
+            const s = (State.discussionTimeLeft % 60).toString().padStart(2,'0');
+            $('timer-display').innerText = `${m}:${s}`;
         }
     },
 
@@ -1662,25 +1721,14 @@ const Game = {
 
     runLocalTimer: () => {
         const duration = parseInt($('discuss-timer-duration-slider').value);
-        const timerDisplay = $('timer-display');
+        const timerContainer = $('timer-container');
         const discussTimerSettings = $('discuss-timer-settings');
         
-        timerDisplay.classList.remove('hidden');
+        timerContainer.classList.remove('hidden');
         discussTimerSettings.classList.add('hidden');
         
-        let timeLeft = duration * 60;
-        const tick = () => {
-            const m = Math.floor(timeLeft / 60).toString().padStart(2,'0');
-            const s = (timeLeft % 60).toString().padStart(2,'0');
-            timerDisplay.innerText = `${m}:${s}`;
-            if(timeLeft > 0) {
-                timeLeft--;
-                State.timerInterval = setTimeout(tick, 1000); 
-            } else {
-                Game.showAlert("Time's up! Start voting now.", "⌛ Time's Up");
-            }
-        };
-        tick();
+        State.discussionTimeLeft = duration * 60;
+        Game.tickDiscussionTimer();
     },
 
     // --- Close Reveal Modal ---
@@ -1909,23 +1957,12 @@ const Game = {
             const isVoterImposter = oddIds.includes(p.id);
 
             playerVotes.forEach(vId => {
-                const targetId = parseInt(vId); // vId is from State.votes which stores numbers or strings? 
-                // State.selectedTargets stores numbers from toggleVoteSelect(p.id)
-                // So targetId is already a number. Let's be safe.
+                const targetId = parseInt(vId); 
                 if (oddIds.includes(targetId)) {
-                    // Correct identification, check if it's a 'Betrayal'
-                    let scoreAward = 10; // Base: Majority Hit
-                    let minorityAward = 5; // Base: Minority Hit
-
                     if (isVoterImposter) {
-                        scoreAward = 5; // Betrayal Penalty (Caught)
-                        minorityAward = 2; // Betrayal Penalty (Escaped)
-                    }
-
-                    if (mostVotedIds.includes(targetId.toString())) {
-                        p.roundScore += scoreAward;
+                        p.roundScore += 5; // Betrayal Penalty
                     } else {
-                        p.roundScore += minorityAward;
+                        p.roundScore += 10; // Detective Points
                     }
                 }
             });
@@ -1939,38 +1976,26 @@ const Game = {
             const votesOnMe = voteCounts[id] || 0;
             const imposterPlayer = State.players.find(p => p.id == id);
             
-            if (!mostVotedIds.includes(id.toString())) {
-                if (votesOnMe === 0) {
-                    imposterPlayer.roundScore += 20; // Perfect Escape
-                } else {
-                    imposterPlayer.roundScore += 15; // Standard Escape
-                }
+            if (mostVotedIds.includes(id.toString()) && votesOnMe > 0) {
+                // Caught -> 0 points (Starts at 0)
+            } else if (votesOnMe === 0) {
+                // Perfect Escape -> +20 Points
+                imposterPlayer.roundScore += 20; 
+            } else {
+                // Suspected -> +10 Points
+                imposterPlayer.roundScore += 10;
             }
         });
 
-        let roundStatus = isAnyCaught ? (caughtImposters.length > 1 ? "Imposters Caught!" : "Imposter Caught!") : "Imposters Escaped!";
+        let roundStatus = isAnyCaught ? 
+            (caughtImposters.length > 1 ? "Imposters Caught!" : "Imposter Caught!") : 
+            (oddIds.length > 1 ? "Imposters Escaped!" : "Imposter Escaped!");
         let winner = isAnyCaught ? "players" : "imposters";
         
         State.players.forEach(p => p.score += p.roundScore);
         Game.saveSession();
 
-        if (winner === "players") {
-             Game.launchConfetti("#6BCF2D");
-        } else {
-             Game.launchConfetti("#D93A3A");
-        }
-
         Game.renderResults(voteCounts, roundStatus);
-    },
-    
-    launchConfetti: (color) => {
-        if (typeof confetti !== 'function') return;
-        confetti({
-            particleCount: 150,
-            spread: 70,
-            origin: { y: 0.6 },
-            colors: [color, "#ffffff"]
-        });
     },
 
     renderResults: (voteCounts, roundStatus) => {
@@ -2138,15 +2163,75 @@ const Game = {
         // Validation: Re-verify imposter count after removal
         const maxImposters = Math.max(1, Math.floor(State.players.length / 3));
         if(State.config.imposterCount > maxImposters) {
-            const oldCount = State.config.imposterCount;
             State.config.imposterCount = maxImposters;
-            Game.showAlert(`Imposter count has been reduced from ${oldCount} to ${maxImposters} to maintain game balance for ${State.players.length} players.`, "Players Reduced");
+            Game.showAlert(`Max imposters set to ${maxImposters} for ${State.players.length} players.`, "Game Balance");
         }
 
         Game.saveSession();
         Game.closeRemovePlayerConfirm();
         Game.goToScoreboard();
         Game.updateImposterUI();
+    },
+
+    // --- Reset Scores ---
+    askResetScores: () => {
+        $('modal-reset-scores-confirm').classList.add('open');
+    },
+
+    cancelResetScores: () => {
+        $('modal-reset-scores-confirm').classList.remove('open');
+    },
+
+    confirmResetScores: () => {
+        State.players.forEach(p => p.score = 0);
+        Game.saveSession();
+        Game.cancelResetScores();
+        Game.goToScoreboard();
+    },
+
+    // --- Rearrange Players Mid-game Logic ---
+    renderRearrangeInputs: () => {
+        const list = $('rearrange-players-list');
+        if (!list) return;
+        list.innerHTML = "";
+        
+        if (!list.ondragover) {
+            list.ondragover = (e) => Game.handleDragOver(e, 'rearrange-players-list');
+            list.ondrop = (e) => Game.handleDrop(e, 'rearrange-players-list', true);
+        }
+
+        State.players.forEach((p, idx) => {
+            if (!p) return;
+            const grp = document.createElement('div');
+            grp.className = "input-group";
+            grp.id = `rearrange-player-${idx}`;
+            grp.setAttribute('data-player-index', idx);
+            grp.draggable = true;
+            
+            grp.ondragstart = (e) => Game.handleDragStart(e, idx);
+            grp.ondragend = (e) => Game.handleDragEnd(e);
+            
+            grp.innerHTML = `
+                <span class="player-num">#${idx + 1}</span>
+                <div style="flex: 1; text-align: left; padding: 15px; background: var(--bg-card); border: 2px solid var(--text-muted); border-radius: var(--radius); color: white; font-size: 1.1rem; font-weight: bold; margin: 0 5px;">
+                    ${p.name}
+                </div>
+                <div class="drag-handle" title="Drag to reorder" style="padding: 10px; cursor: grab;">
+                    <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:currentColor;"><path d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                </div>
+            `;
+            list.appendChild(grp);
+        });
+    },
+
+    openRearrangePlayers: () => {
+        Game.renderRearrangeInputs();
+        $('modal-rearrange-players').classList.add('open');
+    },
+
+    closeRearrangePlayers: () => {
+        $('modal-rearrange-players').classList.remove('open');
+        Game.goToScoreboard();
     },
 
     // --- Mid-game Settings Logic ---
@@ -2308,10 +2393,13 @@ const Game = {
                 return `<span class="${isImposter ? 'text-danger' : 'text-white'}" style="font-weight: 900;">${p.name}</span>`;
             }).join('<br>'); // List vertically in the cell
 
+            const isVoterImposter = State.oddPlayerIds.includes(voter.id);
+            const voterNameDisplay = isVoterImposter ? `<span class="text-danger" style="font-weight: 900;">${voter.name}</span>` : voter.name;
+
             const row = document.createElement('tr');
             row.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
             row.innerHTML = `
-                <td style="padding: 12px; text-align: left; vertical-align: middle; font-weight: 600;">${voter.name}</td>
+                <td style="padding: 12px; text-align: left; vertical-align: middle; font-weight: 600;">${voterNameDisplay}</td>
                 <td style="padding: 12px; text-align: right; vertical-align: middle; line-height: 1.4;">${targetChips}</td>
             `;
             tbody.appendChild(row);
