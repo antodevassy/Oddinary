@@ -1,10 +1,15 @@
-const CACHE_NAME = 'oddinary-v2';
+const CACHE_NAME = 'oddinary-v4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
-  './words-data.js',
-  './logo.png',
-  './fav-icon.png',
+  './style.css',
+  './js/words-data.js',
+  './js/storage.js',
+  './js/audio.js',
+  './js/game.js',
+  './js/ui.js',
+  './assets/logo.png',
+  './assets/fav-icon.png',
   './manifest.json',
   './about.html',
   './privacy.html',
@@ -46,4 +51,3 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
-
