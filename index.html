@@ -334,10 +334,16 @@
 
         .logo-img {
             width: 100%; 
-            max-width: 600px;
+            max-width: 440px;
             height: auto;
-            margin-bottom: -10px;
-            filter: drop-shadow(0 0 25px rgba(107, 207, 45, 0.4));
+            object-fit: contain;
+            filter: drop-shadow(0 0 28px rgba(107, 207, 45, 0.45));
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.3s ease;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.02);
+            filter: drop-shadow(0 0 38px rgba(107, 207, 45, 0.65));
         }
 
         /* Vote Bar Animation */
@@ -366,6 +372,51 @@
             text-shadow: 0 0 4px rgba(0,0,0,0.8);
         }
 
+        /* Landing Screen Hero Layout */
+        #screen-landing {
+            justify-content: space-between;
+            align-items: center;
+            min-height: calc(100vh - 40px);
+            min-height: calc(100svh - 40px);
+            padding: 15px 0 10px 0;
+            width: 100%;
+            flex: 1;
+        }
+
+        .landing-hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 500px;
+            gap: 28px;
+            margin: auto 0;
+        }
+
+        .landing-logo-box {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .landing-buttons {
+            width: 100%;
+            max-width: 380px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .landing-buttons .btn {
+            width: 100%;
+            margin-bottom: 0;
+        }
+
         /* Footer */
         .footer-copyright {
             padding: 15px 10px;
@@ -375,14 +426,48 @@
             width: 100%;
             margin-top: auto;
         }
+        .footer-copyright p {
+            text-align: center;
+            margin: 0;
+        }
+        .footer-copyright .footer-links {
+            margin-top: 6px;
+        }
         .footer-copyright a {
             color: var(--text-sec);
             text-decoration: none;
             margin: 0 6px;
             font-weight: 500;
+            transition: color 0.2s ease;
         }
         .footer-copyright a:hover {
             color: var(--primary);
+        }
+
+        /* Mobile Footer Sizing: Exactly 2 lines (1. Copyrights, 2. Links) */
+        @media (max-width: 600px) {
+            .footer-copyright {
+                font-size: 0.72rem;
+                padding: 10px 4px;
+            }
+            .footer-copyright p {
+                white-space: nowrap;
+            }
+            .footer-copyright .footer-links {
+                margin-top: 4px;
+            }
+            .footer-copyright a {
+                margin: 0 3px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .footer-copyright {
+                font-size: 0.68rem;
+            }
+            .footer-copyright a {
+                margin: 0 2px;
+            }
         }
 
         /* AdSense Slots Container */
@@ -820,17 +905,21 @@
 <div id="app">
     <!-- 1. Landing Screen -->
     <div id="screen-landing" class="screen active">
-        <!-- Center Stack -->
-        <img src="logo.png" alt="Oddinary Logo" class="logo-img" style="transform: scale(1.15); margin-bottom: 30px;" onerror="this.src='';this.innerHTML='<h1>Oddinary</h1>'">
-        
-        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 10px;">
-            <button class="btn btn-primary" onclick="AudioEngine.play('click'); Game.goToSetup();">Start Game</button>
-            <button class="btn" onclick="AudioEngine.play('click'); Game.toggleRules();">How to Play?</button>
+        <!-- Center Hero Stack -->
+        <div class="landing-hero">
+            <div class="landing-logo-box">
+                <img src="logo.png" alt="Oddinary Logo" class="logo-img" onerror="this.src='';this.innerHTML='<h1>Oddinary</h1>'">
+            </div>
+            
+            <div class="landing-buttons">
+                <button class="btn btn-primary" onclick="AudioEngine.play('click'); Game.goToSetup();">Start Game</button>
+                <button class="btn" onclick="AudioEngine.play('click'); Game.toggleRules();">How to Play?</button>
+            </div>
         </div>
 
         <div class="footer-copyright">
             <p>© 2026 Oddinary by Anto Devassy V.P. All rights reserved.</p>
-            <p style="margin-top: 8px;">
+            <p class="footer-links">
                 <a href="about.html">About</a> | 
                 <a href="privacy.html">Privacy Policy</a> | 
                 <a href="terms.html">Terms of Service</a> | 
