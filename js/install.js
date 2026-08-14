@@ -20,17 +20,23 @@ const InstallPrompt = (() => {
   }
 
   // --- Instructions per platform ---
-  function getInstructions(platform) {
+  function getInstructions(platform, hasNativePrompt) {
     switch (platform) {
       case 'android':
         return {
           title: 'Install Oddinary',
           subtitle: 'Add to your home screen for the full app experience',
-          steps: [
-            { text: 'Tap the <strong>Install</strong> button below', icon: '📲' },
-            { text: 'Confirm in the browser popup', icon: '✅' },
-            { text: 'Launch Oddinary from your home screen!', icon: '🚀' }
-          ],
+          steps: hasNativePrompt
+            ? [
+                { text: 'Tap the <strong>Install</strong> button below', icon: '📲' },
+                { text: 'Confirm in the browser popup', icon: '✅' },
+                { text: 'Launch Oddinary from your home screen!', icon: '🚀' }
+              ]
+            : [
+                { text: 'Tap <strong>⋮</strong> (menu) in your browser', icon: '1' },
+                { text: 'Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>', icon: '2' },
+                { text: 'Launch Oddinary from your home screen!', icon: '🚀' }
+              ],
           canAutoInstall: true
         };
 
@@ -50,11 +56,17 @@ const InstallPrompt = (() => {
         return {
           title: 'Install Oddinary',
           subtitle: 'Pin Oddinary to your Start Menu or Taskbar',
-          steps: [
-            { text: 'Click the <strong>Install</strong> icon <span class="install-inline-icon">⊕</span> in the address bar', icon: '1' },
-            { text: 'Or click <strong>⋮ Menu → Install Oddinary</strong>', icon: '2' },
-            { text: 'Launch from your Desktop or Start Menu!', icon: '3' }
-          ],
+          steps: hasNativePrompt
+            ? [
+                { text: 'Click the <strong>Install</strong> button below', icon: '📲' },
+                { text: 'Confirm in the browser popup', icon: '✅' },
+                { text: 'Launch from your Desktop or Start Menu!', icon: '🚀' }
+              ]
+            : [
+                { text: 'Look for the <strong>Install</strong> icon <span class="install-inline-icon">⊕</span> in the address bar and click it', icon: '1' },
+                { text: 'Or click <strong>⋮ Menu → Install Oddinary</strong> in Chrome/Edge', icon: '2' },
+                { text: 'Launch from your Desktop or Start Menu!', icon: '🚀' }
+              ],
           canAutoInstall: true
         };
 
@@ -62,11 +74,17 @@ const InstallPrompt = (() => {
         return {
           title: 'Install Oddinary',
           subtitle: 'Install the app for the best experience',
-          steps: [
-            { text: 'Click the <strong>Install</strong> icon in your browser\'s address bar', icon: '1' },
-            { text: 'Or use <strong>Menu → Install Oddinary</strong>', icon: '2' },
-            { text: 'Open from your Applications!', icon: '3' }
-          ],
+          steps: hasNativePrompt
+            ? [
+                { text: 'Click the <strong>Install</strong> button below', icon: '📲' },
+                { text: 'Confirm in the browser popup', icon: '✅' },
+                { text: 'Open from your Applications!', icon: '🚀' }
+              ]
+            : [
+                { text: 'Click the <strong>Install</strong> icon in your browser\'s address bar', icon: '1' },
+                { text: 'Or use <strong>Menu → Install Oddinary</strong>', icon: '2' },
+                { text: 'Open from your Applications!', icon: '🚀' }
+              ],
           canAutoInstall: true
         };
     }
@@ -78,7 +96,8 @@ const InstallPrompt = (() => {
     const existing = document.getElementById('modal-install');
     if (existing) existing.remove();
 
-    const info = getInstructions(platform);
+    const hasNativePrompt = deferredPrompt !== null;
+    const info = getInstructions(platform, hasNativePrompt);
 
     const stepsHTML = info.steps.map(s => `
       <div class="install-step">
@@ -87,13 +106,25 @@ const InstallPrompt = (() => {
       </div>
     `).join('');
 
-    const actionsHTML = (info.canAutoInstall && deferredPrompt)
-      ? `<button class="btn btn-primary install-btn" onclick="InstallPrompt.doInstall()">
+    let actionsHTML;
+    if (hasNativePrompt) {
+      // Native prompt available — show Install Now
+      actionsHTML = `<button class="btn btn-primary install-btn" onclick="InstallPrompt.doInstall()">
            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;margin-right:6px;"><path d="M12 5v14m0 0l-4-4m4 4l4-4"/><path d="M4 19h16"/></svg>
            Install Now
          </button>
-         <button class="btn install-dismiss-btn" onclick="InstallPrompt.close()">Not Now</button>`
-      : `<button class="btn btn-primary install-btn" onclick="InstallPrompt.close()">Got It</button>`;
+         <button class="btn install-dismiss-btn" onclick="InstallPrompt.close()">Not Now</button>`;
+    } else if (info.canAutoInstall) {
+      // Platform supports install but prompt hasn't fired yet — show button that tries to trigger it
+      actionsHTML = `<button class="btn btn-primary install-btn" id="install-confirm-btn" onclick="InstallPrompt.doInstall()">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;margin-right:6px;"><path d="M12 5v14m0 0l-4-4m4 4l4-4"/><path d="M4 19h16"/></svg>
+           Install Now
+         </button>
+         <button class="btn install-dismiss-btn" onclick="InstallPrompt.close()">Not Now</button>`;
+    } else {
+      // iOS — manual steps only
+      actionsHTML = `<button class="btn btn-primary install-btn" onclick="InstallPrompt.close()">Got It</button>`;
+    }
 
     const modal = document.createElement('div');
     modal.id = 'modal-install';
@@ -120,6 +151,17 @@ const InstallPrompt = (() => {
     `;
 
     document.body.appendChild(modal);
+
+    // If prompt hasn't fired yet, listen for it while modal is open
+    if (!hasNativePrompt && info.canAutoInstall) {
+      const lateListener = (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        window.removeEventListener('beforeinstallprompt', lateListener);
+      };
+      window.addEventListener('beforeinstallprompt', lateListener);
+    }
+
     requestAnimationFrame(() => {
       requestAnimationFrame(() => modal.classList.add('open'));
     });
@@ -170,6 +212,14 @@ const InstallPrompt = (() => {
           if (sep) sep.style.display = 'none';
         }
         deferredPrompt = null;
+      } else {
+        // Native prompt not available — show fallback tip inside the modal
+        const btn = document.getElementById('install-confirm-btn');
+        if (btn) {
+          btn.outerHTML = `<p style="font-size: 0.85rem; color: var(--text-sec); text-align: center; padding: 8px 0; margin: 0; line-height: 1.5;">
+            Look for the <strong style="color: var(--text-main);">Install</strong> icon <span class="install-inline-icon">⊕</span> in your browser's address bar, or use the browser menu to install.
+          </p>`;
+        }
       }
     },
 
