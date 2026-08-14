@@ -214,7 +214,7 @@
     </div>
 
     <div class="footer-copyright">
-        <p>© 2026 Oddinary by Anto Devassy V.P. All rights reserved.</p>
+        <p>© <span class="copyright-year">2026</span> Oddinary by Anto Devassy V.P. All rights reserved.</p>
         <p class="footer-links">
             <a href="about.html">About</a> | 
             <a href="privacy.html">Privacy Policy</a> | 
@@ -222,5 +222,6 @@
             <a href="contact.html">Contact</a>
         </p>
     </div>
+    <script>document.querySelectorAll('.copyright-year').forEach(el => el.innerText = new Date().getFullYear());</script>
 </body>
 </html>

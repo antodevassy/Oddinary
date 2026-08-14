@@ -4,13 +4,23 @@
   "description": "Find the imposter in this fun local party word game for 3-30 players.",
   "start_url": "./index.html",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#0E0F13",
   "theme_color": "#6BCF2D",
+  "categories": ["games", "entertainment", "utilities"],
   "icons": [
     {
       "src": "fav-icon.png",
       "sizes": "192x192 512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Start Game",
+      "url": "./index.html?action=setup",
+      "description": "Start a new game of Oddinary"
     }
   ]
 }

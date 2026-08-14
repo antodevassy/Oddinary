@@ -137,9 +137,10 @@
         .screen {
             display: none;
             flex-direction: column;
-            min-height: calc(100vh - 20px);
-            min-height: calc(100dvh - 20px);
-            padding: calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom));
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding: calc(15px + env(safe-area-inset-top)) 12px calc(15px + env(safe-area-inset-bottom));
+            box-sizing: border-box;
             animation: fadeIn 0.25s ease-out;
             justify-content: center;
             align-items: center;
@@ -148,8 +149,7 @@
         .screen.active { display: flex; }
         
         #screen-setup {
-            justify-content: flex-start;
-            padding-top: 15px;
+            justify-content: center;
         }
 
         .content-area {
@@ -536,14 +536,16 @@
         /* AdSense Slots Container */
         .ad-slot-container {
             width: 100%;
-            max-width: 100%;
-            min-height: 90px;
-            margin: 15px 0;
+            max-width: 480px;
+            min-height: 50px;
+            max-height: 60px;
+            margin: 12px auto 0 auto;
             display: flex;
             justify-content: center;
             align-items: center;
             background: rgba(24, 26, 32, 0.4);
             border-radius: var(--radius);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             overflow: hidden;
         }
 
@@ -605,20 +607,91 @@
             color: var(--text-sec);
         }
 
+        /* --- GAME SETTINGS LAYOUT & STRAIGHT ALIGNED TOGGLES --- */
+        .settings-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            margin-bottom: 0;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .setting-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .setting-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-align: left;
+            flex: 1;
+            padding-right: 10px;
+        }
+
+        .setting-icon {
+            font-size: 1.1rem;
+            width: 22px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .setting-right {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-shrink: 0;
+            width: 80px; /* Fixed width container to guarantee straight vertical right alignment */
+        }
+
+        .setting-info-btn {
+            width: 20px;
+            height: 20px;
+            min-height: 0;
+            margin: 0;
+            padding: 0;
+            border: none;
+            background: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: color 0.2s ease;
+        }
+        .setting-info-btn:hover { color: var(--primary); }
+
         .switch-container {
             display: flex;
-            justify-content: center;
-            gap: 20px;
+            justify-content: space-between;
             align-items: center;
             width: 100%;
-            margin-bottom: 12px;
-            padding: 15px;
-            background: var(--bg-card);
-            border-radius: var(--radius);
+            margin-bottom: 0;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
         }
 
         /* Toggle Switch */
-        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 28px; flex-shrink: 0; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
             position: absolute; cursor: pointer;
@@ -759,6 +832,7 @@
             border-radius: var(--radius);
             border: 2px solid rgba(107, 207, 45, 0.2);
             box-shadow: 0 4px 15px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+            text-align: center;
         }
 
         .slider-input {
@@ -904,6 +978,264 @@
             75% { transform: translateX(5px); }
         }
 
+        /* --- VISUAL HOW TO PLAY STEP CARDS --- */
+        .how-to-play-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+            width: 100%;
+        }
+
+        .how-to-play-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(24, 26, 32, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-left: 4px solid var(--primary);
+            padding: 12px 14px;
+            border-radius: 14px;
+            text-align: left;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .how-to-play-step:hover {
+            border-color: var(--primary);
+            transform: translateX(3px);
+        }
+
+        .how-to-play-step.step-clue { border-left-color: #3b82f6; }
+        .how-to-play-step.step-imposter { border-left-color: var(--danger); }
+        .how-to-play-step.step-vote { border-left-color: #f59e0b; }
+        .how-to-play-step.step-score { border-left-color: var(--accent-gold); }
+
+        .step-number {
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--primary);
+            background: rgba(107, 207, 45, 0.15);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .step-clue .step-number { color: #3b82f6; background: rgba(59, 130, 246, 0.15); }
+        .step-imposter .step-number { color: var(--danger); background: rgba(217, 58, 58, 0.15); }
+        .step-vote .step-number { color: #f59e0b; background: rgba(245, 158, 11, 0.15); }
+        .step-score .step-number { color: var(--accent-gold); background: rgba(201, 164, 93, 0.15); }
+
+        .step-icon { font-size: 1.5rem; flex-shrink: 0; }
+        .step-body { flex: 1; }
+        .step-title {
+            font-size: 0.9rem;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            color: var(--text-main);
+            margin-bottom: 2px;
+            text-transform: uppercase;
+        }
+        .step-desc { font-size: 0.82rem; color: var(--text-sec); line-height: 1.3; }
+
+        /* --- SETUP SCREEN SECTIONS --- */
+        .setup-section-card {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 12px;
+            text-align: left;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.3);
+        }
+
+        .setup-section-title {
+            font-size: 1.0rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            color: var(--text-main);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* --- SUSPENSE REVEAL OVERLAY --- */
+        .suspense-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #07080A;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .suspense-title {
+            font-size: 1.4rem;
+            letter-spacing: 3px;
+            color: var(--text-sec);
+            font-weight: 900;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            animation: pulseText 0.8s infinite alternate;
+        }
+
+        .suspense-dots {
+            font-size: 3.5rem;
+            color: var(--primary);
+            letter-spacing: 12px;
+            margin-bottom: 20px;
+        }
+
+        .suspense-name-box {
+            opacity: 0;
+            transform: scale(0.6);
+            transition: all 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+        }
+
+        .suspense-name-box.reveal-active {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .suspense-imposter-name {
+            font-size: 2.6rem;
+            font-weight: 900;
+            color: var(--danger);
+            text-shadow: 0 0 30px rgba(217, 58, 58, 0.8);
+            letter-spacing: 1px;
+            margin: 10px 0;
+        }
+
+        .suspense-vote-badge {
+            display: inline-block;
+            background: rgba(217, 58, 58, 0.2);
+            border: 1px solid var(--danger);
+            color: white;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: 20px;
+        }
+
+        @keyframes pulseText { from { opacity: 0.3; } to { opacity: 1; } }
+
+        /* --- LEADERBOARD HERO CARD --- */
+        .leader-hero-card {
+            width: 100%;
+            background: linear-gradient(135deg, rgba(201, 164, 93, 0.18), rgba(24, 26, 32, 0.95));
+            border: 2px solid var(--accent-gold);
+            border-radius: 20px;
+            padding: 18px 15px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 8px 25px rgba(201, 164, 93, 0.25);
+            margin-bottom: 12px;
+        }
+
+        .leader-crown {
+            font-size: 2.2rem;
+            line-height: 1;
+            margin-bottom: 4px;
+            display: inline-block;
+            filter: drop-shadow(0 0 10px rgba(201, 164, 93, 0.6));
+        }
+
+        .leader-subtitle {
+            font-size: 0.75rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+        }
+
+        .leader-name-display {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #FFF;
+            text-shadow: 0 0 15px rgba(201, 164, 93, 0.5);
+            margin: 2px 0;
+        }
+
+        .leader-score-display {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        .score-delta-badge {
+            display: inline-block;
+            background: rgba(107, 207, 45, 0.2);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            font-size: 0.75rem;
+            font-weight: 900;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 6px;
+        }
+
+        /* --- POST-GAME SUMMARY STAT GRID --- */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 14px 10px;
+            text-align: center;
+        }
+
+        .stat-card-full {
+            grid-column: span 2;
+            background: linear-gradient(145deg, rgba(201, 164, 93, 0.15), var(--bg-card));
+            border-color: var(--accent-gold);
+        }
+
+        .stat-icon { font-size: 1.8rem; margin-bottom: 2px; }
+        .stat-label {
+            font-size: 0.72rem;
+            font-weight: 900;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .stat-value { font-size: 1.2rem; font-weight: 900; color: var(--text-main); }
+        .stat-subtext { font-size: 0.78rem; color: var(--text-sec); margin-top: 2px; }
+
+        /* Secret Alliance Hint */
+        .alliance-card-hint {
+            background: rgba(217, 58, 58, 0.12);
+            border: 1px solid var(--danger);
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: #FFB3B3;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-align: left;
+        }
+
         /* --- MOBILE OPTIMIZATION --- */
         @media (max-width: 480px) {
             h1 { font-size: 1.6rem !important; }
@@ -935,7 +1267,7 @@
             .list-item { padding: 10px 15px; }
             .list-item span { font-size: 0.95rem !important; }
 
-        /* Voting Table Mobile Fix */
+            /* Voting Table Mobile Fix */
             table th, table td { padding: 8px !important; font-size: 0.85rem; }
             
             #voter-name { font-size: 1.8rem !important; }
@@ -981,7 +1313,7 @@
         </div>
 
         <div class="footer-copyright">
-            <p>© 2026 Oddinary by Anto Devassy V.P. All rights reserved.</p>
+            <p>© <span class="copyright-year">2026</span> Oddinary by Anto Devassy V.P. All rights reserved.</p>
             <p class="footer-links">
                 <a href="about.html">About</a> | 
                 <a href="privacy.html">Privacy Policy</a> | 
@@ -993,102 +1325,196 @@
 
     <!-- How To Play Modal Overlay -->
     <div id="modal-rules" class="modal">
-        <div class="modal-content">
-            <h2 class="text-primary mb-2 text-c">How to Play?</h2>
-            <div style="text-align: justify; line-height: 1.6; color: var(--text-sec); font-size: 0.95rem;">
-                <p class="mb-2"><b>Get Your Word:</b> Everyone gets a secret word. The Imposters either get a different word or no word at all.</p>
-                <p class="mb-2"><b>Describe Your Word:</b> Take turns giving clues about your word. Don’t say the word directly. Try to figure out who the Imposters are.</p>
-                <p class="mb-2"><b>Vote:</b> Each player votes for who they think the Imposters are. You must vote for the same number of players as there are Imposters.</p>
-                <p class="mb-2" style="margin-bottom: 0;"><b>Score Points:</b> Detectives get points for each correct guess. Imposters get points if they avoid being caught. Check the leaderboard to see who’s winning!</p>
+        <div class="modal-content" style="max-width: 440px;">
+            <h2 class="text-primary mb-2 text-c" style="letter-spacing: 0.5px;">HOW TO PLAY</h2>
+            <div class="how-to-play-container">
+                <div class="how-to-play-step">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">👤</div>
+                    <div class="step-body">
+                        <div class="step-title">GET YOUR WORD</div>
+                        <div class="step-desc">Everyone receives a secret word.</div>
+                    </div>
+                </div>
+                <div class="how-to-play-step step-clue">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">💬</div>
+                    <div class="step-body">
+                        <div class="step-title">GIVE A CLUE</div>
+                        <div class="step-desc">Describe your word without saying it.</div>
+                    </div>
+                </div>
+                <div class="how-to-play-step step-imposter">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">🕵️</div>
+                    <div class="step-body">
+                        <div class="step-title">FIND THE IMPOSTER</div>
+                        <div class="step-desc">Listen carefully. Someone's word is different.</div>
+                    </div>
+                </div>
+                <div class="how-to-play-step step-vote">
+                    <div class="step-number">4</div>
+                    <div class="step-icon">⚡</div>
+                    <div class="step-body">
+                        <div class="step-title">VOTE</div>
+                        <div class="step-desc">Pick who you think is suspicious.</div>
+                    </div>
+                </div>
+                <div class="how-to-play-step step-score">
+                    <div class="step-number">5</div>
+                    <div class="step-icon">🏆</div>
+                    <div class="step-body">
+                        <div class="step-title">SCORE</div>
+                        <div class="step-desc">Earn points and become the Oddinary champion.</div>
+                    </div>
+                </div>
             </div>
-            <button class="btn btn-primary mt-2" onclick="Game.toggleRules()">Got It</button>
+            <button class="btn btn-primary mt-2" onclick="AudioEngine.play('click'); Game.toggleRules()">Got It</button>
         </div>
     </div>
 
     <!-- 2. Player Setup -->
     <div id="screen-setup" class="screen">
-        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px;">
-            <h2 class="text-c">PLAYERS</h2>
-            
-            <!-- List Container -->
-            <div id="players-list" style="width: 100%;">
-                <!-- Dynamic Inputs -->
-            </div>
-            
-            <button class="btn" onclick="Game.addPlayer()" style="border-style: dashed;">+ Add Player</button>
-
-            <div id="setup-imposter-count-container" style="width: 100%; margin: 5px 0; padding: 18px 20px; background: var(--bg-card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.05);">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div style="text-align: left;">
-                        <span class="text-white" style="font-size: 0.95rem; font-weight: 700; display: block; letter-spacing: 0.5px;">IMPOSTER COUNT</span>
-                    </div>
-                    <div class="stepper-control">
-                        <button id="setup-imposter-minus" class="stepper-btn" onclick="Game.adjustImposterCount(-1, 'setup')">−</button>
-                        <span id="setup-imposter-count-display" class="stepper-value">1</span>
-                        <button id="setup-imposter-plus" class="stepper-btn" onclick="Game.adjustImposterCount(1, 'setup')">+</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Moved Game Settings Section -->
-            <div style="width: 100%; display: flex; flex-direction: column; gap: 5px;">
-                <div class="switch-container" style="margin-bottom: 5px; padding: 12px 15px;">
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <span style="font-size: 0.9rem;">Stealth Mode</span>
-                        <button class="btn-icon" style="width:20px; height:20px; min-height:0; margin:0; padding:0; border:none; background:none; color:var(--text-muted); cursor:pointer;" onclick="Game.showStealthModeInfo()">
-                            <svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-                        </button>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="setting-imposter-word" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-
-                <div class="switch-container" style="margin-bottom: 5px; padding: 12px 15px;">
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <span style="font-size: 0.9rem;">Voting</span>
-                        <button class="btn-icon" style="width:20px; height:20px; min-height:0; margin:0; padding:0; border:none; background:none; color:var(--text-muted); cursor:pointer;" onclick="Game.showVotingInfo()">
-                            <svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-                        </button>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="setting-voting" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-
-                <div class="switch-container" style="margin-bottom: 5px; padding: 12px 15px;">
-                    <span style="font-size: 0.9rem;">Shuffle Player Order</span>
-                    <label class="switch">
-                        <input type="checkbox" id="setting-shuffle">
-                        <span class="slider"></span>
-                    </label>
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; max-width: 500px;">
+            <!-- PLAYERS SECTION CARD -->
+            <div class="setup-section-card">
+                <div class="setup-section-title">
+                    <span>PLAYERS</span>
                 </div>
                 
-                <div class="switch-container" style="margin-bottom: 5px; padding: 12px 15px;">
-                    <span style="font-size: 0.9rem;">Discussion Timer</span>
-                    <label class="switch">
-                        <input type="checkbox" id="setting-timer" onchange="Game.toggleTimerSettings()">
-                        <span class="slider"></span>
-                    </label>
+                <!-- List Container -->
+                <div id="players-list" style="width: 100%;">
+                    <!-- Dynamic Inputs -->
                 </div>
                 
-                <div id="timer-slider-container" class="timer-control hidden" style="margin: 5px auto; padding: 15px;">
-                    <p class="text-muted" style="margin-bottom: 5px; font-size: 0.8rem;">Timer Duration</p>
-                    <div class="timer-value" id="timer-value-display" style="font-size: 1.5rem;">3 min</div>
-                    <input type="range" min="1" max="5" value="3" class="slider-input" id="timer-duration-slider" oninput="Game.updateTimerValue(this.value)" style="margin: 10px 0;">
-                    <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.7rem;">
-                        <span>1 min</span>
-                        <span>5 min</span>
+                <button class="btn" onclick="AudioEngine.play('click'); Game.addPlayer()" style="border-style: dashed; margin-bottom: 0; margin-top: 5px;">+ Add Player</button>
+                <div id="setup-error" class="error-msg" style="margin-top: 8px;"></div>
+            </div>
+
+            <!-- GAME SETTINGS SECTION CARD -->
+            <div class="setup-section-card">
+                <div class="setup-section-title">
+                    <span>GAME SETTINGS</span>
+                </div>
+
+                <div class="settings-group">
+                    <!-- 1. Imposters -->
+                    <div class="setting-item">
+                        <div class="setting-left">
+                            <span>Imposters</span>
+                        </div>
+                        <div class="setting-right">
+                            <div class="stepper-control">
+                                <button id="setup-imposter-minus" class="stepper-btn" onclick="AudioEngine.play('click'); Game.adjustImposterCount(-1, 'setup')">−</button>
+                                <span id="setup-imposter-count-display" class="stepper-value">1</span>
+                                <button id="setup-imposter-plus" class="stepper-btn" onclick="AudioEngine.play('click'); Game.adjustImposterCount(1, 'setup')">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Stealth Mode -->
+                    <div class="setting-item">
+                        <div class="setting-left">
+                            <span>Stealth Mode</span>
+                            <button class="setting-info-btn" onclick="Game.showStealthModeInfo()" title="What is Stealth Mode?">
+                                <svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                            </button>
+                        </div>
+                        <div class="setting-right">
+                            <label class="switch">
+                                <input type="checkbox" id="setting-imposter-word" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 3. Secret Alliance -->
+                    <div class="setting-item">
+                        <div class="setting-left">
+                            <span>Secret Alliance</span>
+                            <button class="setting-info-btn" onclick="Game.showAllianceInfo()" title="What is Secret Alliance?">
+                                <svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                            </button>
+                        </div>
+                        <div class="setting-right">
+                            <label class="switch">
+                                <input type="checkbox" id="setting-secret-alliance" onchange="Game.toggleSecretAllianceSetting(this, 'setup')">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 4. Voting -->
+                    <div class="setting-item">
+                        <div class="setting-left">
+                            <span>Voting</span>
+                            <button class="setting-info-btn" onclick="Game.showVotingInfo()" title="What is Voting?">
+                                <svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                            </button>
+                        </div>
+                        <div class="setting-right">
+                            <label class="switch">
+                                <input type="checkbox" id="setting-voting" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 5. Shuffle Players -->
+                    <div class="setting-item">
+                        <div class="setting-left">
+                            <span>Shuffle Players</span>
+                        </div>
+                        <div class="setting-right">
+                            <label class="switch">
+                                <input type="checkbox" id="setting-shuffle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 6. Discussion Timer -->
+                    <div class="setting-item">
+                        <div class="setting-left">
+                            <span>Discussion Timer</span>
+                        </div>
+                        <div class="setting-right">
+                            <label class="switch">
+                                <input type="checkbox" id="setting-timer" onchange="Game.toggleTimerSettings()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div id="timer-slider-container" class="timer-control hidden" style="margin: 12px auto; padding: 16px 12px; background: rgba(255,255,255,0.03); border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); width: 100%; max-width: 360px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                        <p class="text-muted" style="margin-bottom: 6px; font-size: 0.85rem; text-align: center; width: 100%;">Timer Duration</p>
+                        <div class="timer-value text-c" id="timer-value-display" style="font-size: 1.4rem; font-weight: 800; text-align: center; width: 100%; color: var(--primary);">3 min</div>
+                        <input type="range" min="1" max="5" value="3" class="slider-input" id="timer-duration-slider" oninput="Game.updateTimerValue(this.value)" style="margin: 12px auto; width: 85%; display: block;">
+                        <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.75rem; width: 85%; margin: 0 auto;">
+                            <span>1 min</span>
+                            <span>5 min</span>
+                        </div>
+                    </div>
+
+                    <!-- 7. Sound Effects -->
+                    <div class="setting-item">
+                        <div class="setting-left">
+                            <span>Sound Effects</span>
+                        </div>
+                        <div class="setting-right">
+                            <label class="switch">
+                                <input type="checkbox" id="setting-sound" checked onchange="Game.toggleSoundSetting(this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>
             
             <!-- Setup Actions -->
             <div style="width: 100%; display: flex; flex-direction: column; gap: 8px;">
-                <button class="btn btn-primary" onclick="Game.startGame()" style="margin-bottom: 0;">Start</button>
-                <button class="btn" onclick="Game.goHome()" style="margin-bottom: 0;">Back</button>
+                <button class="btn btn-primary" onclick="AudioEngine.play('click'); Game.startGame()" style="margin-bottom: 0;">START GAME</button>
+                <button class="btn" onclick="AudioEngine.play('click'); Game.goHome()" style="margin-bottom: 0;">Back</button>
             </div>
         </div>
     </div>
@@ -1159,23 +1585,24 @@
             
             <button class="btn" onclick="Game.showForgotWord()">Forgot Your Word?</button>
             <button id="btn-start-voting" class="btn btn-primary" onclick="Game.startVoting()">Start Voting</button>
+        </div>
 
-            <!-- AdSense Container Slot -->
-            <div class="ad-slot-container">
-                <ins class="adsbygoogle"
-                     style="display:block; width:100%; text-align:center;"
-                     data-ad-client="ca-pub-9418997406256200"
-                     data-ad-format="auto"
-                     data-full-width-responsive="true"></ins>
-                <script>
-                     try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e){}
-                </script>
-            </div>
+        <!-- AdSense Container Slot (Sticks to bottom of screen!) -->
+        <div class="ad-slot-container">
+            <ins class="adsbygoogle"
+                 style="display:block; width:100%; text-align:center;"
+                 data-ad-client="ca-pub-9418997406256200"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e){}
+            </script>
         </div>
     </div>
 
     <!-- 5. Voting Phase -->
     <div id="screen-voting" class="screen">
+        <div class="close-btn" onclick="Game.askCloseReveal()" title="Close">✕</div>
         <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px;">
             <h3 class="text-c text-muted">Pass to</h3>
             <h1 id="voter-name" class="text-primary text-glow" style="font-size: 2.5rem;">Player</h1>
@@ -1184,6 +1611,17 @@
             <div class="content-area" id="voting-list">
                 <!-- Voting Buttons -->
             </div>
+        </div>
+    </div>
+
+    <!-- Voting Complete Pre-Reveal Screen -->
+    <div id="screen-voting-complete" class="screen">
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; max-width: 480px; text-align: center; margin: auto;">
+            <div style="font-size: 4rem;">📢</div>
+            <h1 class="text-gold" style="font-size: 2.2rem; letter-spacing: 1px;">VOTING COMPLETE!</h1>
+            <button class="btn btn-primary" style="font-size: 1.2rem; padding: 16px 28px; width: 100%; margin-top: 10px; border-radius: 16px;" onclick="AudioEngine.play('click'); Game.startImposterRevealAnimation()">
+                REVEAL IMPOSTER 🕵️
+            </button>
         </div>
     </div>
 
@@ -1199,14 +1637,14 @@
         </div>
     </div>
 
-    <!-- Confirmation Modal for New Game -->
-    <div id="modal-new-game-confirm" class="modal">
-        <div class="modal-content" style="text-align: center;">
-            <h2 class="text-white mb-2">Reset Game?</h2>
-            <p class="text-muted mb-2">This will clear all the scores. Are you sure?</p>
+    <!-- Confirmation Modal for End Game -->
+    <div id="modal-end-game-confirm" class="modal">
+        <div class="modal-content" style="text-align: center; max-width: 400px; padding: 25px;">
+            <h2 class="text-white mb-2">End Game?</h2>
+            <p class="text-muted mb-2">Are you sure you want to end the game?</p>
             <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn" style="flex:1" onclick="Game.cancelNewGame()">Cancel</button>
-                <button class="btn btn-danger" style="flex:1" onclick="Game.confirmNewGame()">Reset</button>
+                <button class="btn" style="flex:1" onclick="Game.cancelEndGame()">Cancel</button>
+                <button class="btn btn-danger" style="flex:1" onclick="Game.confirmEndGame()">End Game</button>
             </div>
         </div>
     </div>
@@ -1256,237 +1694,289 @@
         </div>
     </div>
 
-    <!-- Points Rules Modal -->
-    <div id="modal-points-rules" class="modal">
-        <div class="modal-content">
-            <h2 class="text-primary mb-2 text-c">POINTS RULES</h2>
-            <div style="text-align: justify; line-height: 1.6; color: var(--text-sec); font-size: 0.9rem;">
-                <div style="background: rgba(107, 207, 45, 0.05); padding: 12px; border-radius: 8px; margin-top: 10px; border-left: 3px solid var(--primary);">
-                    <h3 class="text-primary" style="margin-bottom: 5px; font-size: 1rem;">DETECTIVES</h3>
-                    <p><strong>+15 Points</strong> for each correctly identified Imposter.</p>
-                    <p><strong>0 Points</strong> for an incorrect identification.</p>
-                </div>
-
-                <div style="background: rgba(217, 58, 58, 0.05); padding: 12px; border-radius: 8px; margin-top: 15px; border-left: 3px solid var(--danger);">
-                    <h3 class="text-danger" style="margin-bottom: 5px; font-size: 1rem;">IMPOSTERS</h3>
-                    <p><strong>0 Points</strong> if caught by receiving the most votes.</p>
-                    <p><strong>+10 Points</strong> if suspected but successfully survived.</p>
-                    <p><strong>+20 Points</strong> if received zero votes.</p>
-                    <p class="text-gold" style="font-size: 0.8rem; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
-                        <strong>Betrayal:</strong> +5 points for voting against a fellow Imposter.
-                    </p>
-                </div>
-
-                <p class="text-muted" style="margin-top: 15px; font-size: 0.8rem; font-style: italic;">
-                    Note: Imposters are considered caught if they receive the most votes or are tied for the highest count.
-                </p>
-            </div>
-            <button class="btn btn-primary mt-2" onclick="Game.closePointsRules()">Got it!</button>
-        </div>
-    </div>
-    <!-- Add Player Mid-game Modal -->
-    <div id="modal-add-player-midgame" class="modal">
-        <div class="modal-content">
-            <h2 class="text-primary mb-2 text-c">Add New Player</h2>
-            <div class="input-group">
-                <input type="text" id="new-player-name-midgame" placeholder="Enter player name">
-            </div>
-            <div id="add-player-midgame-error" class="error-msg"></div>
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn" style="flex:1" onclick="Game.closeAddPlayerMidgame()">Cancel</button>
-                <button class="btn btn-primary" style="flex:1" onclick="Game.confirmAddPlayerMidgame()">Add</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Remove Player Mid-game Confirmation Modal -->
-    <div id="modal-remove-player-confirm" class="modal">
-        <div class="modal-content" style="text-align: center;">
-            <h2 class="text-white mb-2">Remove Player?</h2>
-            <p class="text-muted mb-2">This will remove <span id="remove-player-name" class="text-danger" style="font-weight: 900;">Player</span> from the game.</p>
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn" style="flex:1" onclick="Game.closeRemovePlayerConfirm()">Cancel</button>
-                <button class="btn btn-danger" style="flex:1" onclick="Game.confirmRemovePlayerMidgame()">Remove</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Reset Scores Confirmation Modal -->
-    <div id="modal-reset-scores-confirm" class="modal">
-        <div class="modal-content" style="text-align: center;">
-            <h2 class="text-white mb-2">Reset All Scores?</h2>
-            <p class="text-muted mb-2">This will reset every player's score to zero.</p>
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn" style="flex:1" onclick="Game.cancelResetScores()">Cancel</button>
-                <button class="btn btn-danger" style="flex:1" onclick="Game.confirmResetScores()">Reset</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Rearrange Players Modal -->
-    <div id="modal-rearrange-players" class="modal">
-        <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
-            <h2 class="text-primary mb-2 text-c">Rearrange Players</h2>
-            <div id="rearrange-players-list" style="width: 100%; margin-top: 15px;">
-                <!-- Filled dynamically -->
-            </div>
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn btn-primary" style="flex:1" onclick="Game.closeRearrangePlayers()">Done</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- General Alert Modal -->
-    <div id="modal-alert" class="modal">
-        <div class="modal-content" style="max-width: 400px; padding: 30px; text-align: center;">
-            <h2 id="alert-title" class="text-primary mb-2">Notice</h2>
-            <p id="alert-message" class="text-muted mb-2"></p>
-            <button class="btn btn-primary mt-2" onclick="Game.closeAlert()">Got It</button>
-        </div>
-    </div>
-
     <!-- Stealth Mode Info Modal -->
     <div id="modal-stealth-info" class="modal">
-        <div class="modal-content" style="max-width: 400px; padding: 30px;">
+        <div class="modal-content" style="max-width: 400px; padding: 25px;">
             <h2 class="text-primary mb-2 text-c">Stealth Mode</h2>
-            <div style="text-align: justify; line-height: 1.6; color: var(--text-sec);">
-                <p style="margin-bottom: 20px;">
-                    <strong class="text-gold">ON:</strong> The Imposter receives a secret word but does not know they are the Imposter. They must blend into the game using the descriptions provided by the other players.
+            <div style="text-align: left; line-height: 1.6; color: var(--text-sec);">
+                <p style="margin-bottom: 15px;">
+                    <strong style="color: var(--primary);">ON:</strong> Imposters receive a secret word that is slightly different from the common word. They must blend in without realizing their word is different.
                 </p>
                 <p>
-                    <strong class="text-danger">OFF:</strong> The Imposter is directly told that they are the <span class="text-danger" style="font-weight:900;">IMPOSTER</span>. They must lie from the start to blend in with the other players.
+                    <strong style="color: var(--danger);">OFF:</strong> Imposters receive no word. Their card displays <strong>"IMPOSTER"</strong>. They must deduce the word by listening to others.
                 </p>
             </div>
-            <button class="btn btn-primary mt-2" onclick="Game.closeStealthModeInfo()">Got It</button>
+            <button class="btn btn-primary mt-2" onclick="AudioEngine.play('click'); Game.closeStealthModeInfo()">Got It</button>
         </div>
     </div>
-    <!-- Voting Info Modal -->
-    <div id="modal-voting-info" class="modal">
-        <div class="modal-content" style="max-width: 400px; padding: 30px;">
-            <h2 class="text-primary mb-2 text-c">Voting</h2>
-            <div style="text-align: justify; line-height: 1.6; color: var(--text-sec);">
-                <p style="margin-bottom: 20px;">
-                    <strong class="text-primary">ON:</strong> Players vote in the app to find the Imposter. Scores are calculated and the leaderboard is shown.
+
+    <!-- Secret Alliance Info Modal -->
+    <div id="modal-alliance-info" class="modal">
+        <div class="modal-content" style="max-width: 400px; padding: 25px;">
+            <h2 class="text-primary mb-2 text-c">Secret Alliance</h2>
+            <div style="text-align: left; line-height: 1.6; color: var(--text-sec);">
+                <p style="margin-bottom: 15px;">
+                    <strong style="color: var(--primary);">ON:</strong> When playing with 2 or more Imposters, each Imposter will see the names of their fellow Imposter partners on their secret card.
                 </p>
                 <p>
-                    <strong class="text-danger">OFF:</strong> No in-app voting. Players discuss and decide in real life. The app only reveals the Imposter at the end.
+                    <strong style="color: var(--danger);">OFF:</strong> Imposters do not know who the other Imposters are and must play independently.
                 </p>
             </div>
-            <button class="btn btn-primary mt-2" onclick="Game.closeVotingInfo()">Got It</button>
+            <button class="btn btn-primary mt-2" onclick="AudioEngine.play('click'); Game.closeAllianceInfo()">Got It</button>
+        </div>
+    </div>
+
+    <!-- Voting Mode Info Modal -->
+    <div id="modal-voting-info" class="modal">
+        <div class="modal-content" style="max-width: 400px; padding: 25px;">
+            <h2 class="text-primary mb-2 text-c">Voting Mode</h2>
+            <div style="text-align: left; line-height: 1.6; color: var(--text-sec);">
+                <p style="margin-bottom: 15px;">
+                    <strong style="color: var(--primary);">ON:</strong> In-app secret voting. Every player selects their suspect on the phone, and the app calculates round scores automatically.
+                </p>
+                <p>
+                    <strong style="color: var(--danger);">OFF:</strong> Real-life voting. Players discuss and vote out loud out-of-app. The app reveals the Imposters directly.
+                </p>
+            </div>
+            <button class="btn btn-primary mt-2" onclick="AudioEngine.play('click'); Game.closeVotingInfo()">Got It</button>
+        </div>
+    </div>
+
+    <!-- Points Rules Modal: Scoring Rules -->
+    <div id="modal-points-rules" class="modal">
+        <div class="modal-content" style="max-width: 440px;">
+            <h2 class="text-primary mb-2 text-c" style="letter-spacing: 0.5px;">Scoring Rules</h2>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px; text-align: left;">
+                <div style="background: rgba(107, 207, 45, 0.08); border-left: 4px solid var(--primary); padding: 12px 14px; border-radius: 12px;">
+                    <div style="font-weight: 900; color: var(--primary); font-size: 0.95rem; margin-bottom: 4px; text-transform: uppercase;">Detective</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.9rem; color: var(--text-main);">🎯 Correctly catch an Imposter</span>
+                        <span style="font-weight: 900; color: var(--primary); font-size: 1.1rem;">+15</span>
+                    </div>
+                </div>
+
+                <div style="background: rgba(217, 58, 58, 0.08); border-left: 4px solid var(--danger); padding: 12px 14px; border-radius: 12px;">
+                    <div style="font-weight: 900; color: var(--danger); font-size: 0.95rem; margin-bottom: 6px; text-transform: uppercase;">Imposter</div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.88rem; color: var(--text-main);">😎 Survive the vote</span>
+                            <span style="font-weight: 900; color: var(--primary); font-size: 1.05rem;">+10</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.88rem; color: var(--text-main);">👻 Receive zero votes</span>
+                            <span style="font-weight: 900; color: var(--primary); font-size: 1.05rem;">+20</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.88rem; color: var(--text-main);">🗡️ Betray another Imposter</span>
+                            <span style="font-weight: 900; color: var(--accent-gold); font-size: 1.05rem;">+5</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visible Detailed Rules -->
+            <div style="margin-top: 15px; text-align: left; background: rgba(255,255,255,0.02); border-radius: 12px; padding: 12px 14px; border: 1px solid rgba(255,255,255,0.05);">
+                <div style="font-weight: 700; color: var(--text-sec); font-size: 0.85rem; margin-bottom: 6px;">Detailed Rules:</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">
+                    <p>• Imposters are considered <strong>caught</strong> if they receive the most votes or are tied for highest votes.</p>
+                    <p style="margin-top: 4px;">• If an Imposter is caught, they get <strong>0 points</strong> for surviving.</p>
+                    <p style="margin-top: 4px;">• Detectives gain <strong>+15 points</strong> for every correct vote cast for an Imposter.</p>
+                </div>
+            </div>
+
+            <button class="btn btn-primary mt-2" onclick="AudioEngine.play('click'); Game.closePointsRules()">Got it!</button>
         </div>
     </div>
 
     <!-- Mid-game Settings Modal -->
     <div id="modal-midgame-settings" class="modal">
-        <div class="modal-content">
-            <h2 class="text-primary mb-2 text-c">Game Settings</h2>
+        <div class="modal-content" style="max-width: 460px; padding: 22px;">
+            <h2 class="text-primary mb-2 text-c" style="letter-spacing: 0.5px;">GAME SETTINGS</h2>
 
-            <div style="width: 100%; margin-bottom: 12px; padding: 18px 20px; background: var(--bg-card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.05);">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div style="text-align: left;">
-                        <span class="text-white" style="font-size: 0.95rem; font-weight: 700; display: block; letter-spacing: 0.5px;">Imposter Count</span>
+            <div class="settings-group" style="margin-bottom: 20px;">
+                <!-- 1. Imposters -->
+                <div class="setting-item">
+                    <div class="setting-left">
+                        <span>Imposters</span>
                     </div>
-                    <div class="stepper-control">
-                        <button id="mid-imposter-minus" class="stepper-btn" onclick="Game.adjustImposterCount(-1, 'mid')">−</button>
-                        <span id="mid-imposter-count-display" class="stepper-value">1</span>
-                        <button id="mid-imposter-plus" class="stepper-btn" onclick="Game.adjustImposterCount(1, 'mid')">+</button>
+                    <div class="setting-right">
+                        <div class="stepper-control">
+                            <button id="mid-imposter-minus" class="stepper-btn" onclick="AudioEngine.play('click'); Game.adjustImposterCount(-1, 'mid')">−</button>
+                            <span id="mid-imposter-count-display" class="stepper-value">1</span>
+                            <button id="mid-imposter-plus" class="stepper-btn" onclick="AudioEngine.play('click'); Game.adjustImposterCount(1, 'mid')">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Stealth Mode -->
+                <div class="setting-item">
+                    <div class="setting-left">
+                        <span>Stealth Mode</span>
+                        <button class="setting-info-btn" onclick="Game.showStealthModeInfo()">
+                            <svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        </button>
+                    </div>
+                    <div class="setting-right">
+                        <label class="switch">
+                            <input type="checkbox" id="mid-setting-imposter-word">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 3. Secret Alliance -->
+                <div class="setting-item">
+                    <div class="setting-left">
+                        <span>Secret Alliance</span>
+                        <button class="setting-info-btn" onclick="Game.showAllianceInfo()">
+                            <svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        </button>
+                    </div>
+                    <div class="setting-right">
+                        <label class="switch">
+                            <input type="checkbox" id="mid-setting-secret-alliance" onchange="Game.toggleSecretAllianceSetting(this, 'mid')">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 4. Voting -->
+                <div class="setting-item">
+                    <div class="setting-left">
+                        <span>Voting</span>
+                        <button class="setting-info-btn" onclick="Game.showVotingInfo()">
+                            <svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        </button>
+                    </div>
+                    <div class="setting-right">
+                        <label class="switch">
+                            <input type="checkbox" id="mid-setting-voting">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 5. Shuffle Players -->
+                <div class="setting-item">
+                    <div class="setting-left">
+                        <span>Shuffle Players</span>
+                    </div>
+                    <div class="setting-right">
+                        <label class="switch">
+                            <input type="checkbox" id="mid-setting-shuffle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 6. Discussion Timer -->
+                <div class="setting-item">
+                    <div class="setting-left">
+                        <span>Discussion Timer</span>
+                    </div>
+                    <div class="setting-right">
+                        <label class="switch">
+                            <input type="checkbox" id="mid-setting-timer" onchange="Game.toggleMidTimerSettings()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="mid-timer-slider-container" class="timer-control hidden" style="margin: 12px auto; padding: 16px 12px; background: rgba(255,255,255,0.03); border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); width: 100%; max-width: 360px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                    <p class="text-muted" style="margin-bottom: 6px; font-size: 0.85rem; text-align: center; width: 100%;">Timer Duration</p>
+                    <div class="timer-value text-c" id="mid-timer-value-display" style="font-size: 1.4rem; font-weight: 800; text-align: center; width: 100%; color: var(--primary);">3 min</div>
+                    <input type="range" min="1" max="5" value="3" class="slider-input" id="mid-timer-duration-slider" oninput="Game.updateMidTimerValue(this.value)" style="margin: 12px auto; width: 85%; display: block;">
+                    <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.75rem; width: 85%; margin: 0 auto;">
+                        <span>1 min</span>
+                        <span>5 min</span>
+                    </div>
+                </div>
+
+                <!-- 7. Sound Effects -->
+                <div class="setting-item">
+                    <div class="setting-left">
+                        <span>Sound Effects</span>
+                    </div>
+                    <div class="setting-right">
+                        <label class="switch">
+                            <input type="checkbox" id="mid-setting-sound" checked onchange="Game.toggleSoundSetting(this.checked)">
+                            <span class="slider"></span>
+                        </label>
                     </div>
                 </div>
             </div>
-            
-            <div class="switch-container">
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span>Stealth Mode</span>
-                    <button class="btn-icon" style="width:20px; height:20px; min-height:0; margin:0; padding:0; border:none; background:none; color:var(--text-muted); cursor:pointer;" onclick="Game.showStealthModeInfo()">
-                        <svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-                    </button>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="mid-setting-imposter-word">
-                    <span class="slider"></span>
-                </label>
-            </div>
 
-            <div class="switch-container">
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span>Voting</span>
-                    <button class="btn-icon" style="width:20px; height:20px; min-height:0; margin:0; padding:0; border:none; background:none; color:var(--text-muted); cursor:pointer;" onclick="Game.showVotingInfo()">
-                        <svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-                    </button>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="mid-setting-voting">
-                    <span class="slider"></span>
-                </label>
-            </div>
-
-            <div class="switch-container">
-                <span>Shuffle Player Order</span>
-                <label class="switch">
-                    <input type="checkbox" id="mid-setting-shuffle">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="switch-container">
-                <span>Discussion Timer</span>
-                <label class="switch">
-                    <input type="checkbox" id="mid-setting-timer" onchange="Game.toggleMidTimerSettings()">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            
-            <div id="mid-timer-slider-container" class="timer-control hidden">
-                <p class="text-muted" style="margin-bottom: 10px;">Timer Duration</p>
-                <div class="timer-value" id="mid-timer-value-display">3 min</div>
-                <input type="range" min="1" max="5" value="3" class="slider-input" id="mid-timer-duration-slider" oninput="Game.updateMidTimerValue(this.value)">
-                <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.8rem;">
-                    <span>1 min</span>
-                    <span>5 min</span>
-                </div>
-            </div>
-
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn" style="flex:1" onclick="Game.closeMidgameSettings()">Cancel</button>
-                <button class="btn btn-primary" style="flex:1" onclick="Game.saveMidgameSettings()">Save</button>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn" style="flex:1; margin:0;" onclick="AudioEngine.play('click'); Game.closeMidgameSettings()">Cancel</button>
+                <button class="btn btn-primary" style="flex:1; margin:0;" onclick="AudioEngine.play('click'); Game.saveMidgameSettings()">Save</button>
             </div>
         </div>
     </div>
 
-    <!-- 6. Results -->
+    <!-- Suspense Reveal Overlay -->
+    <div id="suspense-overlay" class="suspense-overlay hidden">
+        <div class="suspense-title">THE IMPOSTER WAS</div>
+        <div class="suspense-dots" id="suspense-dots">.</div>
+        <div class="suspense-name-box" id="suspense-name-box">
+            <div style="font-size: 3rem;">🕵️</div>
+            <div id="suspense-imposter-name" class="suspense-imposter-name">PLAYER</div>
+        </div>
+    </div>
+
+    <!-- 6. Results Screen (Round Complete) -->
     <div id="screen-results" class="screen">
-        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px;">
-            <div class="content-area" id="results-area">
-                <!-- Dynamic Results -->
-            </div>
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; max-width: 500px; margin: auto;">
+            <h1 class="text-c text-gold" style="letter-spacing: 1px;">ROUND COMPLETE</h1>
             
-            <h3 id="imposter-reveal-text" class="text-c text-danger"></h3>
+            <div id="results-imposter-card" style="background: rgba(255, 255, 255, 0.03); border: 2px solid var(--primary); border-radius: 16px; padding: 18px; width: 100%; text-align: center;">
+                <h1 id="round-status-header" style="font-size: 1.8rem; margin: 0; font-weight: 900; letter-spacing: 1px; color: var(--primary);">IMPOSTER CAUGHT!</h1>
+            </div>
 
-            <div style="background: var(--bg-card); padding: 15px; border-radius: var(--radius); width: 100%; margin-bottom: 15px;">
-               <div style="display:flex; justify-content:center; gap: 20px; align-items:center;">
-                 <span class="text-muted">Common Word:</span>
-                 <strong id="res-common-word" class="text-primary">Word</strong>
+            <!-- Words Card -->
+            <div style="background: var(--bg-card); padding: 14px 18px; border-radius: var(--radius); width: 100%; border: 1px solid rgba(255,255,255,0.06);">
+               <div style="display:flex; justify-content:space-between; align-items:center;">
+                 <span class="text-muted" style="font-size: 0.9rem;">Common Word:</span>
+                 <strong id="res-common-word" class="text-primary" style="font-size: 1.1rem;">Word</strong>
                </div>
-               <div id="res-odd-word-row" style="display:flex; justify-content:center; gap: 20px; align-items:center; margin-top: 10px;">
-                 <span class="text-muted">Odd Word:</span>
-                 <strong id="res-odd-word" class="text-danger">Word</strong>
+               <div id="res-odd-word-row" style="display:flex; justify-content:space-between; align-items:center; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 8px;">
+                 <span class="text-muted" style="font-size: 0.9rem;">Odd Word:</span>
+                 <strong id="res-odd-word" class="text-danger" style="font-size: 1.1rem;">Word</strong>
                </div>
             </div>
 
-            <button id="btn-view-votes" class="btn" onclick="Game.showVotingBreakdown()">View Votes</button>
-            <button id="btn-points-rules" class="btn" onclick="Game.showPointsRules()">Points Rules</button>
-            <button id="btn-results-scoreboard" class="btn btn-primary" onclick="Game.goToScoreboard()">Leaderboard</button>
-
-            <!-- AdSense Container Slot -->
-            <div class="ad-slot-container">
-                <ins class="adsbygoogle"
-                     style="display:block; width:100%; text-align:center;"
-                     data-ad-client="ca-pub-9418997406256200"
-                     data-ad-format="auto"
-                     data-full-width-responsive="true"></ins>
-                <script>
-                     try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e){}
-                </script>
+            <!-- Round Score List -->
+            <div style="width: 100%; text-align: left;">
+                <div style="font-size: 0.85rem; font-weight: 900; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; margin-left: 4px;">ROUND SCORE</div>
+                <div id="round-score-list" style="width: 100%; display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Filled dynamically -->
+                </div>
             </div>
+
+            <div class="content-area hidden" id="results-area">
+                <!-- Legacy fallback container -->
+            </div>
+
+            <div style="display: flex; gap: 8px; width: 100%;">
+                <button id="btn-view-votes" class="btn" style="flex: 1; margin: 0; font-size: 0.85rem;" onclick="AudioEngine.play('click'); Game.showVotingBreakdown()">View Votes</button>
+                <button id="btn-points-rules" class="btn" style="flex: 1; margin: 0; font-size: 0.85rem;" onclick="AudioEngine.play('click'); Game.showPointsRules()">Scoring Rules</button>
+            </div>
+
+            <button id="btn-results-scoreboard" class="btn btn-primary" style="margin-bottom: 0;" onclick="AudioEngine.play('click'); Game.goToScoreboard()">
+                Leaderboard
+            </button>
+        </div>
+
+        <!-- AdSense Container Slot (Sticks to bottom of screen!) -->
+        <div class="ad-slot-container">
+            <ins class="adsbygoogle"
+                 style="display:block; width:100%; text-align:center;"
+                 data-ad-client="ca-pub-9418997406256200"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e){}
+            </script>
         </div>
     </div>
 
@@ -1497,49 +1987,137 @@
             <div id="voting-breakdown-list" style="width: 100%; margin: 20px 0;">
                 <!-- Filled dynamically -->
             </div>
-            <button class="btn btn-primary" onclick="Game.closeVotingBreakdown()">Close</button>
+            <button class="btn btn-primary" onclick="AudioEngine.play('click'); Game.closeVotingBreakdown()">Close</button>
         </div>
     </div>
 
-    <!-- 7. Leaderboard -->
+    <!-- General Alert Modal -->
+    <div id="modal-alert" class="modal">
+        <div class="modal-content" style="text-align: center; max-width: 400px; padding: 25px;">
+            <div style="font-size: 2.8rem; margin-bottom: 10px;">⚠️</div>
+            <h2 id="alert-title" class="text-primary mb-2" style="font-size: 1.4rem;">Notice</h2>
+            <p id="alert-message" class="text-white mb-2" style="line-height: 1.5; font-size: 0.95rem; margin: 15px 0;">Alert message text</p>
+            <button class="btn btn-primary" style="margin-top: 15px; width: 100%;" onclick="AudioEngine.play('click'); Game.closeAlert()">Got It</button>
+        </div>
+    </div>
+
+    <!-- Mid-game Add Player Modal -->
+    <div id="modal-add-player-midgame" class="modal">
+        <div class="modal-content" style="max-width: 400px; padding: 25px;">
+            <h2 class="text-primary mb-2 text-c">Add New Player</h2>
+            <input type="text" id="new-player-name-midgame" placeholder="Enter player name" style="width: 100%; margin: 15px 0;" autocomplete="off">
+            <div id="add-player-midgame-error" class="error-msg" style="margin-bottom: 10px;"></div>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button class="btn" style="flex:1" onclick="Game.closeAddPlayerMidgame()">Cancel</button>
+                <button class="btn btn-primary" style="flex:1" onclick="Game.confirmAddPlayerMidgame()">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Remove Player Confirmation Modal -->
+    <div id="modal-remove-player-confirm" class="modal">
+        <div class="modal-content" style="text-align: center; max-width: 400px; padding: 25px;">
+            <h2 class="text-white mb-2">Remove Player?</h2>
+            <p class="text-muted mb-2">Are you sure you want to remove <span id="remove-player-name" class="text-danger" style="font-weight: bold;">Player</span>?</p>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn" style="flex:1" onclick="Game.closeRemovePlayerConfirm()">Cancel</button>
+                <button class="btn btn-danger" style="flex:1" onclick="Game.confirmRemovePlayerMidgame()">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Scores Confirmation Modal -->
+    <div id="modal-reset-scores-confirm" class="modal">
+        <div class="modal-content" style="text-align: center; max-width: 400px; padding: 25px;">
+            <h2 class="text-white mb-2">Reset Scores?</h2>
+            <p class="text-muted mb-2">Are you sure you want to reset all player scores?</p>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn" style="flex:1" onclick="Game.cancelResetScores()">Cancel</button>
+                <button class="btn btn-danger" style="flex:1" onclick="Game.confirmResetScores()">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rearrange Players Mid-game Modal -->
+    <div id="modal-rearrange-players" class="modal">
+        <div class="modal-content" style="max-width: 440px; padding: 22px;">
+            <h2 class="text-primary mb-2 text-c">Rearrange Order</h2>
+            <p class="text-muted text-c mb-2" style="font-size: 0.85rem;">Drag to reorder player turn order</p>
+            <div id="rearrange-players-list" style="width: 100%; margin: 15px 0;"></div>
+            <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="Game.closeRearrangePlayers()">Done</button>
+        </div>
+    </div>
+
+    <!-- Delete Players Modal -->
+    <div id="modal-delete-players" class="modal">
+        <div class="modal-content" style="max-width: 440px; padding: 22px;">
+            <h2 class="text-primary mb-2 text-c">Remove Player</h2>
+            <p id="delete-players-subtext" class="text-muted text-c mb-2" style="font-size: 0.85rem;">Select a player to remove from the game</p>
+            <div id="delete-players-list" style="width: 100%; margin: 15px 0;"></div>
+            <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="AudioEngine.play('click'); Game.closeDeletePlayers()">Done</button>
+        </div>
+    </div>
+
+    <!-- 7. Leaderboard Screen -->
     <div id="screen-scoreboard" class="screen">
-        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px;">
-            <h1 id="scoreboard-header" class="text-c text-gold">LEADERBOARD</h1>
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; max-width: 500px; margin: auto;">
+            
+            <h1 class="text-c text-gold" style="letter-spacing: 1px; margin-bottom: 5px;">LEADERBOARD</h1>
+
             <div class="content-area" id="scoreboard-list" style="width: 100%;">
-                <!-- Scores -->
+                <!-- Dynamic Ranks with Medals -->
             </div>
             
-            <div style="display: flex; gap: 10px; width: 100%; margin-top: 5px;">
-                <button class="btn" onclick="Game.openAddPlayerMidgame()" style="border-style: dashed; flex: 1; margin: 0;">+ Add Player</button>
-                <button id="btn-reset-scores" class="btn btn-icon btn-danger" onclick="Game.askResetScores()" style="margin: 0; border-radius: var(--radius);" title="Reset Scores">
+            <div style="display: flex; gap: 8px; width: 100%; margin-top: 5px;">
+                <button class="btn" onclick="AudioEngine.play('click'); Game.openAddPlayerMidgame()" style="border-style: dashed; flex: 1; margin: 0; font-size: 0.85rem;">+ Add Player</button>
+                <button id="btn-reset-scores" class="btn btn-icon btn-danger" onclick="AudioEngine.play('click'); Game.askResetScores()" style="margin: 0; border-radius: var(--radius);" title="Reset Scores">
                     <svg viewBox="0 0 24 24" style="width: 22px; height: 22px; fill: currentColor;"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
                 </button>
             </div>
-            <div style="display: flex; gap: 10px; width: 100%; margin-top: 5px;">
-                <button class="btn" onclick="Game.openRearrangePlayers()" style="flex: 1; margin: 0;">Rearrange</button>
-                <button class="btn" onclick="Game.openMidgameSettings()" style="flex: 1; margin: 0;">Game Settings</button>
+            <div style="display: flex; gap: 8px; width: 100%;">
+                <button class="btn" onclick="AudioEngine.play('click'); Game.openRearrangePlayers()" style="flex: 1; margin: 0; font-size: 0.85rem;">Rearrange</button>
+                <button class="btn" onclick="AudioEngine.play('click'); Game.openDeletePlayers()" style="flex: 1; margin: 0; font-size: 0.85rem;">Remove</button>
+                <button class="btn" onclick="AudioEngine.play('click'); Game.openMidgameSettings()" style="flex: 1; margin: 0; font-size: 0.85rem;">Settings</button>
             </div>
             
-            <button id="btn-back-to-results" class="btn" onclick="Game.backToResults()">Back to Scoreboard</button>
-            <button class="btn btn-primary" onclick="Game.setupNextRound()">Next Round</button>
-            <button class="btn" onclick="Game.askNewGame()">New Game</button>
+            <button id="btn-back-to-results" class="btn" style="margin-bottom: 0;" onclick="AudioEngine.play('click'); Game.backToResults()">Back to Imposter Reveal</button>
+            <button class="btn btn-primary" style="margin-bottom: 0;" onclick="AudioEngine.play('click'); Game.setupNextRound()">NEXT ROUND</button>
+            
+            <button class="btn btn-danger" style="margin-top: 5px; width: 100%;" onclick="AudioEngine.play('click'); Game.askEndGame()">End Game</button>
+        </div>
 
-            <!-- AdSense Container Slot -->
-            <div class="ad-slot-container">
-                <ins class="adsbygoogle"
-                     style="display:block; width:100%; text-align:center;"
-                     data-ad-client="ca-pub-9418997406256200"
-                     data-ad-format="auto"
-                     data-full-width-responsive="true"></ins>
-                <script>
-                     try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e){}
-                </script>
-            </div>
+        <!-- AdSense Container Slot (Sticks to bottom of screen!) -->
+        <div class="ad-slot-container">
+            <ins class="adsbygoogle"
+                 style="display:block; width:100%; text-align:center;"
+                 data-ad-client="ca-pub-9418997406256200"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e){}
+            </script>
         </div>
     </div>
 </div>
 
 <script>
+/**
+ * ODDINARY ANALYTICS ENGINE
+ * Funnel & usage event tracking with GA4 & fallback logger
+ */
+const Analytics = {
+    logEvent: function(eventName, params = {}) {
+        try {
+            if (window.gtag) {
+                window.gtag('event', eventName, params);
+            }
+            console.log(`[Analytics] ${eventName}:`, params);
+        } catch(e) {
+            console.error("Analytics error:", e);
+        }
+    }
+};
+
 /**
  * ODDINARY WEB AUDIO API SYNTHESIZER
  * Pure synthesized sound effects - zero external audio dependencies!
@@ -1547,6 +2125,7 @@
 const AudioEngine = {
     ctx: null,
     muted: false,
+    lastPlayTime: 0,
 
     init: function() {
         if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
@@ -1557,6 +2136,10 @@ const AudioEngine = {
 
     play: function(type) {
         if (this.muted) return;
+        const nowMs = Date.now();
+        if (type === 'click' && nowMs - this.lastPlayTime < 40) return;
+        if (type === 'click') this.lastPlayTime = nowMs;
+
         try {
             if (!this.ctx) this.init();
             if (this.ctx && this.ctx.state === 'suspended') {
@@ -1612,6 +2195,35 @@ const AudioEngine = {
                     osc.start(now + delay);
                     osc.stop(now + delay + 0.1);
                 });
+            } else if (type === 'suspense') {
+                // Soft, warm sine-wave chord swell (C4 & G4)
+                [261.63, 392.00].forEach(freq => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now);
+                    gain.gain.setValueAtTime(0.01, now);
+                    gain.gain.linearRampToValueAtTime(0.08, now + 0.8);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 1.2);
+                });
+            } else if (type === 'reveal') {
+                // Crisp, melodic 3-note bell chime (C5 -> E5 -> G5)
+                [523.25, 659.25, 783.99].forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+                    gain.gain.setValueAtTime(0.18, now + idx * 0.07);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.35);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + idx * 0.07);
+                    osc.stop(now + idx * 0.07 + 0.35);
+                });
             } else if (type === 'fanfare') {
                 const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
                 notes.forEach((freq, idx) => {
@@ -1637,6 +2249,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW failed:', err));
     }
+    document.querySelectorAll('.copyright-year').forEach(el => {
+        el.innerText = new Date().getFullYear();
+    });
+
+    // Universal audio click listener for all interactive options, buttons, toggles, and controls
+    document.addEventListener('click', (e) => {
+        const target = e.target.closest('button, .btn, .switch, .close-btn, .setting-info-btn, .player-select-item, .player-chip, input[type="checkbox"], input[type="range"], .stepper-btn, .card-container');
+        if (target) {
+            AudioEngine.play('click');
+        }
+    }, true);
+
+    Analytics.logEvent('homepage_opened');
 });
 
 // --- Initialize Word Selector ---
@@ -1651,24 +2276,41 @@ const State = {
     oddPlayerIds: [],
     votes: {}, 
     round: 0,
-    config: { shuffle: false, timer: false, timerDuration: 3, imposterCount: 1, imposterHasWord: true, voting: true },
+    config: { 
+        shuffle: false, 
+        timer: false, 
+        timerDuration: 3, 
+        imposterCount: 1, 
+        imposterHasWord: true, 
+        voting: true,
+        secretAlliance: false,
+        sound: true
+    },
     stepIndex: 0,
     pendingVoteTarget: null,
     pendingForgotPlayer: null,
     pendingRemovePlayerId: null,
     selectedTargets: [],
     timerInterval: null,
-    discussionTimeLeft: 0
+    discussionTimeLeft: 0,
+    // Cumulative game statistics across rounds
+    stats: {
+        imposterCountTimes: {},
+        imposterCaughtTimes: {},
+        correctGuesses: {},
+        votesReceived: {}
+    }
 };
 
 const $ = (id) => document.getElementById(id);
-const Screens = ['landing', 'setup', 'reveal', 'discuss', 'voting', 'results', 'scoreboard'];
+const Screens = ['landing', 'setup', 'reveal', 'discuss', 'voting', 'voting-complete', 'results', 'scoreboard'];
 let shouldPreventRefresh = true;
-const SESSION_KEY = 'oddinary_session_v1';
+const SESSION_KEY = 'oddinary_session_v2';
 
 // --- Safety: Prevent Refresh ---
 window.addEventListener('beforeunload', (e) => {
     if(shouldPreventRefresh && (State.round > 0)) {
+        Analytics.logEvent('game_abandoned', { round: State.round });
         e.preventDefault();
         e.returnValue = '';
     }
@@ -1685,12 +2327,15 @@ const Game = {
                 { id: 103, name: "", score: 0 }
             ];
         }
+        AudioEngine.muted = !State.config.sound;
     },
 
     saveSession: () => {
         const data = {
             players: State.players,
-            config: State.config
+            config: State.config,
+            round: State.round,
+            stats: State.stats
         };
         sessionStorage.setItem(SESSION_KEY, JSON.stringify(data));
     },
@@ -1702,9 +2347,11 @@ const Game = {
                 const data = JSON.parse(raw);
                 if(data.players) State.players = data.players;
                 if(data.config) State.config = {...State.config, ...data.config};
-                // Ensure default if missing
+                if(data.round) State.round = data.round;
+                if(data.stats) State.stats = data.stats;
                 if(State.config.voting === undefined) State.config.voting = true;
-                State.players.forEach(p => p.score = 0); 
+                if(State.config.secretAlliance === undefined) State.config.secretAlliance = false;
+                if(State.config.sound === undefined) State.config.sound = true;
             } catch(e) {
                 console.error("Failed to load session", e);
             }
@@ -1712,8 +2359,12 @@ const Game = {
     },
 
     showScreen: (name) => {
-        Screens.forEach(s => $(`screen-${s}`).classList.remove('active'));
-        $(`screen-${name}`).classList.add('active');
+        Screens.forEach(s => {
+            const el = $(`screen-${s}`);
+            if(el) el.classList.remove('active');
+        });
+        const target = $(`screen-${name}`);
+        if(target) target.classList.add('active');
         window.scrollTo(0,0);
     },
 
@@ -1721,6 +2372,16 @@ const Game = {
         const modal = $('modal-rules');
         modal.classList.toggle('open');
     },
+
+    toggleSoundSetting: (enabled) => {
+        State.config.sound = enabled;
+        AudioEngine.muted = !enabled;
+        if(enabled) AudioEngine.play('click');
+        Game.saveSession();
+    },
+
+    showAllianceInfo: () => $('modal-alliance-info').classList.add('open'),
+    closeAllianceInfo: () => $('modal-alliance-info').classList.remove('open'),
 
     // Timer Settings
     toggleTimerSettings: () => {
@@ -1740,9 +2401,19 @@ const Game = {
 
     // --- Setup Phase ---
     goToSetup: () => {
+        Analytics.logEvent('start_game_clicked');
         Game.showScreen('setup');
         Game.renderSetupInputs();
         Game.updateImposterUI();
+        
+        // Sync checkboxes
+        $('setting-imposter-word').checked = State.config.imposterHasWord;
+        $('setting-voting').checked = State.config.voting;
+        $('setting-shuffle').checked = State.config.shuffle;
+        $('setting-secret-alliance').checked = State.config.secretAlliance;
+        $('setting-timer').checked = State.config.timer;
+        $('setting-sound').checked = State.config.sound;
+        if(State.config.timer) $('timer-slider-container').classList.remove('hidden');
     },
 
     goHome: () => Game.showScreen('landing'),
@@ -1762,11 +2433,9 @@ const Game = {
         if(State.players.length <= 3) return Game.showAlert("Minimum 3 players required!", "Warning");
         State.players.splice(index, 1);
         
-        // Validation: Re-verify imposter count after removal
         const maxImposters = Math.max(1, Math.floor(State.players.length / 3));
         if(State.config.imposterCount > maxImposters) {
             State.config.imposterCount = maxImposters;
-            Game.showAlert(`Maximum imposters set to ${maxImposters} for ${State.players.length} players.`, "Game Balance");
         }
 
         Game.saveSession();
@@ -1774,12 +2443,10 @@ const Game = {
         Game.updateImposterUI();
     },
     
-    // Validate player name for duplicates
     validatePlayerName: (index) => {
         const errorEl = $('setup-error');
         const currentName = State.players[index].name.trim();
         
-        // Check for duplicates
         const hasDuplicate = State.players.some((p, i) => 
             i !== index && p.name.trim().toLowerCase() === currentName.toLowerCase() && currentName !== ""
         );
@@ -1843,7 +2510,6 @@ const Game = {
         const list = $(listId);
         if (!list) return;
         
-        // Update State.players based on new DOM order
         const newList = [];
         list.querySelectorAll('.input-group').forEach(el => {
             const index = parseInt(el.getAttribute('data-player-index'));
@@ -1865,7 +2531,6 @@ const Game = {
         if (!list) return;
         list.innerHTML = "";
         
-        // Add dragover listener to container if not present
         if (!list.ondragover) {
             list.ondragover = (e) => Game.handleDragOver(e, 'players-list');
             list.ondrop = (e) => Game.handleDrop(e, 'players-list', false);
@@ -1895,14 +2560,13 @@ const Game = {
                 <div class="drag-handle" title="Drag to reorder">
                     <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:currentColor;"><path d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
                 </div>
-                <button class="btn btn-icon btn-danger" onclick="Game.removePlayer(${idx})" style="width:44px; height:44px; min-height:0; border-radius:12px;">
+                <button class="btn btn-icon btn-danger" onclick="AudioEngine.play('click'); Game.removePlayer(${idx})" style="width:44px; height:44px; min-height:0; border-radius:12px;">
                    <svg viewBox="0 0 24 24" style="width:20px; height:20px;"><path d="M5 11h14v2H5z" fill="currentColor"/></svg>
                 </button>
             `;
             list.appendChild(grp);
         });
         
-        // Scroll to last player and focus if new player was added
         if(scrollToLast && State.players.length > 0) {
             setTimeout(() => {
                 const lastIndex = State.players.length - 1;
@@ -1918,7 +2582,6 @@ const Game = {
     startGame: () => {
         const errorEl = $('setup-error');
         
-        // Validation: Check for empty names
         const hasEmpty = State.players.some(p => !p.name.trim());
         if(hasEmpty) {
             errorEl.innerText = "All players must have a name!";
@@ -1927,7 +2590,6 @@ const Game = {
             return;
         }
         
-        // Check for duplicates
         const names = State.players.map(p => p.name.trim().toLowerCase()).filter(n => n !== "");
         const hasDuplicates = names.some((name, idx) => names.indexOf(name) !== idx);
         if(hasDuplicates) {
@@ -1944,22 +2606,34 @@ const Game = {
             return;
         }
 
-        Game.saveSession();
-
-        // Update config from UI
+        // Config sync
         State.config.shuffle = $('setting-shuffle').checked;
         State.config.timer = $('setting-timer').checked;
         State.config.imposterHasWord = $('setting-imposter-word').checked;
         State.config.voting = $('setting-voting').checked;
+        State.config.secretAlliance = $('setting-secret-alliance').checked;
+        State.config.sound = $('setting-sound').checked;
+        AudioEngine.muted = !State.config.sound;
+        
         if(State.config.timer) {
             State.config.timerDuration = parseInt($('timer-duration-slider').value);
         }
 
+        Analytics.logEvent('game_started', {
+            player_count: State.players.length,
+            imposter_count: State.config.imposterCount,
+            stealth_mode: State.config.imposterHasWord,
+            voting_enabled: State.config.voting,
+            secret_alliance: State.config.secretAlliance
+        });
+
+        Game.saveSession();
         Game.setupNextRound();
     },
 
     setupNextRound: () => {
         State.round++;
+        State.players.forEach(p => p.roundScore = 0);
         const pair = wordSelector.getRandomPair();
         
         if(Math.random() > 0.5) {
@@ -1972,7 +2646,6 @@ const Game = {
 
         const pIds = State.players.map(p => p.id);
         
-        // Pick multiple imposters
         State.oddPlayerIds = [];
         const availableIndices = Array.from({length: pIds.length}, (_, i) => i);
         for(let i = 0; i < State.config.imposterCount; i++) {
@@ -2008,7 +2681,12 @@ const Game = {
         const role = State.roles[playerId];
         const labelEl = $('reveal-role-label');
         const wordEl = $('secret-word-display');
+        const cardBack = document.querySelector('.card-back');
         
+        // Remove existing alliance hints
+        const existingHint = cardBack.querySelector('.alliance-card-hint');
+        if (existingHint) existingHint.remove();
+
         if (role === 'odd') {
             if (State.config.imposterHasWord) {
                 wordEl.innerText = State.words.odd;
@@ -2019,17 +2697,23 @@ const Game = {
                 wordEl.innerText = "IMPOSTER";
                 wordEl.classList.add('text-danger');
             }
+
+            // Secret Alliance Feature: Display partner names if Enabled and imposter count > 1
+            if (State.config.secretAlliance && State.oddPlayerIds.length > 1) {
+                const partnerIds = State.oddPlayerIds.filter(id => id !== playerId);
+                const partnerNames = partnerIds.map(id => State.players.find(p => p.id === id).name);
+                
+                const allianceHint = document.createElement('div');
+                allianceHint.className = 'alliance-card-hint';
+                allianceHint.innerHTML = `🤝 <strong>Secret Alliance:</strong> ${partnerNames.join(', ')} ${partnerNames.length > 1 ? 'are also Imposters' : 'is also an Imposter'}`;
+                cardBack.appendChild(allianceHint);
+            }
         } else {
             labelEl.innerText = "Your secret word is:";
             wordEl.innerText = State.words.common;
             wordEl.classList.remove('text-danger');
         }
         
-        // Remove teammate identification as requested
-        const existingHint = document.querySelector('.team-hint');
-        if (existingHint) existingHint.remove();
-        
-        // Button Logic: Check if Last Player
         const nextBtn = $('btn-next-player');
         nextBtn.classList.add('hidden');
         
@@ -2039,12 +2723,9 @@ const Game = {
              nextBtn.innerHTML = `Hide & Pass`;
         }
         
-        // Disable card flip initially
         State.canFlip = false;
-        
         Game.showScreen('reveal');
         
-        // Enable flip after player name is displayed (500ms delay)
         setTimeout(() => {
             State.canFlip = true;
         }, 500);
@@ -2065,10 +2746,7 @@ const Game = {
 
     nextReveal: () => {
         AudioEngine.play('click');
-        // Hide button immediately to prevent double clicks
         $('btn-next-player').classList.add('hidden');
-        
-        // Flip card back first
         $('word-card').classList.remove('flipped');
         
         setTimeout(() => {
@@ -2086,7 +2764,6 @@ const Game = {
         const timerContainer = $('timer-container');
         const discussTimerSettings = $('discuss-timer-settings');
         
-        // Change button text for Real Life Voting
         const vBtn = $('btn-start-voting');
         if(vBtn) vBtn.innerText = !State.config.voting ? "Reveal Imposter" : "Start Voting";
 
@@ -2163,16 +2840,17 @@ const Game = {
     },
 
     // --- Close Reveal Modal ---
-    askCloseReveal: () => {
-        $('modal-close-reveal').classList.add('open');
-    },
-
-    cancelCloseReveal: () => {
-        $('modal-close-reveal').classList.remove('open');
-    },
-
+    askCloseReveal: () => $('modal-close-reveal').classList.add('open'),
+    cancelCloseReveal: () => $('modal-close-reveal').classList.remove('open'),
     confirmCloseReveal: () => {
         $('modal-close-reveal').classList.remove('open');
+        // Abort in-progress round: revert round counter if round was not completed with votes
+        if (State.round > 0) {
+            State.round--;
+        }
+        State.players.forEach(p => p.roundScore = 0);
+        State.votes = {};
+        Game.saveSession();
         Game.goToScoreboard();
     },
 
@@ -2192,9 +2870,7 @@ const Game = {
         $('modal-forgot-word').classList.add('open');
     },
 
-    closeForgotWord: () => {
-        $('modal-forgot-word').classList.remove('open');
-    },
+    closeForgotWord: () => $('modal-forgot-word').classList.remove('open'),
 
     askForgotConfirm: (playerId) => {
         State.pendingForgotPlayer = playerId;
@@ -2215,6 +2891,10 @@ const Game = {
         const role = State.roles[playerId];
         const labelEl = $('forgot-word-label');
         const wordEl = $('forgot-word-display');
+        const modalContent = document.querySelector('#modal-word-reveal .modal-content');
+        
+        const existingHint = modalContent.querySelector('.alliance-card-hint');
+        if(existingHint) existingHint.remove();
         
         if (role === 'odd') {
             if (State.config.imposterHasWord) {
@@ -2227,6 +2907,16 @@ const Game = {
                 wordEl.innerText = "IMPOSTER";
                 wordEl.classList.add('text-danger');
                 wordEl.classList.remove('text-primary');
+            }
+
+            if (State.config.secretAlliance && State.oddPlayerIds.length > 1) {
+                const partnerIds = State.oddPlayerIds.filter(id => id !== playerId);
+                const partnerNames = partnerIds.map(id => State.players.find(p => p.id === id).name);
+                
+                const allianceHint = document.createElement('div');
+                allianceHint.className = 'alliance-card-hint';
+                allianceHint.innerHTML = `🤝 <strong>Secret Alliance:</strong> ${partnerNames.join(', ')} ${partnerNames.length > 1 ? 'are also Imposters' : 'is also an Imposter'}`;
+                modalContent.appendChild(allianceHint);
             }
         } else {
             labelEl.innerText = "Your word is:";
@@ -2244,14 +2934,8 @@ const Game = {
         State.pendingForgotPlayer = null;
     },
 
-    // --- Points Rules ---
-    showPointsRules: () => {
-        $('modal-points-rules').classList.add('open');
-    },
-
-    closePointsRules: () => {
-        $('modal-points-rules').classList.remove('open');
-    },
+    showPointsRules: () => $('modal-points-rules').classList.add('open'),
+    closePointsRules: () => $('modal-points-rules').classList.remove('open'),
 
     // --- Voting ---
     startVoting: () => {
@@ -2268,7 +2952,6 @@ const Game = {
     },
 
     revealImpostersRL: () => {
-        // Skip voting scoring, just set round results to empty and show reveal
         State.players.forEach(p => p.roundScore = 0);
         Game.renderResults({}, "ID REVEALED");
     },
@@ -2294,10 +2977,8 @@ const Game = {
             list.appendChild(btn);
         });
 
-        // Use the actual number of imposters assigned at round start
         const activeImposterCount = State.oddPlayerIds.length;
 
-        // Add Multi-vote Counter and Confirm Button
         const controls = document.createElement('div');
         controls.className = "content-area";
         controls.innerHTML = `
@@ -2312,7 +2993,7 @@ const Game = {
     toggleVoteSelect: (targetId) => {
         AudioEngine.play('click');
         const idx = State.selectedTargets.indexOf(targetId);
-        const max = State.oddPlayerIds.length; // Use active count for the round
+        const max = State.oddPlayerIds.length;
         const btn = $(`vote-btn-${targetId}`);
 
         if (idx > -1) {
@@ -2321,7 +3002,6 @@ const Game = {
             btn.style.background = "var(--bg-card)";
         } else {
             if (State.selectedTargets.length >= max) {
-                // If only 1 imposter, just replace
                 if (max === 1) {
                     const oldId = State.selectedTargets[0];
                     const oldBtn = $(`vote-btn-${oldId}`);
@@ -2358,8 +3038,6 @@ const Game = {
         Game.submitVote(voterId, [...State.selectedTargets]);
     },
 
-
-
     submitVote: (voterId, targetIds) => {
         State.votes[voterId] = targetIds;
         State.stepIndex++;
@@ -2371,8 +3049,19 @@ const Game = {
         }
     },
 
-    // --- Results ---
+    // --- Results & Scoring ---
     calculateResults: () => {
+        const totalVotesCast = Object.values(State.votes).reduce((sum, v) => sum + (Array.isArray(v) ? v.length : 1), 0);
+        if (totalVotesCast === 0 && State.config.voting) {
+            // Round aborted without votes: revert round counter and clear round score
+            if (State.round > 0) State.round--;
+            State.players.forEach(p => p.roundScore = 0);
+            State.votes = {};
+            Game.saveSession();
+            Game.goToScoreboard();
+            return;
+        }
+
         const voteCounts = {}; 
         let maxVotes = 0;
         
@@ -2381,10 +3070,11 @@ const Game = {
             p.roundScore = 0; 
         });
         
-        // Count all votes (each player might have multiple)
         Object.values(State.votes).forEach(targetIds => {
             targetIds.forEach(targetId => {
                 voteCounts[targetId] = (voteCounts[targetId] || 0) + 1;
+                // Track cumulative votes received for stats
+                State.stats.votesReceived[targetId] = (State.stats.votesReceived[targetId] || 0) + 1;
             });
         });
 
@@ -2395,6 +3085,11 @@ const Game = {
         const mostVotedIds = Object.keys(voteCounts).filter(pid => voteCounts[pid] === maxVotes && maxVotes > 0);
         const oddIds = State.oddPlayerIds;
         
+        // Track imposter counts
+        oddIds.forEach(id => {
+            State.stats.imposterCountTimes[id] = (State.stats.imposterCountTimes[id] || 0) + 1;
+        });
+
         // 1. Identify Suspects Scoring
         State.players.forEach(p => {
             const playerVotes = State.votes[p.id] || [];
@@ -2407,6 +3102,7 @@ const Game = {
                         p.roundScore += 5; // Betrayal Penalty
                     } else {
                         p.roundScore += 15; // Detective Points
+                        State.stats.correctGuesses[p.id] = (State.stats.correctGuesses[p.id] || 0) + 1;
                     }
                 }
             });
@@ -2421,13 +3117,12 @@ const Game = {
             const imposterPlayer = State.players.find(p => p.id == id);
             
             if (mostVotedIds.includes(id.toString()) && votesOnMe > 0) {
-                // Caught -> 0 points (Starts at 0)
+                // Caught -> 0 points
+                State.stats.imposterCaughtTimes[id] = (State.stats.imposterCaughtTimes[id] || 0) + 1;
             } else if (votesOnMe === 0) {
-                // Perfect Escape -> +20 Points
-                imposterPlayer.roundScore += 20; 
+                imposterPlayer.roundScore += 20; // Perfect Escape
             } else {
-                // Suspected -> +10 Points
-                imposterPlayer.roundScore += 10;
+                imposterPlayer.roundScore += 10; // Suspected Escape
             }
         });
 
@@ -2435,84 +3130,86 @@ const Game = {
         let roundStatus = isAnyCaught ? 
             (caughtImposters.length > 1 ? "Imposters Caught!" : "Imposter Caught!") : 
             (isPerfectEscape ? "Perfect Escape!" : (oddIds.length > 1 ? "Imposters Escaped!" : "Imposter Escaped!"));
-        let winner = isAnyCaught ? "players" : "imposters";
         
         State.players.forEach(p => p.score += p.roundScore);
         Game.saveSession();
 
-        Game.renderResults(voteCounts, roundStatus);
+        // Store pending reveal data and navigate to Voting Complete screen
+        const imposterNames = oddIds.map(id => State.players.find(p => p.id === id).name);
+        State.pendingRevealData = {
+            imposterNames: imposterNames,
+            highestVoteCount: maxVotes,
+            voteCounts: voteCounts,
+            roundStatus: roundStatus
+        };
+        Game.showScreen('voting-complete');
+    },
+
+    startImposterRevealAnimation: () => {
+        if (!State.pendingRevealData) return;
+        const data = State.pendingRevealData;
+        Game.triggerSuspenseReveal(data.imposterNames, data.highestVoteCount, () => {
+            Game.renderResults(data.voteCounts, data.roundStatus);
+        });
+    },
+
+    triggerSuspenseReveal: (imposterNames, voteCount, callback) => {
+        const overlay = $('suspense-overlay');
+        const nameBox = $('suspense-name-box');
+        const nameEl = $('suspense-imposter-name');
+        const dotsEl = $('suspense-dots');
+
+        nameEl.innerText = imposterNames.join(', ');
+        
+        overlay.classList.remove('hidden');
+        nameBox.classList.remove('reveal-active');
+        dotsEl.innerText = ".";
+        
+        AudioEngine.play('suspense');
+
+        let step = 1;
+        const interval = setInterval(() => {
+            step++;
+            if (step === 2) dotsEl.innerText = "..";
+            else if (step === 3) dotsEl.innerText = "...";
+            else clearInterval(interval);
+        }, 350);
+
+        setTimeout(() => {
+            nameBox.classList.add('reveal-active');
+            AudioEngine.play('reveal');
+        }, 1200);
+
+        setTimeout(() => {
+            overlay.classList.add('hidden');
+            if (callback) callback();
+        }, 2800);
     },
 
     renderResults: (voteCounts, roundStatus) => {
         AudioEngine.play('fanfare');
-        const area = $('results-area');
-        area.innerHTML = "";
         
-        const isRL = !State.config.voting;
-        
-        // Settings Visibility
-        const vBtn = $('btn-view-votes');
-        const pBtn = $('btn-points-rules');
-        const sBtn = $('btn-results-scoreboard');
-        
-        if(vBtn) vBtn.style.display = isRL ? 'none' : 'flex';
-        if(pBtn) pBtn.style.display = isRL ? 'none' : 'flex';
-        if(sBtn) sBtn.innerText = isRL ? 'Continue' : 'Leaderboard';
+        const statusHeader = $('round-status-header');
+        const cardEl = $('results-imposter-card');
+        const displayStatus = (roundStatus || "ROUND COMPLETE").toUpperCase();
 
-        // Header
-        const statusH = document.createElement('h2');
-        statusH.innerText = "Imposter Reveal"; 
-        statusH.style.marginBottom = "5px";
-        statusH.style.color = "white"; 
-        area.appendChild(statusH);
+        if (statusHeader) {
+            statusHeader.innerText = displayStatus;
+            if (displayStatus.includes('CAUGHT')) {
+                statusHeader.style.color = "var(--primary)";
+                if (cardEl) {
+                    cardEl.style.borderColor = "var(--primary)";
+                    cardEl.style.background = "rgba(46, 204, 113, 0.08)";
+                }
+            } else {
+                statusHeader.style.color = "var(--danger)";
+                if (cardEl) {
+                    cardEl.style.borderColor = "var(--danger)";
+                    cardEl.style.background = "rgba(217, 58, 58, 0.08)";
+                }
+            }
+        }
 
-        const subH = document.createElement('h3');
-        subH.innerText = isRL ? "" : roundStatus;
-        subH.style.marginBottom = "20px";
-        subH.className = "text-gold";
-        area.appendChild(subH);
-        
-        if(!isRL) {
-            const sortedPlayers = [...State.players].sort((a,b) => (voteCounts[b.id] || 0) - (voteCounts[a.id] || 0));
-            
-            sortedPlayers.forEach(p => {
-                 const count = voteCounts[p.id] || 0;
-                 const rScore = p.roundScore > 0 ? `+${p.roundScore}` : `0`;
-                 const rClass = p.roundScore > 0 ? `text-primary` : `text-muted`;
-                 
-                 const wrap = document.createElement('div');
-                 wrap.style.width = "100%";
-                 wrap.style.marginBottom = "15px";
-                 
-                 wrap.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span>${p.name}</span>
-                        <span class="${rClass}" style="font-weight:bold;">${rScore} pts</span>
-                    </div>
-                    <div class="vote-bar-container">
-                        <div class="vote-bar-fill" style="width: 0%;" data-w="${(count/State.players.length)*100}%"></div>
-                        <span class="vote-count-text">${count} votes</span>
-                    </div>
-                 `;
-                 area.appendChild(wrap);
-            });
-        } else {
-            // Simplify view for RL Voting
-            const animDiv = document.createElement('div');
-            animDiv.className = "pulse-anim";
-            animDiv.innerText = "🔍";
-            animDiv.style.margin = "20px auto";
-            area.appendChild(animDiv);
-        }
-        
-        // Imposter Reveal Text - Support multi
-        const names = State.oddPlayerIds.map(id => State.players.find(p => p.id === id).name);
-        if (names.length > 1) {
-            $('imposter-reveal-text').innerText = `Imposters: ${names.join(', ')}`;
-        } else {
-            $('imposter-reveal-text').innerText = `Imposter: ${names[0]}`;
-        }
-        
         $('res-common-word').innerText = State.words.common;
         
         const oddWordRow = $('res-odd-word-row');
@@ -2522,60 +3219,211 @@ const Game = {
         } else {
             oddWordRow.classList.add('hidden');
         }
+
+        // Render Round Score List
+        const list = $('round-score-list');
+        list.innerHTML = "";
         
+        const sorted = [...State.players].sort((a,b) => b.roundScore - a.roundScore);
+        sorted.forEach((p, idx) => {
+            const isImposter = State.oddPlayerIds.includes(p.id);
+            const medal = idx === 0 ? "🥇" : (idx === 1 ? "🥈" : (idx === 2 ? "🥉" : ""));
+            const icon = isImposter ? "🕵️" : (medal || "👤");
+            
+            const card = document.createElement('div');
+            card.style.background = "var(--bg-card)";
+            card.style.border = "1px solid rgba(255,255,255,0.06)";
+            card.style.padding = "10px 14px";
+            card.style.borderRadius = "12px";
+            card.style.display = "flex";
+            card.style.justifyContent = "space-between";
+            card.style.alignItems = "center";
+
+            card.innerHTML = `
+                <div style="display:flex; align-items:center; gap: 8px;">
+                    <span style="font-size: 1.1rem;">${icon}</span>
+                    <span style="font-weight: 700; color: white; font-size: 0.95rem;">${p.name}</span>
+                </div>
+                <div style="font-weight: 900; color: ${p.roundScore > 0 ? 'var(--primary)' : 'var(--text-muted)'}; font-size: 1.05rem;">
+                    +${p.roundScore}
+                </div>
+            `;
+            list.appendChild(card);
+        });
+
+        Analytics.logEvent('round_completed', { round: State.round });
         Game.showScreen('results');
-        
-        setTimeout(() => {
-            document.querySelectorAll('.vote-bar-fill').forEach(bar => {
-                bar.style.width = bar.getAttribute('data-w');
-            });
-        }, 100);
     },
-    
+
     goToScoreboard: () => {
         const area = $('scoreboard-list');
         area.innerHTML = "";
         
-        const isVoting = State.config.voting;
-        const header = $('scoreboard-header');
-        if(header) header.innerText = isVoting ? "LEADERBOARD" : "ROUND OVER";
+        const btnBack = $('btn-back-to-results');
+        if (btnBack) {
+            if (State.round > 0 && State.oddPlayerIds && State.oddPlayerIds.length > 0) {
+                btnBack.style.display = 'block';
+            } else {
+                btnBack.style.display = 'none';
+            }
+        }
 
-        const resetBtn = $('btn-reset-scores');
-        if(resetBtn) resetBtn.style.display = isVoting ? 'flex' : 'none';
+        const sorted = [...State.players].sort((a,b) => b.score - a.score);
 
-        const backBtn = $('btn-back-to-results');
-        if(backBtn) backBtn.innerText = isVoting ? 'Back to Scoreboard' : 'Back to Imposter Reveal';
-
-        if (!isVoting) {
-            area.style.display = "none";
-        } else {
-            area.style.display = "block";
-            const sorted = [...State.players].sort((a,b) => b.score - a.score);
+        sorted.forEach((p, idx) => {
+            const item = document.createElement('div');
+            item.className = "list-item";
+            if(idx === 0) item.style.borderColor = "var(--accent-gold)";
             
-            sorted.forEach((p, idx) => {
+            const medalEmoji = idx === 0 ? "🥇" : (idx === 1 ? "🥈" : (idx === 2 ? "🥉" : `#${idx+1}`));
+
+            item.innerHTML = `
+                <div style="display:flex; align-items:center; flex: 1;">
+                    <span style="font-weight:900; font-size:1.1rem; width:35px; text-align:center; margin-right:8px;">${medalEmoji}</span>
+                    <span style="font-size:1.1rem; font-weight:bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">${p.name}</span>
+                </div>
+                <div style="text-align:right;">
+                    <span class="text-primary" style="font-weight:900; font-size:1.15rem; display:block;">${p.score}</span>
+                </div>
+            `;
+            area.appendChild(item);
+        });
+
+        Game.showScreen('scoreboard');
+    },
+
+    // --- Delete Players Feature ---
+    openDeletePlayers: () => {
+        const list = $('delete-players-list');
+        const subtext = $('delete-players-subtext');
+        if (!list) return;
+        list.innerHTML = "";
+
+        if (State.players.length <= 3) {
+            if (subtext) subtext.style.display = "none";
+            list.innerHTML = `<p class="text-danger text-c" style="padding: 15px; font-weight: 700; font-size: 0.95rem;">Minimum 3 players required in game!</p>`;
+        } else {
+            if (subtext) subtext.style.display = "block";
+            State.players.forEach(p => {
                 const item = document.createElement('div');
-                item.className = "list-item";
-                if(idx === 0) item.style.borderColor = "var(--accent-gold)";
-                
+                item.style.display = "flex";
+                item.style.justifyContent = "space-between";
+                item.style.alignItems = "center";
+                item.style.padding = "12px 16px";
+                item.style.marginBottom = "8px";
+                item.style.background = "var(--bg-card)";
+                item.style.borderRadius = "12px";
+                item.style.border = "1px solid rgba(255,255,255,0.06)";
+                item.style.cursor = "pointer";
+
                 item.innerHTML = `
-                    <div style="display:flex; align-items:center; flex: 1;">
-                        <span style="font-weight:900; color:var(--text-muted); width:30px; text-align:right; margin-right:10px;">#${idx+1}</span>
-                        <span style="font-size:1.2rem; font-weight:bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">${p.name}</span>
-                    </div>
-                    <div style="display:flex; align-items:center; gap: 15px;">
-                        <div style="text-align:right;">
-                            <span class="text-primary" style="font-weight:900; font-size:1.2rem; display:block;">${p.score}</span>
-                        </div>
-                        <button class="btn btn-icon btn-danger" style="margin: 0; width: 36px; min-height: 36px; border-radius: 50%; padding: 0;" onclick="Game.openRemovePlayerConfirm(${p.id})">
-                            <svg viewBox="0 0 24 24" style="width: 18px; height: 18px;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-                        </button>
-                    </div>
+                    <span style="font-weight: 700; color: white; font-size: 1.05rem;">${p.name}</span>
+                    <span style="color: var(--text-muted); font-weight: 600; font-size: 0.85rem; padding: 4px 10px; border: 1px solid rgba(255,255,255,0.15); border-radius: 20px;">Remove</span>
                 `;
-                area.appendChild(item);
+                item.onclick = () => {
+                    AudioEngine.play('click');
+                    $('modal-delete-players').classList.remove('open');
+                    Game.openRemovePlayerConfirm(p.id);
+                };
+                list.appendChild(item);
             });
         }
+
+        $('modal-delete-players').classList.add('open');
+    },
+
+    closeDeletePlayers: () => $('modal-delete-players').classList.remove('open'),
+
+    // --- Post-Game Summary ---
+    showGameOverScreen: () => {
+        Analytics.logEvent('game_completed', { total_rounds: State.round });
         
-        Game.showScreen('scoreboard');
+        const allPointsZero = State.players.every(p => (p.score || 0) === 0);
+
+        if (allPointsZero || State.round === 0) {
+            $('game-over-winner-name').innerText = "-";
+            $('game-over-winner-score').innerText = "0 points";
+            $('stat-dangerous-imposter-name').innerText = "-";
+            $('stat-dangerous-imposter-sub').innerText = "-";
+            $('stat-best-detective-name').innerText = "-";
+            $('stat-best-detective-sub').innerText = "-";
+            $('stat-most-suspected-name').innerText = "-";
+            $('stat-most-suspected-sub').innerText = "-";
+        } else {
+            const sorted = [...State.players].sort((a,b) => b.score - a.score);
+            const winner = sorted[0] || { name: 'Player', score: 0 };
+
+            $('game-over-winner-name').innerText = winner.name;
+            $('game-over-winner-score').innerText = `${winner.score} points`;
+
+            // Calculate Most Dangerous Imposter
+            let mostDangerous = null;
+            let lowestCaughtRatio = 999;
+            State.players.forEach(p => {
+                const imposterTimes = State.stats.imposterCountTimes[p.id] || 0;
+                const caughtTimes = State.stats.imposterCaughtTimes[p.id] || 0;
+                if (imposterTimes > 0) {
+                    const ratio = caughtTimes / imposterTimes;
+                    if (ratio < lowestCaughtRatio) {
+                        lowestCaughtRatio = ratio;
+                        mostDangerous = { player: p, caught: caughtTimes };
+                    }
+                }
+            });
+            if (mostDangerous) {
+                $('stat-dangerous-imposter-name').innerText = mostDangerous.player.name;
+                $('stat-dangerous-imposter-sub').innerText = `Caught ${mostDangerous.caught} time${mostDangerous.caught !== 1 ? 's' : ''}`;
+            } else {
+                $('stat-dangerous-imposter-name').innerText = "-";
+                $('stat-dangerous-imposter-sub').innerText = "-";
+            }
+
+            // Calculate Best Detective
+            let bestDetective = null;
+            let maxGuesses = 0;
+            State.players.forEach(p => {
+                const guesses = State.stats.correctGuesses[p.id] || 0;
+                if (guesses > maxGuesses) {
+                    maxGuesses = guesses;
+                    bestDetective = { player: p, guesses: guesses };
+                }
+            });
+            if (bestDetective) {
+                $('stat-best-detective-name').innerText = bestDetective.player.name;
+                $('stat-best-detective-sub').innerText = `${bestDetective.guesses} correct guess${bestDetective.guesses !== 1 ? 'es' : ''}`;
+            } else {
+                $('stat-best-detective-name').innerText = "-";
+                $('stat-best-detective-sub').innerText = "-";
+            }
+
+            // Calculate Most Suspected
+            let mostSuspected = null;
+            let maxVotes = 0;
+            State.players.forEach(p => {
+                const votes = State.stats.votesReceived[p.id] || 0;
+                if (votes > maxVotes) {
+                    maxVotes = votes;
+                    mostSuspected = { player: p, votes: votes };
+                }
+            });
+            if (mostSuspected) {
+                $('stat-most-suspected-name').innerText = mostSuspected.player.name;
+                $('stat-most-suspected-sub').innerText = `Suspected ${mostSuspected.votes} time${mostSuspected.votes !== 1 ? 's' : ''}`;
+            } else {
+                $('stat-most-suspected-name').innerText = "-";
+                $('stat-most-suspected-sub').innerText = "-";
+            }
+        }
+
+        Game.showScreen('game-over');
+    },
+
+    playAgain: () => {
+        State.players.forEach(p => p.score = 0);
+        State.round = 0;
+        State.stats = { imposterCountTimes: {}, imposterCaughtTimes: {}, correctGuesses: {}, votesReceived: {} };
+        Game.saveSession();
+        Game.setupNextRound();
     },
 
     // --- Mid-game Player Management ---
@@ -2586,9 +3434,7 @@ const Game = {
         setTimeout(() => $('new-player-name-midgame').focus(), 100);
     },
 
-    closeAddPlayerMidgame: () => {
-        $('modal-add-player-midgame').classList.remove('open');
-    },
+    closeAddPlayerMidgame: () => $('modal-add-player-midgame').classList.remove('open'),
 
     confirmAddPlayerMidgame: () => {
         const nameInput = $('new-player-name-midgame');
@@ -2641,11 +3487,9 @@ const Game = {
         const playerId = State.pendingRemovePlayerId;
         State.players = State.players.filter(p => p.id !== playerId);
         
-        // Validation: Re-verify imposter count after removal
         const maxImposters = Math.max(1, Math.floor(State.players.length / 3));
         if(State.config.imposterCount > maxImposters) {
             State.config.imposterCount = maxImposters;
-            Game.showAlert(`Maximum imposters set to ${maxImposters} for ${State.players.length} players.`, "Game Balance");
         }
 
         Game.saveSession();
@@ -2655,14 +3499,8 @@ const Game = {
     },
 
     // --- Reset Scores ---
-    askResetScores: () => {
-        $('modal-reset-scores-confirm').classList.add('open');
-    },
-
-    cancelResetScores: () => {
-        $('modal-reset-scores-confirm').classList.remove('open');
-    },
-
+    askResetScores: () => $('modal-reset-scores-confirm').classList.add('open'),
+    cancelResetScores: () => $('modal-reset-scores-confirm').classList.remove('open'),
     confirmResetScores: () => {
         State.players.forEach(p => p.score = 0);
         Game.saveSession();
@@ -2717,10 +3555,11 @@ const Game = {
 
     // --- Mid-game Settings Logic ---
     openMidgameSettings: () => {
-        // Sync modal from State.config
         $('mid-setting-shuffle').checked = State.config.shuffle;
         $('mid-setting-timer').checked = State.config.timer;
         $('mid-setting-voting').checked = State.config.voting;
+        $('mid-setting-secret-alliance').checked = State.config.secretAlliance;
+        $('mid-setting-sound').checked = State.config.sound;
         $('mid-timer-duration-slider').value = State.config.timerDuration;
         $('mid-timer-value-display').innerText = `${State.config.timerDuration} min`;
         $(`mid-imposter-count-display`).innerText = State.config.imposterCount;
@@ -2731,9 +3570,7 @@ const Game = {
         $('modal-midgame-settings').classList.add('open');
     },
 
-    closeMidgameSettings: () => {
-        $('modal-midgame-settings').classList.remove('open');
-    },
+    closeMidgameSettings: () => $('modal-midgame-settings').classList.remove('open'),
 
     toggleMidTimerSettings: () => {
         const enabled = $('mid-setting-timer').checked;
@@ -2753,43 +3590,35 @@ const Game = {
         State.config.shuffle = $('mid-setting-shuffle').checked;
         State.config.timer = $('mid-setting-timer').checked;
         State.config.voting = $('mid-setting-voting').checked;
+        State.config.secretAlliance = $('mid-setting-secret-alliance').checked;
+        State.config.sound = $('mid-setting-sound').checked;
+        AudioEngine.muted = !State.config.sound;
         State.config.timerDuration = parseInt($('mid-timer-duration-slider').value);
         State.config.imposterCount = parseInt($('mid-imposter-count-display').innerText);
         State.config.imposterHasWord = $('mid-setting-imposter-word').checked;
         
-        // Also sync back to landing screen UI just in case they go back
         $('setting-shuffle').checked = State.config.shuffle;
         $('setting-timer').checked = State.config.timer;
         $('setting-voting').checked = State.config.voting;
+        $('setting-secret-alliance').checked = State.config.secretAlliance;
+        $('setting-sound').checked = State.config.sound;
         $('timer-duration-slider').value = State.config.timerDuration;
         $('timer-value-display').innerText = `${State.config.timerDuration} min`;
         $('setting-imposter-word').checked = State.config.imposterHasWord;
         
-        // Sync setup screen imposter count if it exists
         const setupCount = $('setup-imposter-count-display');
         if(setupCount) setupCount.innerText = State.config.imposterCount;
         
         Game.toggleTimerSettings();
-        
         Game.saveSession();
         Game.closeMidgameSettings();
     },
 
-    showStealthModeInfo: () => {
-        $('modal-stealth-info').classList.add('open');
-    },
+    showStealthModeInfo: () => $('modal-stealth-info').classList.add('open'),
+    closeStealthModeInfo: () => $('modal-stealth-info').classList.remove('open'),
 
-    closeStealthModeInfo: () => {
-        $('modal-stealth-info').classList.remove('open');
-    },
-
-    showVotingInfo: () => {
-        $('modal-voting-info').classList.add('open');
-    },
-
-    closeVotingInfo: () => {
-        $('modal-voting-info').classList.remove('open');
-    },
+    showVotingInfo: () => $('modal-voting-info').classList.add('open'),
+    closeVotingInfo: () => $('modal-voting-info').classList.remove('open'),
 
     handlePlayerEnter: (e, idx) => {
         if (e.key === 'Enter') {
@@ -2803,13 +3632,63 @@ const Game = {
         }
     },
 
+    toggleSecretAllianceSetting: (el, screenType) => {
+        const countDisplay = screenType === 'mid' ? $('mid-imposter-count-display') : $('setup-imposter-count-display');
+        const activeCount = countDisplay ? parseInt(countDisplay.innerText) : State.config.imposterCount;
+
+        if (el.checked && activeCount <= 1) {
+            AudioEngine.play('click');
+            Game.showAlert("Secret Alliance requires at least 2 Imposters. Increase the Imposter count to enable this feature.", "Secret Alliance Rule");
+            setTimeout(() => {
+                el.checked = false;
+                State.config.secretAlliance = false;
+                const setupCheck = $('setting-secret-alliance');
+                const midCheck = $('mid-setting-secret-alliance');
+                if (setupCheck) setupCheck.checked = false;
+                if (midCheck) midCheck.checked = false;
+                Game.saveSession();
+            }, 50);
+        } else {
+            State.config.secretAlliance = el.checked;
+            if (screenType === 'setup') {
+                const mid = $('mid-setting-secret-alliance');
+                if (mid) mid.checked = el.checked;
+            } else {
+                const setup = $('setting-secret-alliance');
+                if (setup) setup.checked = el.checked;
+            }
+            Game.saveSession();
+        }
+    },
+
     adjustImposterCount: (delta, screenType = 'setup') => {
         const maxImposters = Math.max(1, Math.floor(State.players.length / 3)); 
         let newCount = State.config.imposterCount + delta;
         
-        if (newCount < 1 || newCount > maxImposters) return;
+        if (delta > 0 && newCount > maxImposters) {
+            const neededPlayers = (State.config.imposterCount + 1) * 3;
+            Game.showAlert(
+                `You need at least ${neededPlayers} players to add another Imposter.`,
+                "More Players Needed"
+            );
+            return;
+        }
+
+        if (delta < 0 && newCount < 1) {
+            Game.showAlert("A game must have at least 1 Imposter!", "Imposter Required");
+            return;
+        }
         
         State.config.imposterCount = newCount;
+
+        if (newCount <= 1 && State.config.secretAlliance) {
+            State.config.secretAlliance = false;
+            const setupCheck = $('setting-secret-alliance');
+            const midCheck = $('mid-setting-secret-alliance');
+            if (setupCheck) setupCheck.checked = false;
+            if (midCheck) midCheck.checked = false;
+        }
+
         Game.updateImposterUI();
         Game.saveSession();
     },
@@ -2817,7 +3696,6 @@ const Game = {
     updateImposterUI: () => {
         const count = State.config.imposterCount;
         const total = State.players.length;
-        const maxImposters = Math.max(1, Math.floor(total / 3));
 
         const screens = ['setup', 'mid'];
         screens.forEach(s => {
@@ -2828,27 +3706,15 @@ const Game = {
             if (display) display.innerText = count;
             
             if (plusBtn) {
-                if (count >= maxImposters) {
-                    plusBtn.style.opacity = "0.2";
-                    plusBtn.style.pointerEvents = "none";
-                    plusBtn.style.filter = "grayscale(1)";
-                } else {
-                    plusBtn.style.opacity = "1";
-                    plusBtn.style.pointerEvents = "auto";
-                    plusBtn.style.filter = "none";
-                }
+                plusBtn.style.opacity = "1";
+                plusBtn.style.pointerEvents = "auto";
+                plusBtn.style.filter = "none";
             }
 
             if (minusBtn) {
-                if (count <= 1) {
-                    minusBtn.style.opacity = "0.2";
-                    minusBtn.style.pointerEvents = "none";
-                    minusBtn.style.filter = "grayscale(1)";
-                } else {
-                    minusBtn.style.opacity = "1";
-                    minusBtn.style.pointerEvents = "auto";
-                    minusBtn.style.filter = "none";
-                }
+                minusBtn.style.opacity = "1";
+                minusBtn.style.pointerEvents = "auto";
+                minusBtn.style.filter = "none";
             }
         });
     },
@@ -2900,9 +3766,7 @@ const Game = {
         $('modal-voting-breakdown').classList.add('open');
     },
 
-    closeVotingBreakdown: () => {
-        $('modal-voting-breakdown').classList.remove('open');
-    },
+    closeVotingBreakdown: () => $('modal-voting-breakdown').classList.remove('open'),
 
     // --- Alert System ---
     showAlert: (message, title = "Notice") => {
@@ -2911,32 +3775,19 @@ const Game = {
         $('modal-alert').classList.add('open');
     },
 
-    closeAlert: () => {
-        $('modal-alert').classList.remove('open');
-    },
+    closeAlert: () => $('modal-alert').classList.remove('open'),
 
-    backToResults: () => {
-        Game.showScreen('results');
-    },
+    backToResults: () => Game.showScreen('results'),
     
-    // --- New Game Utils ---
-    askNewGame: () => {
-        $('modal-new-game-confirm').classList.add('open');
-    },
-    
-    cancelNewGame: () => {
-        $('modal-new-game-confirm').classList.remove('open');
-    },
+    // --- End Game Utils ---
+    askEndGame: () => $('modal-end-game-confirm').classList.add('open'),
+    cancelEndGame: () => $('modal-end-game-confirm').classList.remove('open'),
 
-    confirmNewGame: () => {
-        // Clear Persistence
+    confirmEndGame: () => {
         sessionStorage.removeItem(SESSION_KEY);
-        // Hard Reload
         shouldPreventRefresh = false;
-        location.reload();
-    },
-
-
+        location.href = 'index.html';
+    }
 };
 
 Game.init();
