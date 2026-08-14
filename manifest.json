@@ -1,0 +1,16 @@
+{
+  "name": "Oddinary - Party Word Game",
+  "short_name": "Oddinary",
+  "description": "Find the imposter in this fun local party word game for 3-30 players.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0E0F13",
+  "theme_color": "#6BCF2D",
+  "icons": [
+    {
+      "src": "fav-icon.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png"
+    }
+  ]
+}

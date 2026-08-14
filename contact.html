@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Oddinary - A Word Imposter Game</title>
+    <meta name="description" content="Contact the creator of Oddinary for feedback, feature requests, or support.">
+    <link rel="icon" type="image/png" href="fav-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9418997406256200" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --bg-dark: #0E0F13;
+            --bg-card: #181A20;
+            --primary: #6BCF2D;
+            --primary-glow: #9CFF3A;
+            --text-main: #F2F2F2;
+            --text-sec: #B6B8C0;
+            --text-muted: #6C6F78;
+            --radius: 16px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+            flex: 1;
+            width: 100%;
+        }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .card h1 { font-size: 2rem; font-weight: 900; margin-bottom: 20px; color: var(--primary); text-align: left; }
+        .card p { color: var(--text-sec); margin-bottom: 20px; font-size: 0.95rem; text-align: justify; }
+        .contact-box {
+            background: rgba(255,255,255,0.02);
+            border: 1px dashed var(--primary);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .contact-box h3 { color: var(--text-main); font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; }
+        .contact-box p { text-align: center !important; }
+        .contact-box a { color: var(--primary); font-size: 1.1rem; font-weight: 700; text-decoration: none; }
+        .contact-box a:hover { text-decoration: underline; }
+
+        /* Footer - Centered exact match to homepage */
+        .footer-copyright {
+            padding: 15px 10px;
+            text-align: center !important;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            width: 100%;
+            margin-top: auto;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .footer-copyright p {
+            text-align: center !important;
+            margin: 0;
+        }
+        .footer-copyright a {
+            color: var(--text-sec);
+            text-decoration: none;
+            margin: 0 6px;
+            font-weight: 500;
+        }
+        .footer-copyright a:hover {
+            color: var(--primary);
+        }
+        .btn-back {
+            display: inline-block;
+            background: var(--primary);
+            color: var(--bg-dark);
+            font-weight: 700;
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: background 0.2s;
+        }
+        .btn-back:hover { background: var(--primary-glow); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="btn-back">← Back to Game</a>
+        <div class="card">
+            <h1>Contact Us</h1>
+            <p>Have questions, suggestions, word pair recommendations, or bug reports for Oddinary - A Word Imposter Game? We would love to hear from you!</p>
+            
+            <div class="contact-box">
+                <h3>Get in Touch</h3>
+                <p>Created & maintained by <strong>Anto Devassy V.P</strong></p>
+                <p>For inquiries, support, or feedback, feel free to reach out:</p>
+                <p><a href="mailto:antodevassyvp@gmail.com">antodevassyvp@gmail.com</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-copyright">
+        <p>© 2026 Oddinary by Anto Devassy V.P. All rights reserved.</p>
+        <p style="margin-top: 8px;">
+            <a href="about.html">About</a> | 
+            <a href="privacy.html">Privacy Policy</a> | 
+            <a href="terms.html">Terms of Service</a> | 
+            <a href="contact.html">Contact</a>
+        </p>
+    </div>
+</body>
+</html>
