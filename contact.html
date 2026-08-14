@@ -119,22 +119,41 @@
             }
         }
         .btn-back {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             background: var(--primary);
             color: var(--bg-dark);
             font-weight: 700;
-            padding: 10px 20px;
+            padding: 10px 18px;
             border-radius: 12px;
             text-decoration: none;
             margin-bottom: 20px;
-            transition: background 0.2s;
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-        .btn-back:hover { background: var(--primary-glow); }
+        .btn-back:hover {
+            background: var(--primary-glow);
+            transform: translateX(-3px);
+        }
+        .btn-back svg {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2.8;
+            transition: transform 0.2s ease;
+        }
+        .btn-back:hover svg {
+            transform: translateX(-2px);
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <a href="index.html" class="btn-back">← Back to Game</a>
+        <a href="index.html" class="btn-back">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            <span>Back to Game</span>
+        </a>
         <div class="card">
             <h1>Contact Us</h1>
             <p>Have questions, suggestions, word pair recommendations, or bug reports for Oddinary - A Word Imposter Game? We would love to hear from you!</p>

@@ -449,43 +449,51 @@
             color: var(--primary);
         }
 
-        /* Mobile Adjustments: Fits 100% on screen without any scrolling */
+        /* Mobile Adjustments: Big prominent logo, no top gap, 100% visible on 1 page without scroll */
         @media (max-width: 600px) {
             #app {
-                padding: 5px 10px;
+                padding: 4px 10px;
             }
 
             #screen-landing {
-                min-height: calc(100dvh - 10px);
-                height: calc(100dvh - 10px);
-                padding: calc(5px + env(safe-area-inset-top)) 0 calc(2px + env(safe-area-inset-bottom)) 0;
+                min-height: calc(100dvh - 8px);
+                height: calc(100dvh - 8px);
+                padding: calc(2px + env(safe-area-inset-top)) 0 calc(2px + env(safe-area-inset-bottom)) 0;
             }
 
             .landing-hero {
-                gap: 14px;
+                gap: 16px;
+                padding: 0;
+                margin-top: 5px;
+                flex: 1;
+                justify-content: center;
+            }
+
+            .landing-logo-box {
                 padding: 0;
             }
 
             .logo-img {
-                max-width: 290px;
-                max-height: 25dvh;
+                width: 92%;
+                max-width: 440px;
+                max-height: 38dvh;
             }
 
             .landing-buttons {
-                max-width: 300px;
-                gap: 8px;
+                max-width: 320px;
+                gap: 9px;
             }
 
             .landing-buttons .btn {
-                padding: 13px;
-                min-height: 46px;
-                font-size: 0.95rem;
+                padding: 14px;
+                min-height: 48px;
+                font-size: 1rem;
             }
 
             .footer-copyright {
-                font-size: 0.71rem;
+                font-size: 0.72rem;
                 padding: 4px 2px 2px 2px;
-                margin-top: 0;
+                margin-top: auto;
             }
             .footer-copyright p {
                 white-space: nowrap;
@@ -500,16 +508,16 @@
 
         @media (max-height: 650px) and (max-width: 600px) {
             .landing-hero {
-                gap: 8px;
+                gap: 10px;
             }
             .logo-img {
-                max-width: 230px;
-                max-height: 20dvh;
+                width: 85%;
+                max-height: 30dvh;
             }
             .landing-buttons .btn {
-                padding: 10px;
-                min-height: 40px;
-                font-size: 0.88rem;
+                padding: 11px;
+                min-height: 42px;
+                font-size: 0.92rem;
             }
         }
 
