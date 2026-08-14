@@ -1460,10 +1460,10 @@
                         </div>
                     </div>
 
-                    <!-- 5. Shuffle Players -->
+                    <!-- 5. Shuffle Players Order -->
                     <div class="setting-item">
                         <div class="setting-left">
-                            <span>Shuffle Players</span>
+                            <span>Shuffle Players Order</span>
                         </div>
                         <div class="setting-right">
                             <label class="switch">
@@ -1473,10 +1473,10 @@
                         </div>
                     </div>
 
-                    <!-- 6. Discussion Timer -->
+                    <!-- 6. Investigation Timer -->
                     <div class="setting-item">
                         <div class="setting-left">
-                            <span>Discussion Timer</span>
+                            <span>Investigation Timer</span>
                         </div>
                         <div class="setting-right">
                             <label class="switch">
@@ -1550,8 +1550,8 @@
     <div id="screen-discuss" class="screen">
         <div class="close-btn" onclick="Game.askCloseReveal()" title="Close">✕</div>
         <div class="content-area">
-            <div class="pulse-anim">🗣️</div>
-            <h1 class="text-gold">DISCUSSION TIME</h1>
+            <div class="pulse-anim">🔍</div>
+            <h1 class="text-gold" style="letter-spacing: 1px;">INVESTIGATION IN PROGRESS</h1>
             <p class="text-c text-muted">Describe your word, but don't say it directly. Find the Imposter.</p>
             <br>
             <div id="timer-container" class="hidden" style="margin: 30px 0; display: flex; flex-direction: column; align-items: center; gap: 15px;">
@@ -1561,10 +1561,10 @@
                 <button id="btn-add-time" class="btn" style="padding: 10px 20px; font-size: 0.95rem; width: auto; min-height: 0; border-radius: 20px;" onclick="Game.addDiscussionTime(60)">+ 1 Min</button>
             </div>
 
-            <!-- New: Discussion Timer Toggle (if not enabled at start) -->
+            <!-- New: Investigation Timer Toggle (if not enabled at start) -->
             <div id="discuss-timer-settings" class="content-area hidden" style="width: 100%; max-width: 400px; margin-bottom: 20px;">
                 <div class="switch-container" style="margin-bottom: 5px; padding: 12px 15px;">
-                    <span style="font-size: 0.9rem;">Discussion Timer</span>
+                    <span style="font-size: 0.9rem;">Investigation Timer</span>
                     <label class="switch">
                         <input type="checkbox" id="discuss-setting-timer" onchange="Game.toggleDiscussTimerSettings()">
                         <span class="slider"></span>
@@ -1703,7 +1703,7 @@
                     <strong style="color: var(--primary);">ON:</strong> Imposters receive a secret word that is slightly different from the common word. They must blend in without realizing their word is different.
                 </p>
                 <p>
-                    <strong style="color: var(--danger);">OFF:</strong> Imposters receive no word. Their card displays <strong>"IMPOSTER"</strong>. They must deduce the word by listening to others.
+                    <strong style="color: var(--danger);">OFF:</strong> Imposters receive no word. Their card displays <strong>"IMPOSTER"</strong>. They must figure out the secret word by listening to the clues.
                 </p>
             </div>
             <button class="btn btn-primary mt-2" onclick="AudioEngine.play('click'); Game.closeStealthModeInfo()">Got It</button>
@@ -1735,7 +1735,7 @@
                     <strong style="color: var(--primary);">ON:</strong> In-app secret voting. Every player selects their suspect on the phone, and the app calculates round scores automatically.
                 </p>
                 <p>
-                    <strong style="color: var(--danger);">OFF:</strong> Real-life voting. Players discuss and vote out loud out-of-app. The app reveals the Imposters directly.
+                    <strong style="color: var(--danger);">OFF:</strong> Real-life voting. Players investigate and vote out loud out-of-app. The app reveals the Imposters directly.
                 </p>
             </div>
             <button class="btn btn-primary mt-2" onclick="AudioEngine.play('click'); Game.closeVotingInfo()">Got It</button>
@@ -1857,10 +1857,10 @@
                     </div>
                 </div>
 
-                <!-- 5. Shuffle Players -->
+                <!-- 5. Shuffle Players Order -->
                 <div class="setting-item">
                     <div class="setting-left">
-                        <span>Shuffle Players</span>
+                        <span>Shuffle Players Order</span>
                     </div>
                     <div class="setting-right">
                         <label class="switch">
@@ -1870,10 +1870,10 @@
                     </div>
                 </div>
 
-                <!-- 6. Discussion Timer -->
+                <!-- 6. Investigation Timer -->
                 <div class="setting-item">
                     <div class="setting-left">
-                        <span>Discussion Timer</span>
+                        <span>Investigation Timer</span>
                     </div>
                     <div class="setting-right">
                         <label class="switch">
@@ -2069,15 +2069,15 @@
             </div>
             
             <div style="display: flex; gap: 8px; width: 100%; margin-top: 5px;">
-                <button class="btn" onclick="AudioEngine.play('click'); Game.openAddPlayerMidgame()" style="border-style: dashed; flex: 1; margin: 0; font-size: 0.85rem;">+ Add Player</button>
-                <button id="btn-reset-scores" class="btn btn-icon btn-danger" onclick="AudioEngine.play('click'); Game.askResetScores()" style="margin: 0; border-radius: var(--radius);" title="Reset Scores">
-                    <svg viewBox="0 0 24 24" style="width: 22px; height: 22px; fill: currentColor;"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+                <button class="btn" onclick="AudioEngine.play('click'); Game.openAddPlayerMidgame()" style="border-style: dashed; flex: 1; margin: 0; font-size: 0.85rem; padding: 10px 4px;">+ Add Player</button>
+                <button class="btn" onclick="AudioEngine.play('click'); Game.openDeletePlayers()" style="border-style: dashed; flex: 1; margin: 0; font-size: 0.85rem; padding: 10px 4px;">Remove Player</button>
+                <button id="btn-reset-scores" class="btn btn-icon btn-danger" onclick="AudioEngine.play('click'); Game.askResetScores()" style="margin: 0; border-radius: var(--radius); padding: 0 12px;" title="Reset Scores">
+                    <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: currentColor;"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
                 </button>
             </div>
             <div style="display: flex; gap: 8px; width: 100%;">
-                <button class="btn" onclick="AudioEngine.play('click'); Game.openRearrangePlayers()" style="flex: 1; margin: 0; font-size: 0.85rem;">Rearrange</button>
-                <button class="btn" onclick="AudioEngine.play('click'); Game.openDeletePlayers()" style="flex: 1; margin: 0; font-size: 0.85rem;">Remove</button>
-                <button class="btn" onclick="AudioEngine.play('click'); Game.openMidgameSettings()" style="flex: 1; margin: 0; font-size: 0.85rem;">Settings</button>
+                <button class="btn" onclick="AudioEngine.play('click'); Game.openRearrangePlayers()" style="flex: 1; margin: 0; font-size: 0.85rem; padding: 10px 4px;">Rearrange</button>
+                <button class="btn" onclick="AudioEngine.play('click'); Game.openMidgameSettings()" style="flex: 1; margin: 0; font-size: 0.85rem; padding: 10px 4px;">Settings</button>
             </div>
             
             <button id="btn-back-to-results" class="btn" style="margin-bottom: 0;" onclick="AudioEngine.play('click'); Game.backToResults()">Back to Imposter Reveal</button>
@@ -2126,12 +2126,29 @@ const AudioEngine = {
     ctx: null,
     muted: false,
     lastPlayTime: 0,
+    currentBGMStage: null,
+    bgmElements: {},
 
     init: function() {
         if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
             const AudioCtx = window.AudioContext || window.webkitAudioContext;
             this.ctx = new AudioCtx();
         }
+    },
+
+    stopBGM: function() {
+        Object.keys(this.bgmElements).forEach(k => {
+            if (this.bgmElements[k]) {
+                this.bgmElements[k].pause();
+                this.bgmElements[k].currentTime = 0;
+            }
+        });
+        this.currentBGMStage = null;
+    },
+
+    playBGM: function(stage) {
+        // Standby for custom music tracks provided by user
+        this.stopBGM();
     },
 
     play: function(type) {
@@ -2366,6 +2383,19 @@ const Game = {
         const target = $(`screen-${name}`);
         if(target) target.classList.add('active');
         window.scrollTo(0,0);
+
+        // Stage-based Background Music
+        if (name === 'landing' || name === 'setup') {
+            AudioEngine.playBGM('menu');
+        } else if (name === 'reveal') {
+            AudioEngine.playBGM('reveal');
+        } else if (name === 'discuss') {
+            AudioEngine.playBGM('investigation');
+        } else if (name === 'voting' || name === 'voting-complete') {
+            AudioEngine.playBGM('voting');
+        } else if (name === 'results' || name === 'scoreboard') {
+            AudioEngine.playBGM('results');
+        }
     },
 
     toggleRules: () => {
@@ -2376,7 +2406,11 @@ const Game = {
     toggleSoundSetting: (enabled) => {
         State.config.sound = enabled;
         AudioEngine.muted = !enabled;
-        if(enabled) AudioEngine.play('click');
+        if (enabled) {
+            AudioEngine.play('click');
+        } else {
+            AudioEngine.stopBGM();
+        }
         Game.saveSession();
     },
 
@@ -2718,7 +2752,7 @@ const Game = {
         nextBtn.classList.add('hidden');
         
         if(State.stepIndex === State.players.length - 1) {
-             nextBtn.innerHTML = `Discussion`;
+             nextBtn.innerHTML = `Start Investigation`;
         } else {
              nextBtn.innerHTML = `Hide & Pass`;
         }
@@ -2775,6 +2809,10 @@ const Game = {
         } else {
             timerContainer.classList.add('hidden');
             discussTimerSettings.classList.remove('hidden');
+            const discussCheck = $('discuss-setting-timer');
+            if (discussCheck) discussCheck.checked = false;
+            const sliderCont = $('discuss-timer-slider-container');
+            if (sliderCont) sliderCont.classList.add('hidden');
         }
     },
 
@@ -2795,7 +2833,7 @@ const Game = {
                 State.timerInterval = setTimeout(tick, 1000); 
             } else {
                 AudioEngine.play('alarm');
-                Game.showAlert("Time's up! Start voting now.", "⌛ Time's Up");
+                Game.showAlert("Investigation time is up! Start voting now.", "⌛ Time's Up");
             }
         };
         tick();
@@ -3608,6 +3646,23 @@ const Game = {
         
         const setupCount = $('setup-imposter-count-display');
         if(setupCount) setupCount.innerText = State.config.imposterCount;
+
+        if (State.config.timer) {
+            const timerContainer = $('timer-container');
+            const discussTimerSettings = $('discuss-timer-settings');
+            if (timerContainer && discussTimerSettings) {
+                timerContainer.classList.remove('hidden');
+                discussTimerSettings.classList.add('hidden');
+                if (State.discussionTimeLeft <= 0 || !State.timerInterval) {
+                    State.discussionTimeLeft = State.config.timerDuration * 60;
+                    Game.tickDiscussionTimer();
+                }
+            }
+        } else {
+            const timerContainer = $('timer-container');
+            if (timerContainer) timerContainer.classList.add('hidden');
+            clearTimeout(State.timerInterval);
+        }
         
         Game.toggleTimerSettings();
         Game.saveSession();
