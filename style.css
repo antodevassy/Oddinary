@@ -48,7 +48,7 @@ html {
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #07080A;
+    background: transparent;
     color: var(--text-main);
     min-height: 100vh;
     overflow-x: hidden;
@@ -59,24 +59,20 @@ body {
     position: relative;
 }
 
-/* GPU-Accelerated Fixed Background Overlay - Fixes Mobile White Flash & Scroll Repaint Tearing */
+/* Static Fixed Background Image Layer - 100% Visible & Fixed on Mobile */
 body::before {
     content: "";
     position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
     width: 100%;
     height: 100%;
-    height: 100dvh;
-    background: linear-gradient(rgba(7, 8, 10, 0.91), rgba(7, 8, 10, 0.95)), url('assets/background.png') no-repeat center center;
+    background: linear-gradient(rgba(5, 6, 8, 0.88), rgba(5, 6, 8, 0.92)), url('assets/background.png') no-repeat center center;
     background-size: cover;
     pointer-events: none;
-    z-index: -1000;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    will-change: transform;
+    z-index: -1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
 }
 
 h1, h2, h3 { font-weight: 900; letter-spacing: -0.5px; }
