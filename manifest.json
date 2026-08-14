@@ -1,5 +1,5 @@
 {
-  "name": "Oddinary - Word Imposter Game",
+  "name": "Oddinary",
   "short_name": "Oddinary",
   "description": "Find the imposter in this fun local party word game for 3-30 players.",
   "start_url": "./index.html",
