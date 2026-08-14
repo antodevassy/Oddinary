@@ -3,29 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Oddinary - Word Imposter Game</title>
-    <meta name="description" content="Play Oddinary - Word Imposter Game. Gather your friends, describe your secret word, and find the imposter!">
-    <meta name="keywords" content="party game, word game, imposter game, social deduction, pass and play, oddinary, word deduction">
+    <title>Oddinary - Word Imposter Game | Offline Party Game for Friends</title>
+    <meta name="description" content="Play Oddinary - the ultimate Word Imposter Game & Offline Party Game for friends! Give subtle clues, spot secret words, catch the spy, and uncover the imposter in this fun social deduction word game for 3 to 30 players.">
+    <meta name="keywords" content="Word Imposter Game, Imposter Game, Party Game, Word Game, Spy Game, Game for Friends, Offline Party Game, social deduction game, secret word game, pass and play, oddinary">
     <meta name="author" content="Anto Devassy V.P">
+    <meta name="robots" content="index, follow">
 
-    <!-- Open Graph / Facebook -->
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://oddinary.vercel.app/">
+
+    <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://oddinary.vercel.app/">
-    <meta property="og:title" content="Oddinary - Word Imposter Game">
-    <meta property="og:description" content="Gather your friends, describe your secret word, and catch the imposter in Oddinary!">
-    <meta property="og:image" content="assets/logo.png">
+    <meta property="og:site_name" content="Oddinary - Word Imposter Game">
+    <meta property="og:title" content="Oddinary - Word Imposter Game | Offline Party Game for Friends">
+    <meta property="og:description" content="Play Oddinary - the ultimate Word Imposter Game & Offline Party Game for friends! Give clues, catch the spy, and find the imposter.">
+    <meta property="og:image" content="https://oddinary.vercel.app/assets/logo.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="en_US">
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://oddinary.vercel.app/">
-    <meta property="twitter:title" content="Oddinary - Word Imposter Game">
-    <meta property="twitter:description" content="Gather your friends and find the imposter in this fast-paced word game!">
-    <meta property="twitter:image" content="assets/logo.png">
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://oddinary.vercel.app/">
+    <meta name="twitter:title" content="Oddinary - Word Imposter Game | Offline Party Game for Friends">
+    <meta name="twitter:description" content="Gather your friends, describe your secret word, and catch the imposter in this fast-paced party game!">
+    <meta name="twitter:image" content="https://oddinary.vercel.app/assets/logo.png">
 
     <!-- PWA & Favicon -->
     <link rel="icon" type="image/png" href="assets/fav-icon.png">
+    <link rel="apple-touch-icon" href="assets/fav-icon.png">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#6BCF2D">
+    <meta name="theme-color" content="#07080A">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,20 +50,33 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "Oddinary",
+      "@type": "SoftwareApplication",
+      "name": "Oddinary - Word Imposter Game",
+      "alternateName": "Oddinary Party Game",
       "url": "https://oddinary.vercel.app/",
-      "description": "Local party game of secret words, social deduction, and finding the imposter.",
+      "image": "https://oddinary.vercel.app/assets/logo.png",
+      "description": "The ultimate offline party game of secret words, social deduction, spy hunting, and finding the imposter for groups of 3 to 30 friends.",
       "applicationCategory": "GameApplication",
-      "genre": "Party Game",
-      "operatingSystem": "Any",
+      "genre": ["Party Game", "Word Game", "Imposter Game", "Social Deduction", "Spy Game"],
+      "operatingSystem": "Any (Web, iOS, Android)",
+      "keywords": "Word Imposter Game, Imposter Game, Party Game, Word Game, Spy Game, Game for Friends, Offline Party Game",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
       "author": {
         "@type": "Person",
         "name": "Anto Devassy V.P"
+      },
+      "numberOfPlayers": {
+        "@type": "QuantitativeValue",
+        "minValue": 3,
+        "maxValue": 30
       }
     }
     </script>
-        <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -366,7 +390,7 @@
         <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px;">
             <h3 class="text-c text-muted">Pass to</h3>
             <h1 id="voter-name" class="text-primary text-glow" style="font-size: 2.5rem;">Player</h1>
-            <h2 class="text-c">Who is the Imposter?</h2><br>
+            <h2 class="text-c">WHO DO YOU SUSPECT?</h2><br>
             
             <div class="content-area" id="voting-list">
                 <!-- Voting Buttons -->
@@ -540,7 +564,8 @@
                 <div style="font-weight: 700; color: var(--text-sec); font-size: 0.85rem; margin-bottom: 6px;">Detailed Rules:</div>
                 <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">
                     <p>• Imposters are considered <strong>caught</strong> if they receive the most votes or are tied for highest votes.</p>
-                    <p style="margin-top: 4px;">• If an Imposter is caught, they get <strong>0 points</strong> for surviving.</p>
+                    <p style="margin-top: 4px;">• If an Imposter is caught, they earn <strong>0 points</strong> for the round.</p>
+                    <p style="margin-top: 4px;">• <strong>Betrayal:</strong> If you're an Imposter and vote against another Imposter, you earn <strong>+5 points</strong>.</p>
                     <p style="margin-top: 4px;">• Detectives gain <strong>+15 points</strong> for every correct vote cast for an Imposter.</p>
                     <p style="margin-top: 4px;">• <strong>Voting is OFF:</strong> Points are not calculated when voting mode is disabled.</p>
                 </div>
