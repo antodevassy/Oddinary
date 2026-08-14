@@ -313,18 +313,27 @@ input:focus { border-color: var(--primary); box-shadow: var(--glow-primary); }
  text-align: center;
 }
 
+.landing-logo-box {
+ width: 100%;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ padding: 10px 15px;
+ overflow: visible;
+}
+
 .logo-img {
  width: 100%; 
- max-width: 680px;
+ max-width: 540px;
  height: auto;
  object-fit: contain;
- filter: drop-shadow(0 0 38px rgba(107, 207, 45, 0.6));
+ filter: drop-shadow(0 0 28px rgba(107, 207, 45, 0.5));
  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.3s ease;
 }
 
 .logo-img:hover {
- transform: scale(1.04);
- filter: drop-shadow(0 0 48px rgba(107, 207, 45, 0.8));
+ transform: scale(1.02);
+ filter: drop-shadow(0 0 36px rgba(107, 207, 45, 0.7));
 }
 
 /* Vote Bar Animation */
@@ -449,15 +458,17 @@ input:focus { border-color: var(--primary); box-shadow: var(--glow-primary); }
  }
 
  .landing-logo-box {
- padding: 0;
+ padding: 5px 15px;
  width: 100%;
+ overflow: visible;
  }
 
  .logo-img {
  width: 100%;
- max-width: 620px;
- max-height: 50dvh;
- transform: scale(1.22);
+ max-width: 100%;
+ max-height: 48dvh;
+ transform: none;
+ filter: drop-shadow(0 0 24px rgba(107, 207, 45, 0.5));
  }
 
  .landing-buttons {
@@ -492,9 +503,10 @@ input:focus { border-color: var(--primary); box-shadow: var(--glow-primary); }
  gap: 8px;
  }
  .logo-img {
- width: 95%;
- max-height: 38dvh;
- transform: scale(1.08);
+  width: 95%;
+  max-height: 38dvh;
+  transform: none;
+  filter: drop-shadow(0 0 20px rgba(107, 207, 45, 0.45));
  }
  .landing-buttons .btn {
  padding: 10px;
