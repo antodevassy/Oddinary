@@ -1,0 +1,184 @@
+/**
+ * ODDINARY — ADD TO HOMESCREEN / INSTALL PROMPT
+ * Shows platform-specific install instructions when user clicks "Install App".
+ */
+
+const InstallPrompt = (() => {
+  let deferredPrompt = null;
+
+  // --- Platform Detection ---
+  function getPlatform() {
+    const ua = navigator.userAgent || '';
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+      || navigator.standalone === true;
+    if (isStandalone) return 'standalone';
+
+    if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) return 'ios';
+    if (/Android/i.test(ua)) return 'android';
+    if (/Windows/i.test(ua)) return 'windows';
+    return 'desktop';
+  }
+
+  // --- Instructions per platform ---
+  function getInstructions(platform) {
+    switch (platform) {
+      case 'android':
+        return {
+          title: 'Install Oddinary',
+          subtitle: 'Add to your home screen for the full app experience',
+          steps: [
+            { text: 'Tap the <strong>Install</strong> button below', icon: '📲' },
+            { text: 'Confirm in the browser popup', icon: '✅' },
+            { text: 'Launch Oddinary from your home screen!', icon: '🚀' }
+          ],
+          canAutoInstall: true
+        };
+
+      case 'ios':
+        return {
+          title: 'Add to Home Screen',
+          subtitle: 'Get the full-screen app experience on your iPhone',
+          steps: [
+            { text: 'Tap the <strong>Share</strong> button <span class="install-inline-icon">⎋</span> in Safari\'s toolbar', icon: '1' },
+            { text: 'Scroll down and tap <strong>"Add to Home Screen"</strong>', icon: '2' },
+            { text: 'Tap <strong>"Add"</strong> in the top-right corner', icon: '3' }
+          ],
+          canAutoInstall: false
+        };
+
+      case 'windows':
+        return {
+          title: 'Install Oddinary',
+          subtitle: 'Pin Oddinary to your Start Menu or Taskbar',
+          steps: [
+            { text: 'Click the <strong>Install</strong> icon <span class="install-inline-icon">⊕</span> in the address bar', icon: '1' },
+            { text: 'Or click <strong>⋮ Menu → Install Oddinary</strong>', icon: '2' },
+            { text: 'Launch from your Desktop or Start Menu!', icon: '3' }
+          ],
+          canAutoInstall: true
+        };
+
+      default:
+        return {
+          title: 'Install Oddinary',
+          subtitle: 'Install the app for the best experience',
+          steps: [
+            { text: 'Click the <strong>Install</strong> icon in your browser\'s address bar', icon: '1' },
+            { text: 'Or use <strong>Menu → Install Oddinary</strong>', icon: '2' },
+            { text: 'Open from your Applications!', icon: '3' }
+          ],
+          canAutoInstall: true
+        };
+    }
+  }
+
+  // --- Render & open the modal ---
+  function renderModal(platform) {
+    // Remove any existing one first
+    const existing = document.getElementById('modal-install');
+    if (existing) existing.remove();
+
+    const info = getInstructions(platform);
+
+    const stepsHTML = info.steps.map(s => `
+      <div class="install-step">
+        <span class="install-step-num">${s.icon}</span>
+        <span class="install-step-text">${s.text}</span>
+      </div>
+    `).join('');
+
+    const actionsHTML = (info.canAutoInstall && deferredPrompt)
+      ? `<button class="btn btn-primary install-btn" onclick="InstallPrompt.doInstall()">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;margin-right:6px;"><path d="M12 5v14m0 0l-4-4m4 4l4-4"/><path d="M4 19h16"/></svg>
+           Install Now
+         </button>
+         <button class="btn install-dismiss-btn" onclick="InstallPrompt.close()">Not Now</button>`
+      : `<button class="btn btn-primary install-btn" onclick="InstallPrompt.close()">Got It</button>`;
+
+    const modal = document.createElement('div');
+    modal.id = 'modal-install';
+    modal.className = 'modal';
+    modal.innerHTML = `
+      <div class="modal-content install-modal-content">
+        <button class="install-close-btn" onclick="InstallPrompt.close()" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <div class="install-hero">
+          <div class="install-icon-wrapper">
+            <img src="assets/fav-icon.png" alt="Oddinary" class="install-app-icon">
+          </div>
+          <h2 class="install-title">${info.title}</h2>
+          <p class="install-subtitle">${info.subtitle}</p>
+        </div>
+        <div class="install-steps">
+          ${stepsHTML}
+        </div>
+        <div class="install-actions">
+          ${actionsHTML}
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => modal.classList.add('open'));
+    });
+  }
+
+  // --- Public API ---
+  return {
+    init() {
+      const platform = getPlatform();
+
+      // Hide the footer link if already installed as standalone
+      if (platform === 'standalone') {
+        const link = document.getElementById('install-app-link');
+        const sep = document.getElementById('install-link-separator');
+        if (link) link.style.display = 'none';
+        if (sep) sep.style.display = 'none';
+        return;
+      }
+
+      // Capture the native install prompt (Chrome / Edge on Android & desktop)
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+      });
+    },
+
+    show() {
+      const platform = getPlatform();
+      if (platform === 'standalone') return;
+      AudioEngine.play('click');
+      renderModal(platform);
+    },
+
+    async doInstall() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const result = await deferredPrompt.userChoice;
+        if (result.outcome === 'accepted') {
+          const modal = document.getElementById('modal-install');
+          if (modal) {
+            modal.classList.remove('open');
+            setTimeout(() => modal.remove(), 300);
+          }
+          // Hide the link since they installed
+          const link = document.getElementById('install-app-link');
+          const sep = document.getElementById('install-link-separator');
+          if (link) link.style.display = 'none';
+          if (sep) sep.style.display = 'none';
+        }
+        deferredPrompt = null;
+      }
+    },
+
+    close() {
+      const modal = document.getElementById('modal-install');
+      if (modal) {
+        modal.classList.remove('open');
+        setTimeout(() => modal.remove(), 300);
+      }
+    }
+  };
+})();

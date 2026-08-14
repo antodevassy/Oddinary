@@ -192,5 +192,6 @@ document.addEventListener('DOMContentLoaded', () => {
  }, true);
 
  Game.init();
+ if (typeof InstallPrompt !== 'undefined') InstallPrompt.init();
  Analytics.logEvent('homepage_opened');
 });

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'oddinary-v17';
+const CACHE_NAME = 'oddinary-v18';
 const ASSETS_TO_CACHE = [
  './',
  './index.html',
@@ -8,6 +8,7 @@ const ASSETS_TO_CACHE = [
  './js/audio.js',
  './js/game.js',
  './js/ui.js',
+ './js/install.js',
  './assets/background.png',
  './assets/logo.png',
  './assets/fav-icon.png',

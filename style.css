@@ -1351,3 +1351,173 @@ input:checked + .slider:before { transform: translateX(22px); }
 .author-link:hover {
     color: var(--primary);
 }
+
+/* ===== Install / Add-to-Homescreen Prompt ===== */
+.install-modal-content {
+    max-width: 400px;
+    text-align: center;
+    padding: 28px 24px 22px;
+    position: relative;
+}
+
+.install-close-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 8px;
+    transition: color 0.2s, background 0.2s;
+    line-height: 0;
+}
+.install-close-btn:hover {
+    color: var(--text-main);
+    background: rgba(255,255,255,0.08);
+}
+
+.install-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.install-icon-wrapper {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+    background: var(--bg-dark);
+    border: 2px solid rgba(107, 207, 45, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(107, 207, 45, 0.12);
+    margin-bottom: 4px;
+}
+
+.install-app-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.install-hero-icon {
+    width: 36px;
+    height: 36px;
+    color: var(--primary);
+}
+
+.install-title {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: var(--text-main);
+    letter-spacing: 0.3px;
+    margin: 0;
+}
+
+.install-subtitle {
+    font-size: 0.88rem;
+    color: var(--text-sec);
+    line-height: 1.45;
+    margin: 0;
+    max-width: 280px;
+}
+
+.install-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 22px;
+    text-align: left;
+}
+
+.install-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 12px;
+    transition: background 0.2s;
+}
+.install-step:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.install-step-num {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(107, 207, 45, 0.12);
+    color: var(--primary);
+    font-size: 0.85rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.install-step-text {
+    font-size: 0.88rem;
+    color: var(--text-sec);
+    line-height: 1.5;
+    padding-top: 3px;
+}
+.install-step-text strong {
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+.install-inline-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: 0 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-main);
+    vertical-align: middle;
+    line-height: 1.4;
+}
+
+.install-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.install-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+}
+
+.install-dismiss-btn {
+    width: 100%;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.install-dismiss-btn:hover {
+    color: var(--text-sec);
+}
