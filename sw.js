@@ -1,4 +1,4 @@
-const CACHE_NAME = 'oddinary-v18';
+const CACHE_NAME = 'oddinary-v19';
 const ASSETS_TO_CACHE = [
  './',
  './index.html',
@@ -12,7 +12,6 @@ const ASSETS_TO_CACHE = [
  './assets/background.png',
  './assets/logo.png',
  './assets/fav-icon.png',
- './manifest.json',
  './about.html',
  './privacy.html',
  './terms.html',
@@ -43,13 +42,18 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
- // Pass network-first for external ads and analytics
- if (event.request.url.includes('googlesyndication') || event.request.url.includes('google-analytics') || event.request.url.includes('googletagmanager')) {
- return;
- }
- event.respondWith(
- caches.match(event.request).then((cachedResponse) => {
- return cachedResponse || fetch(event.request);
- })
- );
+  // Skip caching for external ads and analytics
+  if (event.request.url.includes('googlesyndication') || event.request.url.includes('google-analytics') || event.request.url.includes('googletagmanager')) {
+  return;
+  }
+  // Always fetch manifest from network so name/icon changes apply immediately
+  if (event.request.url.includes('manifest.json')) {
+  event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
+  return;
+  }
+  event.respondWith(
+  caches.match(event.request).then((cachedResponse) => {
+  return cachedResponse || fetch(event.request);
+  })
+  );
 });
