@@ -76,8 +76,7 @@ body::before {
   height: 100%;
   background: radial-gradient(circle at 50% 15%, rgba(107, 207, 45, 0.08) 0%, transparent 60%),
               radial-gradient(circle at 85% 75%, rgba(241, 196, 15, 0.04) 0%, transparent 50%),
-              linear-gradient(rgba(7, 8, 10, 0.94), rgba(7, 8, 10, 0.97)),
-              url('assets/background.png') no-repeat center center;
+              linear-gradient(rgba(7, 8, 10, 0.94), rgba(7, 8, 10, 0.97));
   background-size: cover;
   pointer-events: none;
   z-index: -1;
@@ -99,6 +98,7 @@ h1, h2, h3, h4 { font-weight: 900; letter-spacing: -0.5px; }
    BUTTONS & CONTROLS
    ========================================================================== */
 .btn {
+  touch-action: manipulation;
   background: var(--bg-card);
   color: var(--text-main);
   border: 1.5px solid rgba(255, 255, 255, 0.15);
@@ -2441,4 +2441,28 @@ ins.adsbygoogle[data-ad-status="unfilled"] { display: none !important; }
   font-weight: 600;
   width: 100%;
   box-sizing: border-box;
+}
+
+/* ==========================================================================
+   CUSTOM DARK THEME SCROLLBARS (Global)
+   ========================================================================== */
+html, body, * {
+  scrollbar-width: thin;
+  scrollbar-color: #1C2029 #07080A;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #07080A;
+}
+::-webkit-scrollbar-thumb {
+  background: #1C2029;
+  border-radius: 5px;
+  border: 2px solid #07080A;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6BCF2D;
 }

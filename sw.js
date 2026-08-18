@@ -1,4 +1,4 @@
-const CACHE_NAME = 'oddinary-v77';
+const CACHE_NAME = 'oddinary-v86';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -10,13 +10,14 @@ const ASSETS_TO_CACHE = [
   './js/game.js',
   './js/ui.js',
   './js/install.js',
-  './assets/background.png',
   './assets/logo.png',
   './assets/fav-icon.png',
+  './assets/maskable-icon.png',
   './about.html',
   './privacy.html',
   './terms.html',
-  './contact.html'
+  './contact.html',
+  './offline.html'
 ];
 
 self.addEventListener('install', (event) => {
@@ -52,6 +53,20 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
     return;
   }
+
+  // Navigation requests (HTML page loads) - fallback to offline.html if network & cache miss
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, response.clone());
+          return response;
+        }))
+        .catch(() => caches.match(event.request).then((cached) => cached || caches.match('./offline.html')))
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       return cachedResponse || fetch(event.request);

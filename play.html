@@ -12,26 +12,59 @@
   <!-- Canonical URL -->
   <link rel="canonical" href="https://oddinary.vercel.app/play.html">
 
-  <!-- Open Graph -->
+  <!-- Open Graph / Facebook / WhatsApp -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://oddinary.vercel.app/play.html">
   <meta property="og:site_name" content="Oddinary - Word Imposter Game">
   <meta property="og:title" content="Play Oddinary - Word Imposter Game">
   <meta property="og:description" content="Gather your friends, describe your secret word, and catch the imposter in this fast-paced party game!">
   <meta property="og:image" content="https://oddinary.vercel.app/assets/logo.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://oddinary.vercel.app/play.html">
+  <meta name="twitter:title" content="Play Oddinary - Word Imposter Game">
+  <meta name="twitter:description" content="Gather your friends, describe your secret word, and catch the imposter in this fast-paced party game!">
+  <meta name="twitter:image" content="https://oddinary.vercel.app/assets/logo.png">
 
   <!-- PWA & Favicon -->
   <link rel="icon" type="image/png" href="assets/fav-icon.png">
   <link rel="apple-touch-icon" href="assets/fav-icon.png">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#07080A">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Oddinary">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800;900&family=Space+Grotesk:wght@600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+  <!-- Schema.org Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Oddinary - Word Imposter Game",
+    "url": "https://oddinary.vercel.app/play.html",
+    "image": "https://oddinary.vercel.app/assets/logo.png",
+    "description": "Play Oddinary - Word Imposter Game online with friends on a single device.",
+    "applicationCategory": "GameApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
 
   <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9418997406256200" crossorigin="anonymous"></script>
@@ -46,7 +79,7 @@
     <div class="setup-wrapper">
       <!-- Game Title Header -->
       <div class="game-top-bar">
-        <a href="index.html" class="top-bar-home-btn" onclick="Game.quitGame(); event.preventDefault();" title="Back to Homepage">
+        <a href="index.html" class="top-bar-home-btn" onclick="Game.quitGame(); event.preventDefault();" title="Back to Homepage" aria-label="Back to Homepage">
           <svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round;"><path d="M15 18l-6-6 6-6"/></svg>
           <span>Home</span>
         </a>
@@ -65,7 +98,7 @@
         <!-- Players Input List -->
         <div id="players-list" style="width: 100%;"></div>
 
-        <button class="btn btn-add-player" onclick="AudioEngine.play('click'); Game.addPlayer()">
+        <button class="btn btn-add-player" onclick="AudioEngine.play('click'); Game.addPlayer()" aria-label="Add player">
           + Add Player
         </button>
         <div id="setup-error" class="error-msg"></div>
@@ -77,9 +110,9 @@
           </div>
           <div class="setting-right">
             <div class="stepper-control">
-              <button id="setup-imposter-minus" class="stepper-btn" onclick="AudioEngine.play('click'); Game.adjustImposterCount(-1, 'setup')">−</button>
+              <button id="setup-imposter-minus" class="stepper-btn" onclick="AudioEngine.play('click'); Game.adjustImposterCount(-1, 'setup')" aria-label="Decrease Oddinary count">−</button>
               <span id="setup-imposter-count-display" class="stepper-value">1</span>
-              <button id="setup-imposter-plus" class="stepper-btn" onclick="AudioEngine.play('click'); Game.adjustImposterCount(1, 'setup')">+</button>
+              <button id="setup-imposter-plus" class="stepper-btn" onclick="AudioEngine.play('click'); Game.adjustImposterCount(1, 'setup')" aria-label="Increase Oddinary count">+</button>
             </div>
           </div>
         </div>
@@ -102,7 +135,7 @@
 
         <div id="advanced-settings-content" class="advanced-settings-content collapsed">
           <div class="settings-group">
-            <!-- 0. Word Pack Category -->
+            <!-- 0. Word Category -->
             <div class="setting-item" style="flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 14px;">
               <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
                 <div id="cat-icon-setup" style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"></div>
@@ -613,7 +646,7 @@
     <h2 class="text-primary mb-2 text-c" style="letter-spacing: 0.5px;">GAME SETTINGS</h2>
 
     <div class="settings-group" style="margin-bottom: 20px;">
-      <!-- 0. Word Pack Category -->
+      <!-- 0. Word Category -->
       <div class="setting-item" style="flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 14px;">
         <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
           <div id="cat-icon-mid" style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"></div>

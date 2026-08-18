@@ -39,12 +39,16 @@
   <link rel="apple-touch-icon" href="assets/fav-icon.png">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#07080A">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Oddinary">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800;900&family=Space+Grotesk:wght@600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
   <!-- Google AdSense -->
@@ -293,7 +297,7 @@
       <div class="scoring-details-accordion">
         <details class="scoring-faq-item">
           <summary>How does the "Betrayal" bonus work? <span class="accordion-arrow">▼</span></summary>
-          <p>When playing with 2 or more Oddinaries, if an Oddinary votes against another Oddinary to blend in, they earn a +5 bonus points.</p>
+          <p>When playing with 2 or more Oddinaries, if an Oddinary votes against another Oddinary to blend in, they earn 5 bonus points.</p>
         </details>
         <details class="scoring-faq-item">
           <summary>What happens if there is a tie in votes? <span class="accordion-arrow">▼</span></summary>
@@ -317,6 +321,7 @@
       </div>
 
       <div class="faq-accordion-container">
+        <!-- 1. GETTING STARTED & SETUP -->
         <!-- Q1 -->
         <div class="faq-item">
           <button class="faq-question" onclick="GameUI.toggleFaq(this)">
@@ -331,55 +336,57 @@
         <!-- Q2 -->
         <div class="faq-item">
           <button class="faq-question" onclick="GameUI.toggleFaq(this)">
-            <span>Do I need to download an app or install anything?</span>
+            <span>Can we play with just one phone?</span>
             <span class="faq-icon">+</span>
           </button>
           <div class="faq-answer">
-            <p>No downloads or installations are required. Oddinary runs directly in your mobile or desktop web browser.</p>
+            <p>Yes! Oddinary is a single-device pass-and-play game. You only need one shared smartphone passed around the circle for secret word reveal and voting.</p>
           </div>
         </div>
 
         <!-- Q3 -->
         <div class="faq-item">
           <button class="faq-question" onclick="GameUI.toggleFaq(this)">
-            <span>Can we play with just one phone?</span>
+            <span>Do I need an account or app download to play?</span>
             <span class="faq-icon">+</span>
           </button>
           <div class="faq-answer">
-            <p>Yes. Oddinary is a single-device pass-and-play game. You only need one shared smartphone passed around the circle for secret word reveal and voting.</p>
+            <p>No sign-up or mandatory download is required — Oddinary runs instantly in any web browser! However, you can optionally install it as an app (PWA) directly onto your phone home screen for quick access.</p>
           </div>
         </div>
 
+        <!-- 2. GAMEPLAY & WORD CATEGORIES -->
         <!-- Q4 -->
         <div class="faq-item">
           <button class="faq-question" onclick="GameUI.toggleFaq(this)">
-            <span>Does Oddinary require an account or sign up?</span>
+            <span>Can we choose specific word categories?</span>
             <span class="faq-icon">+</span>
           </button>
           <div class="faq-answer">
-            <p>No account is required. Simply enter player names and start playing immediately.</p>
+            <p>Yes! You can select word categories such as <strong>Food & Drinks</strong>, <strong>Animals & Creatures</strong>, <strong>Everyday Objects</strong>, <strong>Nature & Weather</strong>, <strong>Places & Concepts</strong>, or <strong>Vehicles & Travel</strong> from Game Settings, or play with <strong>All Categories</strong> set by default.</p>
           </div>
         </div>
 
+        <!-- 3. GAME MODES & SETTINGS -->
         <!-- Q5 -->
-        <div class="faq-item">
-          <button class="faq-question" onclick="GameUI.toggleFaq(this)">
-            <span>How many Oddinaries can there be in a game?</span>
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            <p>You can set 1 or more Oddinaries based on your player count. The game balances the ratio (1 Oddinary per 3 players) to keep deduction fair and competitive.</p>
-          </div>
-        </div>
-
-        <!-- Q6 -->
         <div class="faq-item">
           <button class="faq-question" onclick="GameUI.toggleFaq(this)">
             <span>What is Stealth Mode?</span>
             <span class="faq-icon">+</span>
           </button>
           <div class="faq-answer">
-            <p>In Stealth Mode, the Oddinary receives a word that is closely related to the common word (e.g. <em>Coffee</em> vs <em>Tea</em>), without knowing they are the Oddinary. They only realize something is different by listening closely to other clues.</p>
+            <p>In Stealth Mode (ON by default), the Oddinary receives a word closely related to the common word (e.g., <em>Coffee</em> vs <em>Tea</em>) without knowing they are the Oddinary. When Stealth Mode is OFF (Classic Mode), the Oddinary receives no word at all and must bluff from the start.</p>
+          </div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="faq-item">
+          <button class="faq-question" onclick="GameUI.toggleFaq(this)">
+            <span>How many Oddinaries can there be in a game?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>You can set 1 or more Oddinaries based on your player count. The game balances the maximum ratio (up to 1 Oddinary per 3 players) to keep deduction fair and competitive.</p>
           </div>
         </div>
 
@@ -390,7 +397,19 @@
             <span class="faq-icon">+</span>
           </button>
           <div class="faq-answer">
-            <p>When playing with multiple Oddinaries, Secret Alliance shows each Oddinary the names of their fellow conspirators so they can coordinate clues and protect each other.</p>
+            <p>When playing with 2 or more Oddinaries, Secret Alliance reveals the names of fellow conspirators to each Oddinary during word reveal so they can coordinate clues and protect each other.</p>
+          </div>
+        </div>
+
+        <!-- 4. VOTING & SCORING -->
+        <!-- Q8 -->
+        <div class="faq-item">
+          <button class="faq-question" onclick="GameUI.toggleFaq(this)">
+            <span>How does voting and scoring work?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>You can choose between <strong>In-App Secret Voting</strong> (where the phone is passed around to vote secretly and automatically calculates points) or <strong>Group Voting</strong> (where players debate out loud and point at the suspect on the count of three).</p>
           </div>
         </div>
       </div>

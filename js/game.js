@@ -130,7 +130,7 @@ const Game = {
       if ($('setting-timer')) $('setting-timer').checked = State.config.timer !== false;
       if ($('setting-sound')) $('setting-sound').checked = State.config.sound !== false;
       if ($('setting-category')) $('setting-category').value = State.config.category || 'all';
-      Game.updateCategorySetting(State.config.category || 'all', 'setup');
+      Game.updateCategorySetting(State.config.category || 'all', 'init');
       if (State.config.timer !== false) {
         if ($('timer-slider-container')) $('timer-slider-container').classList.remove('hidden');
       } else {
@@ -155,6 +155,9 @@ const Game = {
       if ($('cat-icon-mid')) $('cat-icon-mid').innerHTML = fullSvg;
     }
 
+    if (source !== 'init') {
+      AudioEngine.play('category_switch');
+    }
     Game.saveSession();
   },
 
@@ -321,13 +324,12 @@ const Game = {
     State.oddPlayerIds = [];
     State.votes = {};
     window.location.href = 'index.html';
-  },
-
- addPlayer: (name = "") => {
+  },  addPlayer: (name = "") => {
     if (State.players.length >= 30) {
       Game.showAlert("Maximum 30 players!", "Limit Reached");
       return;
     }
+    AudioEngine.play('pop');
     State.players.push({ id: Date.now() + Math.floor(Math.random()*100), name: name, score: 0 });
     Game.saveSession();
     Game.renderSetupInputs(true);
@@ -337,7 +339,7 @@ const Game = {
 
   quickAddRecentPlayer: (name) => {
     if (!name) return;
-    AudioEngine.play('click');
+    AudioEngine.play('pop');
     
     // Find first empty player input or add a new player
     const emptyPlayer = State.players.find(p => !p.name.trim());
@@ -365,6 +367,7 @@ const Game = {
 
   removePlayer: (index) => {
     if (State.players.length <= 3) return Game.showAlert("Minimum 3 players required!", "Warning");
+    AudioEngine.play('pop');
     State.players.splice(index, 1);
     
     const maxImposters = Math.max(1, Math.floor(State.players.length / 3));
@@ -488,9 +491,9 @@ const Game = {
  });
  State.players = newList;
  Game.saveSession();
- if (isMidgame) {
- Game.renderRearrangeInputs();
- } else {
+  if (isMidgame) {
+  Game.renderManagePlayersList();
+  } else {
  Game.renderSetupInputs();
  }
  },
@@ -691,6 +694,7 @@ const Game = {
       timerContainer.classList.remove('hidden');
       discussTimerSettings.classList.add('hidden');
       State.discussionTimeLeft = State.config.timerDuration * 60;
+      AudioEngine.play('timer_start');
       Game.tickDiscussionTimer();
     } else {
       timerContainer.classList.add('hidden');
@@ -918,7 +922,7 @@ const Game = {
     State.players.forEach(p => p.roundScore = 0);
     const oddIds = State.oddPlayerIds || [];
     const imposterNames = oddIds.map(id => {
-      const player = State.players.find(p => p.id === id);
+      const player = State.players.find(p => p.id == id);
       return player ? player.name : '';
     }).filter(Boolean);
 
@@ -1067,9 +1071,10 @@ const Game = {
  playerVotes.forEach(vId => {
  const targetId = parseInt(vId); 
  if (oddIds.includes(targetId)) {
- if (isVoterImposter) {
- p.roundScore += 5;
- } else {
+  if (isVoterImposter) {
+  p.roundScore += 5;
+  AudioEngine.play('betrayal');
+  } else {
  p.roundScore += 15;
  State.stats.correctGuesses[p.id] = (State.stats.correctGuesses[p.id] || 0) + 1;
  }
@@ -1100,7 +1105,10 @@ const Game = {
     State.players.forEach(p => p.score += p.roundScore);
     Game.saveSession();
 
-    const imposterNames = oddIds.map(id => State.players.find(p => p.id === id).name);
+    const imposterNames = oddIds.map(id => {
+      const player = State.players.find(p => p.id == id);
+      return player ? player.name : '';
+    }).filter(Boolean);
     State.pendingRevealData = {
       imposterNames: imposterNames,
       highestVoteCount: maxVotes,
@@ -1114,7 +1122,7 @@ const Game = {
     if (!State.config.voting) {
       const oddIds = State.oddPlayerIds || [];
       const imposterNames = oddIds.map(id => {
-        const player = State.players.find(p => p.id === id);
+        const player = State.players.find(p => p.id == id);
         return player ? player.name : '';
       }).filter(Boolean);
 
@@ -1174,12 +1182,18 @@ const Game = {
  }, 4200);
  },
 
- renderResults: (voteCounts, roundStatus) => {
- AudioEngine.play('fanfare');
- 
- const statusHeader = $('round-status-header');
- const cardEl = $('results-imposter-card');
- const displayStatus = (roundStatus || "ROUND COMPLETE").toUpperCase();
+  renderResults: (voteCounts, roundStatus) => {
+    const displayStatus = (roundStatus || "ROUND COMPLETE").toUpperCase();
+    if (displayStatus.includes('CAUGHT')) {
+      AudioEngine.play('imposter_caught');
+    } else if (displayStatus.includes('ESCAPED') || displayStatus.includes('VICTORY')) {
+      AudioEngine.play('innocent_voted');
+    } else {
+      AudioEngine.play('fanfare');
+    }
+  
+    const statusHeader = $('round-status-header');
+    const cardEl = $('results-imposter-card');
 
  if (statusHeader) {
  statusHeader.innerText = displayStatus;
@@ -1364,12 +1378,14 @@ const Game = {
  Game.openRemovePlayerConfirm(player.id);
  },
 
- openDeletePlayers: () => Game.openManagePlayers(),
+openDeletePlayers: () => Game.openManagePlayers(),
  closeDeletePlayers: () => $('modal-manage-players').classList.remove('open'),
  openRearrangePlayers: () => Game.openManagePlayers(),
  closeRearrangePlayers: () => $('modal-manage-players').classList.remove('open'),
 
- showGameOverScreen: () => {
+  showGameOverScreen: () => {
+    AudioEngine.play('championship');
+    ConfettiFX.launch();
     Analytics.logEvent('game_completed', { total_rounds: State.round });
     
     const sorted = [...State.players].sort((a,b) => (b.score || 0) - (a.score || 0));
@@ -1810,38 +1826,6 @@ const Game = {
     }
   },
 
-  downloadShareImage: () => {
-    const canvas = $('share-card-canvas');
-    if (!canvas) return;
-
-    try {
-      if (canvas.toBlob) {
-        canvas.toBlob((blob) => {
-          if (!blob) {
-            Game._fallbackDownloadDataUrl(canvas);
-            return;
-          }
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.download = `oddinary-champion-round-${State.round || 1}.png`;
-          link.href = url;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          setTimeout(() => URL.revokeObjectURL(url), 10000);
-          Game.showAlert('Results image saved to downloads!', 'Saved');
-        }, 'image/png');
-      } else {
-        Game._fallbackDownloadDataUrl(canvas);
-      }
-    } catch (e) {
-      console.error('Download error:', e);
-      Game._fallbackDownloadDataUrl(canvas);
-    }
-  },
-
-
-
   copyShareText: () => {
     const sorted = [...State.players].sort((a,b) => (b.score || 0) - (a.score || 0));
     const winner = sorted[0] || { name: 'Player', score: 0 };
@@ -1861,15 +1845,7 @@ const Game = {
     }
   },
 
- playAgain: () => {
- State.players.forEach(p => p.score = 0);
- State.round = 0;
- State.stats = { imposterCountTimes: {}, imposterCaughtTimes: {}, correctGuesses: {}, votesReceived: {} };
- Game.saveSession();
- Game.setupNextRound();
- },
-
- openAddPlayerMidgame: () => {
+  openAddPlayerMidgame: () => {
  $('new-player-name-midgame').value = "";
  $('add-player-midgame-error').classList.remove('show');
  $('modal-add-player-midgame').classList.add('open');
@@ -1951,16 +1927,6 @@ const Game = {
  State.players.forEach(p => p.score = 0);
  Game.saveSession();
  Game.cancelResetScores();
- Game.goToScoreboard();
- },
-
- openRearrangePlayers: () => {
- Game.renderRearrangeInputs();
- $('modal-rearrange-players').classList.add('open');
- },
-
- closeRearrangePlayers: () => {
- $('modal-rearrange-players').classList.remove('open');
  Game.goToScoreboard();
  },
 
@@ -2093,17 +2059,18 @@ const Game = {
  },
 
  adjustImposterCount: (delta, screenType = 'setup') => {
- const maxImposters = Math.max(1, Math.floor(State.players.length / 3)); 
- let newCount = State.config.imposterCount + delta;
- 
- if (delta > 0 && newCount > maxImposters) {
- const neededPlayers = (State.config.imposterCount + 1) * 3;
- Game.showAlert(
- `You need at least ${neededPlayers} players to add another Imposter.`,
- "More Players Needed"
- );
- return;
- }
+    const maxImposters = Math.max(1, Math.floor(State.players.length / 3)); 
+    let newCount = State.config.imposterCount + delta;
+    
+    if (delta > 0 && newCount > maxImposters) {
+      const neededPlayers = (State.config.imposterCount + 1) * 3;
+      if (neededPlayers > 30 || State.players.length >= 30) {
+        Game.showAlert("Maximum 10 Oddinaries allowed for the 30 player limit.", "Max Limit Reached");
+      } else {
+        Game.showAlert(`You need at least ${neededPlayers} players to add another Imposter.`, "More Players Needed");
+      }
+      return;
+    }
 
  if (delta < 0 && newCount < 1) {
  Game.showAlert("A game must have at least 1 Imposter!", "Imposter Required");
@@ -2245,3 +2212,77 @@ document.addEventListener('keydown', (e) => {
     Game.closeAllOpenModals();
   }
 });
+
+// --- Confetti FX Engine ---
+const ConfettiFX = {
+  launch: () => {
+    let canvas = document.getElementById('confetti-canvas');
+    if (!canvas) {
+      canvas = document.createElement('canvas');
+      canvas.id = 'confetti-canvas';
+      canvas.style.position = 'fixed';
+      canvas.style.top = '0';
+      canvas.style.left = '0';
+      canvas.style.width = '100vw';
+      canvas.style.height = '100vh';
+      canvas.style.pointerEvents = 'none';
+      canvas.style.zIndex = '99999';
+      document.body.appendChild(canvas);
+    }
+
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const colors = ['#6BCF2D', '#9CFF3A', '#F1C40F', '#FFFFFF', '#E63946', '#38BDF8'];
+    const particles = [];
+    const count = 75;
+
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height * 0.4 - canvas.height * 0.2,
+        size: Math.random() * 8 + 6,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        vx: (Math.random() - 0.5) * 4.5,
+        vy: Math.random() * 3 + 2.5,
+        rotation: Math.random() * 360,
+        rSpeed: (Math.random() - 0.5) * 9,
+        opacity: 1
+      });
+    }
+
+    let startTime = performance.now();
+    const duration = 3500;
+
+    const render = (now) => {
+      const elapsed = now - startTime;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rotation += p.rSpeed;
+        if (elapsed > 2000) {
+          p.opacity = Math.max(0, 1 - (elapsed - 2000) / 1500);
+        }
+
+        ctx.save();
+        ctx.globalAlpha = p.opacity;
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        ctx.restore();
+      });
+
+      if (elapsed < duration) {
+        requestAnimationFrame(render);
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    };
+
+    requestAnimationFrame(render);
+  }
+};

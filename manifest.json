@@ -1,12 +1,16 @@
 {
+  "id": "https://oddinary.vercel.app/",
   "name": "Oddinary - Word Imposter Game",
   "short_name": "Oddinary",
   "description": "Find the imposter in this fun local party word game for 3-30 players.",
+  "lang": "en-US",
+  "dir": "ltr",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#07080A",
   "theme_color": "#6BCF2D",
+  "prefer_related_applications": false,
   "categories": ["games", "entertainment", "utilities"],
   "icons": [
     {
@@ -22,13 +26,13 @@
       "purpose": "any"
     },
     {
-      "src": "assets/fav-icon.png",
+      "src": "assets/maskable-icon.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "assets/fav-icon.png",
+      "src": "assets/maskable-icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

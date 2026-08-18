@@ -27,7 +27,7 @@ Game._createPlayerRow = function(p, idx, animate) {
     <div class="drag-handle" title="Drag to reorder">
       <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:currentColor;"><path d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
     </div>
-    <button class="btn btn-icon btn-danger" onclick="AudioEngine.play('click'); Game.removePlayer(${idx})" style="width:44px; height:44px; min-height:0; border-radius:12px;">
+    <button class="btn btn-icon btn-danger" onclick="AudioEngine.play('click'); Game.removePlayer(${idx})" style="width:44px; height:44px; min-height:0; border-radius:12px;" aria-label="Remove player">
       <svg viewBox="0 0 24 24" style="width:20px; height:20px;"><path d="M5 11h14v2H5z" fill="currentColor"/></svg>
     </button>
   `;
@@ -114,14 +114,19 @@ Game.renderRecentPlayerChips = function() {
       <span style="display:flex; align-items:center; gap:5px;"><svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:var(--accent-gold);"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg> Quick-Add Recent Friends</span>
       <button class="clear-recent-btn" onclick="Game.clearSavedPlayersHistory()" title="Clear saved history">Clear</button>
     </div>
-    <div class="recent-players-chips">
-      ${availableRecent.map(name => `
-        <button class="player-chip" onclick="Game.quickAddRecentPlayer('${name.replace(/'/g, "\\'")}')">
-          + ${name}
-        </button>
-      `).join('')}
-    </div>
+    <div class="recent-players-chips" id="recent-players-chips-list"></div>
   `;
+
+  const chipsList = $('recent-players-chips-list');
+  if (chipsList) {
+    availableRecent.forEach(name => {
+      const btn = document.createElement('button');
+      btn.className = 'player-chip';
+      btn.textContent = `+ ${name}`;
+      btn.onclick = () => Game.quickAddRecentPlayer(name);
+      chipsList.appendChild(btn);
+    });
+  }
 };
 
 // --- Render Mid-game Manage Players List ---
