@@ -25,7 +25,8 @@ const WORD_CATEGORIES = {
       ["Honey", "Jam"], ["Salt", "Sugar"], ["Salt", "Pepper"], ["Bread", "Toast"],
       ["Rice", "Wheat"], ["Sandwich", "Burger"], ["Soda", "Lemonade"], ["Almond", "Cashew"],
       ["Yogurt", "Ice cream"], ["Idli", "Dosa"], ["Butter", "Ghee"], ["Milk", "Curd"],
-      ["Omelette", "Boiled Egg"], ["Puri", "Paratha"], ["Pineapple", "Papaya"], ["Cheese", "Paneer"]
+      ["Omelette", "Boiled Egg"], ["Puri", "Paratha"], ["Pineapple", "Papaya"], ["Cheese", "Paneer"],
+      ["French Fries", "Potato Chips"], ["Cotton Candy", "Lollipop"], ["Ketchup", "Mayonnaise"]
     ]
   },
   nature: {
@@ -35,7 +36,8 @@ const WORD_CATEGORIES = {
       ["Sun", "Moon"], ["Moon", "Star"], ["Lightning", "Thunder"], ["Cloud", "Fog"],
       ["Rain", "Snow"], ["River", "Lake"], ["Ocean", "Sea"], ["Desert", "Beach"],
       ["Fire", "Smoke"], ["Mountain", "Hill"], ["Tree", "Plant"], ["Flower", "Leaf"],
-      ["Earthquake", "Tsunami"], ["Wind", "Storm"], ["Sunrise", "Sunset"], ["Waterfall", "Fountain"]
+      ["Earthquake", "Tsunami"], ["Wind", "Storm"], ["Sunrise", "Sunset"], ["Waterfall", "Fountain"],
+      ["Shadow", "Reflection"]
     ]
   },
   animals: {
@@ -48,7 +50,7 @@ const WORD_CATEGORIES = {
       ["Fish", "Crab"], ["Jellyfish", "Starfish"], ["Ghost", "Zombie"], ["Dragon", "Dinosaur"],
       ["Mosquito", "Housefly"], ["Frog", "Toad"], ["Duck", "Goose"], ["Bee", "Wasp"],
       ["Fox", "Wolf"], ["Butterfly", "Moth"], ["Turtle", "Tortoise"], ["Octopus", "Squid"],
-      ["Swan", "Flamingo"]
+      ["Swan", "Flamingo"], ["Goldfish", "Shark"], ["Crab", "Prawn"]
     ]
   },
   objects: {
@@ -67,7 +69,8 @@ const WORD_CATEGORIES = {
       ["Shower", "Tap"], ["Broom", "Mop"], ["Candle", "Lamp"], ["Key", "Lock"],
       ["Cellotape", "Glue"], ["Rope", "String"], ["Zip", "Button"], ["Mug", "Glass"],
       ["Cup", "Bowl"], ["Plate", "Dish"], ["Ladder", "Stairs"], ["Elevator", "Escalator"],
-      ["Keyboard", "Mouse"], ["Fan", "Air Conditioner"], ["Soap", "Bodywash"]
+      ["Keyboard", "Mouse"], ["Fan", "Air Conditioner"], ["Soap", "Bodywash"],
+      ["Crayon", "Color Pencil"], ["Bubble", "Balloon"], ["Mustache", "Beard"]
     ]
   },
   vehicles: {
@@ -76,7 +79,8 @@ const WORD_CATEGORIES = {
     pairs: [
       ["Car", "Bus"], ["Bus", "Train"], ["Cycle", "Bike"], ["Boat", "Ship"],
       ["Airplane", "Helicopter"], ["Taxi", "Auto"], ["Ambulance", "Firetruck"],
-      ["Rocket", "Satellite"], ["Rocket", "Missile"], ["Submarine", "Ship"]
+      ["Rocket", "Satellite"], ["Rocket", "Missile"], ["Submarine", "Ship"],
+      ["Bicycle", "Tricycle"]
     ]
   },
   places: {
@@ -90,7 +94,7 @@ const WORD_CATEGORIES = {
       ["Actor", "Director"], ["King", "Queen"], ["Compass", "Map"], ["Map", "Globe"],
       ["Birthday", "Anniversary"], ["Love", "Happiness"], ["Airport", "Railway Station"], ["Tennis", "Badminton"],
       ["Singing", "Dancing"], ["Policeman", "Security Guard"], ["Park", "Garden"],
-      ["Mall", "Supermarket"]
+      ["Mall", "Supermarket"], ["Spiderman", "Deadpool"]
     ]
   }
 };

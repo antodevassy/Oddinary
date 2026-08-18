@@ -9,6 +9,10 @@
   <meta name="author" content="Anto Devassy V.P">
   <meta name="robots" content="index, follow">
 
+  <!-- High Priority Asset Preloading (Logo Loads First) -->
+  <link rel="preload" href="assets/logo.png" as="image" fetchpriority="high">
+  <link rel="preload" href="assets/fav-icon.png" as="image">
+
   <!-- Canonical URL -->
   <link rel="canonical" href="https://oddinary.vercel.app/">
 
@@ -100,7 +104,7 @@
   <section class="landing-hero-section">
     <div class="landing-hero-inner">
       <div class="hero-logo-wrapper">
-        <img src="assets/logo.png" alt="Oddinary - Word Imposter Game" class="hero-logo-img">
+        <img src="assets/logo.png" alt="Oddinary - Word Imposter Game" class="hero-logo-img" fetchpriority="high" decoding="sync">
       </div>
 
       <!-- Concept Pitch in 5 Seconds -->

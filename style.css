@@ -319,10 +319,44 @@ h1, h2, h3, h4 { font-weight: 900; letter-spacing: -0.5px; }
   text-transform: uppercase;
 }
 
+/* Logo-First Entrance Sequence */
+@keyframes heroLogoPopFirst {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+    filter: drop-shadow(0 0 10px rgba(107, 207, 45, 0.2));
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: drop-shadow(0 0 28px rgba(107, 207, 45, 0.5));
+  }
+}
+
+@keyframes textFadeInAfterLogo {
+  0% {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .hero-logo-wrapper {
   width: 100%;
   max-width: 480px;
   margin: 0 auto 15px;
+  animation: heroLogoPopFirst 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.hero-pitch-card,
+.hero-actions-group,
+.hero-badges-grid {
+  animation: textFadeInAfterLogo 0.45s ease 0.22s both;
+  will-change: transform, opacity;
 }
 
 .hero-logo-img {
