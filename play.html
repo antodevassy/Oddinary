@@ -102,6 +102,25 @@
 
         <div id="advanced-settings-content" class="advanced-settings-content collapsed">
           <div class="settings-group">
+            <!-- 0. Word Pack Category -->
+            <div class="setting-item" style="flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 14px;">
+              <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                <div id="cat-icon-setup" style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"></div>
+                <span style="font-weight: 700;">Word Category</span>
+              </div>
+              <div class="custom-select-wrapper">
+                <select id="setting-category" class="theme-select" onchange="Game.updateCategorySetting(this.value, 'setup')">
+                  <option value="all">All Categories</option>
+                  <option value="food">Food & Drinks</option>
+                  <option value="animals">Animals & Creatures</option>
+                  <option value="objects">Everyday Objects</option>
+                  <option value="nature">Nature & Weather</option>
+                  <option value="places">Places & Concepts</option>
+                  <option value="vehicles">Vehicles & Travel</option>
+                </select>
+              </div>
+            </div>
+
             <!-- 1. Stealth Mode -->
             <div class="setting-item">
               <div class="setting-left">
@@ -594,6 +613,25 @@
     <h2 class="text-primary mb-2 text-c" style="letter-spacing: 0.5px;">GAME SETTINGS</h2>
 
     <div class="settings-group" style="margin-bottom: 20px;">
+      <!-- 0. Word Pack Category -->
+      <div class="setting-item" style="flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 14px;">
+        <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+          <div id="cat-icon-mid" style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"></div>
+          <span style="font-weight: 700;">Word Category</span>
+        </div>
+        <div class="custom-select-wrapper">
+          <select id="mid-setting-category" class="theme-select" onchange="Game.updateCategorySetting(this.value, 'mid')">
+            <option value="all">All Categories</option>
+            <option value="food">Food & Drinks</option>
+            <option value="animals">Animals & Creatures</option>
+            <option value="objects">Everyday Objects</option>
+            <option value="nature">Nature & Weather</option>
+            <option value="places">Places & Concepts</option>
+            <option value="vehicles">Vehicles & Travel</option>
+          </select>
+        </div>
+      </div>
+
       <!-- 1. Oddinaries -->
       <div class="setting-item">
         <div class="setting-left">

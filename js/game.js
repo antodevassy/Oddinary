@@ -62,6 +62,16 @@ const $ = (id) => document.getElementById(id);
 const Screens = ['landing', 'setup', 'reveal', 'discuss', 'voting', 'voting-complete', 'results', 'scoreboard', 'game-over'];
 let shouldPreventRefresh = true;
 
+// Helper to push history entry & prevent mobile back navigation
+function lockHistoryState() {
+  try {
+    window.history.pushState({ oddinary: true }, '', location.href);
+  } catch (e) {}
+}
+
+// Lock history stack on initial script load
+lockHistoryState();
+
 // Prevent refresh warning during active game
 window.addEventListener('beforeunload', (e) => {
   const activeEl = document.querySelector('.screen.active');
@@ -76,14 +86,16 @@ window.addEventListener('beforeunload', (e) => {
   return '';
 });
 
-// Prevent back button / swipe-back navigation during active game
+// Traps mobile hardware back button and swipe-back gestures during active game
 window.addEventListener('popstate', () => {
   const activeEl = document.querySelector('.screen.active');
   const activeId = activeEl ? activeEl.id.replace('screen-', '') : '';
   const isGameInProgress = activeId && !['landing', 'setup', 'game-over'].includes(activeId);
 
-  if (isGameInProgress && shouldPreventRefresh) {
-    window.history.pushState(null, '', location.href);
+  // Immediately re-push history state so browser stays on current page
+  lockHistoryState();
+
+  if ((isGameInProgress || activeId === 'setup') && shouldPreventRefresh) {
     if (typeof Game !== 'undefined' && Game.askEndGame) {
       Game.askEndGame();
     }
@@ -117,12 +129,33 @@ const Game = {
       if ($('setting-secret-alliance')) $('setting-secret-alliance').checked = State.config.secretAlliance;
       if ($('setting-timer')) $('setting-timer').checked = State.config.timer !== false;
       if ($('setting-sound')) $('setting-sound').checked = State.config.sound !== false;
+      if ($('setting-category')) $('setting-category').value = State.config.category || 'all';
+      Game.updateCategorySetting(State.config.category || 'all', 'setup');
       if (State.config.timer !== false) {
         if ($('timer-slider-container')) $('timer-slider-container').classList.remove('hidden');
       } else {
         if ($('timer-slider-container')) $('timer-slider-container').classList.add('hidden');
       }
     }
+  },
+
+  updateCategorySetting: (catKey, source = 'setup') => {
+    State.config.category = catKey || 'all';
+
+    if ($('setting-category')) $('setting-category').value = State.config.category;
+    if ($('mid-setting-category')) $('mid-setting-category').value = State.config.category;
+
+    const pathData = (typeof CATEGORY_ICONS !== 'undefined' && CATEGORY_ICONS[State.config.category]) 
+      ? CATEGORY_ICONS[State.config.category] 
+      : (typeof CATEGORY_ICONS !== 'undefined' ? CATEGORY_ICONS.all : '');
+
+    if (pathData) {
+      const fullSvg = `<svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:var(--primary); display:block;">${pathData}</svg>`;
+      if ($('cat-icon-setup')) $('cat-icon-setup').innerHTML = fullSvg;
+      if ($('cat-icon-mid')) $('cat-icon-mid').innerHTML = fullSvg;
+    }
+
+    Game.saveSession();
   },
 
   updateRoundBadges: () => {
@@ -185,9 +218,7 @@ const Game = {
     });
     const target = $(`screen-${name}`);
     if (target) target.classList.add('active');
-    if (!['landing', 'setup', 'game-over'].includes(name)) {
-      try { window.history.pushState({ screen: name }, '', location.href); } catch(e){}
-    }
+    lockHistoryState();
     window.scrollTo(0, 0);
 
     if (name === 'landing' || name === 'setup') {
@@ -354,6 +385,33 @@ const Game = {
     Game.updatePlayerCountBadge();
     Game.updateImposterUI();
   },
+
+  playAgain: () => {
+    State.players.forEach(p => p.score = 0);
+    State.round = 0;
+    State.stats = { imposterCountTimes: {}, imposterCaughtTimes: {}, correctGuesses: {}, votesReceived: {} };
+    Game.updateCategorySetting('all');
+    Game.saveSession();
+    Game.setupNextRound();
+  },
+
+  startNewGameSetup: () => {
+    State.round = 0;
+    State.stats = { imposterCountTimes: {}, imposterCaughtTimes: {}, correctGuesses: {}, votesReceived: {} };
+    State.players.forEach(p => p.score = 0);
+    State.config.timer = true;
+    State.config.voting = true;
+    Game.updateCategorySetting('all');
+    if (State.config.imposterCount <= 1 && State.config.secretAlliance) {
+      State.config.secretAlliance = false;
+      const setupCheck = $('setting-secret-alliance');
+      const midCheck = $('mid-setting-secret-alliance');
+      if (setupCheck) setupCheck.checked = false;
+      if (midCheck) midCheck.checked = false;
+    }
+    Game.saveSession();
+    Game.goToSetup();
+  },
  
  validatePlayerName: (index) => {
  const errorEl = $('setup-error');
@@ -473,9 +531,10 @@ const Game = {
  State.config.timer = $('setting-timer').checked;
  State.config.imposterHasWord = $('setting-imposter-word').checked;
  State.config.voting = $('setting-voting').checked;
- State.config.secretAlliance = $('setting-secret-alliance').checked;
- State.config.sound = $('setting-sound').checked;
- AudioEngine.muted = !State.config.sound;
+  State.config.secretAlliance = $('setting-secret-alliance').checked;
+  State.config.sound = $('setting-sound').checked;
+  if ($('setting-category')) State.config.category = $('setting-category').value;
+  AudioEngine.muted = !State.config.sound;
  
  if (State.config.timer) {
  State.config.timerDuration = parseInt($('timer-duration-slider').value);
@@ -497,7 +556,7 @@ const Game = {
     State.round++;
     Game.updateRoundBadges();
     State.players.forEach(p => p.roundScore = 0);
-    const pair = wordSelector.getRandomPair();
+    const pair = wordSelector.getRandomPair(State.config.category || 'all');
  
  if (Math.random() > 0.5) {
  State.words.common = pair[0];
@@ -1906,20 +1965,22 @@ const Game = {
  },
 
  openMidgameSettings: () => {
- $('mid-setting-shuffle').checked = State.config.shuffle;
- $('mid-setting-timer').checked = State.config.timer;
- $('mid-setting-voting').checked = State.config.voting;
- $('mid-setting-secret-alliance').checked = State.config.secretAlliance;
- $('mid-setting-sound').checked = State.config.sound;
- $('mid-timer-duration-slider').value = State.config.timerDuration;
- $('mid-timer-value-display').innerText = `${State.config.timerDuration} min`;
- $(`mid-imposter-count-display`).innerText = State.config.imposterCount;
- $(`mid-setting-imposter-word`).checked = State.config.imposterHasWord;
- 
- Game.updateImposterUI();
- Game.toggleMidTimerSettings();
- $('modal-midgame-settings').classList.add('open');
- },
+    $('mid-setting-shuffle').checked = State.config.shuffle;
+    $('mid-setting-timer').checked = State.config.timer;
+    $('mid-setting-voting').checked = State.config.voting;
+    $('mid-setting-secret-alliance').checked = State.config.secretAlliance;
+    $('mid-setting-sound').checked = State.config.sound;
+    $('mid-timer-duration-slider').value = State.config.timerDuration;
+    $('mid-timer-value-display').innerText = `${State.config.timerDuration} min`;
+    $('mid-imposter-count-display').innerText = State.config.imposterCount;
+    $('mid-setting-imposter-word').checked = State.config.imposterHasWord;
+    if ($('mid-setting-category')) $('mid-setting-category').value = State.config.category || 'all';
+    Game.updateCategorySetting(State.config.category || 'all', 'mid');
+    
+    Game.updateImposterUI();
+    Game.toggleMidTimerSettings();
+    $('modal-midgame-settings').classList.add('open');
+  },
 
  closeMidgameSettings: () => $('modal-midgame-settings').classList.remove('open'),
 
@@ -1938,24 +1999,26 @@ const Game = {
  },
 
  saveMidgameSettings: () => {
- State.config.shuffle = $('mid-setting-shuffle').checked;
- State.config.timer = $('mid-setting-timer').checked;
- State.config.voting = $('mid-setting-voting').checked;
- State.config.secretAlliance = $('mid-setting-secret-alliance').checked;
- State.config.sound = $('mid-setting-sound').checked;
- AudioEngine.muted = !State.config.sound;
- State.config.timerDuration = parseInt($('mid-timer-duration-slider').value);
- State.config.imposterCount = parseInt($('mid-imposter-count-display').innerText);
- State.config.imposterHasWord = $('mid-setting-imposter-word').checked;
- 
- $('setting-shuffle').checked = State.config.shuffle;
- $('setting-timer').checked = State.config.timer;
- $('setting-voting').checked = State.config.voting !== false;
- $('setting-secret-alliance').checked = State.config.secretAlliance;
- $('setting-sound').checked = State.config.sound;
- $('timer-duration-slider').value = State.config.timerDuration;
- $('timer-value-display').innerText = `${State.config.timerDuration} min`;
- $('setting-imposter-word').checked = State.config.imposterHasWord;
+    State.config.shuffle = $('mid-setting-shuffle').checked;
+    State.config.timer = $('mid-setting-timer').checked;
+    State.config.voting = $('mid-setting-voting').checked;
+    State.config.secretAlliance = $('mid-setting-secret-alliance').checked;
+    State.config.sound = $('mid-setting-sound').checked;
+    AudioEngine.muted = !State.config.sound;
+    State.config.timerDuration = parseInt($('mid-timer-duration-slider').value);
+    State.config.imposterCount = parseInt($('mid-imposter-count-display').innerText);
+    State.config.imposterHasWord = $('mid-setting-imposter-word').checked;
+    if ($('mid-setting-category')) State.config.category = $('mid-setting-category').value;
+    Game.updateCategorySetting(State.config.category || 'all', 'mid');
+    
+    $('setting-shuffle').checked = State.config.shuffle;
+    $('setting-timer').checked = State.config.timer;
+    $('setting-voting').checked = State.config.voting !== false;
+    $('setting-secret-alliance').checked = State.config.secretAlliance;
+    $('setting-sound').checked = State.config.sound;
+    $('timer-duration-slider').value = State.config.timerDuration;
+    $('timer-value-display').innerText = `${State.config.timerDuration} min`;
+    $('setting-imposter-word').checked = State.config.imposterHasWord;
  
  const setupCount = $('setup-imposter-count-display');
  if (setupCount) setupCount.innerText = State.config.imposterCount;
