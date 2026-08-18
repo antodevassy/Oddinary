@@ -1,4 +1,4 @@
-const CACHE_NAME = 'oddinary-v60';
+const CACHE_NAME = 'oddinary-v61';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

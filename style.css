@@ -1512,7 +1512,8 @@ input:checked + .slider:before { transform: translateX(22px); }
   height: 100%;
   position: relative;
   transform-style: preserve-3d;
-  transition: transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  -webkit-transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   border-radius: 22px;
 }
 
@@ -1522,6 +1523,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   position: absolute;
   width: 100%;
   height: 100%;
+  -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   display: flex;
   flex-direction: column;
@@ -1540,6 +1542,13 @@ input:checked + .slider:before { transform: translateX(22px); }
   background: linear-gradient(145deg, #131720, #0E1017);
   border: 1.5px solid rgba(107, 207, 45, 0.35);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(107, 207, 45, 0.04);
+  transition: opacity 0.18s ease-out, visibility 0.18s ease-out;
+}
+
+.card.flipped .card-front {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .card-medallion {
@@ -1554,6 +1563,8 @@ input:checked + .slider:before { transform: translateX(22px); }
   margin-bottom: 24px;
   box-shadow: 0 0 20px rgba(107, 207, 45, 0.15);
   animation: pulse-ring 2.2s infinite;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .card-front-title {
