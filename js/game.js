@@ -64,14 +64,29 @@ let shouldPreventRefresh = true;
 
 // Prevent refresh warning during active game
 window.addEventListener('beforeunload', (e) => {
-  const landingEl = $('screen-landing');
-  const isLanding = landingEl && landingEl.classList.contains('active');
-  if (!shouldPreventRefresh || isLanding) return;
+  const activeEl = document.querySelector('.screen.active');
+  const activeId = activeEl ? activeEl.id.replace('screen-', '') : '';
+  const isGameInProgress = activeId && !['landing', 'setup', 'game-over'].includes(activeId);
 
-  if (State.round > 0) {
-    Analytics.logEvent('game_abandoned', { round: State.round });
-    e.preventDefault();
-    e.returnValue = '';
+  if (!shouldPreventRefresh || !isGameInProgress) return;
+
+  Analytics.logEvent('game_abandoned', { round: State.round });
+  e.preventDefault();
+  e.returnValue = '';
+  return '';
+});
+
+// Prevent back button / swipe-back navigation during active game
+window.addEventListener('popstate', () => {
+  const activeEl = document.querySelector('.screen.active');
+  const activeId = activeEl ? activeEl.id.replace('screen-', '') : '';
+  const isGameInProgress = activeId && !['landing', 'setup', 'game-over'].includes(activeId);
+
+  if (isGameInProgress && shouldPreventRefresh) {
+    window.history.pushState(null, '', location.href);
+    if (typeof Game !== 'undefined' && Game.askEndGame) {
+      Game.askEndGame();
+    }
   }
 });
 
@@ -170,6 +185,9 @@ const Game = {
     });
     const target = $(`screen-${name}`);
     if (target) target.classList.add('active');
+    if (!['landing', 'setup', 'game-over'].includes(name)) {
+      try { window.history.pushState({ screen: name }, '', location.href); } catch(e){}
+    }
     window.scrollTo(0, 0);
 
     if (name === 'landing' || name === 'setup') {
@@ -1182,28 +1200,28 @@ const Game = {
  Game.showScreen('results');
  },
 
- goToScoreboard: () => {
- Game.updateRoundBadges();
- const area = $('scoreboard-list');
- area.innerHTML = "";
- 
- const scoreboardNote = $('scoreboard-no-voting-note');
- if (scoreboardNote) {
- if (!State.config.voting) {
- scoreboardNote.classList.remove('hidden');
- } else {
- scoreboardNote.classList.add('hidden');
- }
- }
- 
-  const btnBack = $('btn-back-to-results');
-  if (btnBack) {
-  if (State.round > 0 && State.oddPlayerIds && State.oddPlayerIds.length > 0) {
-  btnBack.style.visibility = 'visible';
-  } else {
-  btnBack.style.visibility = 'hidden';
-  }
-  }
+  goToScoreboard: (fromNormalReveal = false) => {
+    Game.updateRoundBadges();
+    const area = $('scoreboard-list');
+    if (area) area.innerHTML = "";
+    
+    const scoreboardNote = $('scoreboard-no-voting-note');
+    if (scoreboardNote) {
+      if (!State.config.voting) {
+        scoreboardNote.classList.remove('hidden');
+      } else {
+        scoreboardNote.classList.add('hidden');
+      }
+    }
+    
+    const btnBack = $('btn-back-to-results');
+    if (btnBack) {
+      if (fromNormalReveal && State.round > 0 && State.oddPlayerIds && State.oddPlayerIds.length > 0) {
+        btnBack.style.visibility = 'visible';
+      } else {
+        btnBack.style.visibility = 'hidden';
+      }
+    }
 
  const sorted = [...State.players].sort((a,b) => b.score - a.score);
 
@@ -1319,7 +1337,6 @@ const Game = {
 
     if (allPointsZero || State.round === 0) {
       $('game-over-winner-name').innerText = sorted[0] ? sorted[0].name : "Player";
-      $('game-over-winner-score').innerText = "0 points";
       $('stat-dangerous-imposter-name').innerText = "-";
       $('stat-dangerous-imposter-sub').innerText = "-";
       $('stat-best-detective-name').innerText = "-";
@@ -1329,7 +1346,6 @@ const Game = {
     } else {
       const winner = sorted[0] || { name: 'Player', score: 0 };
       $('game-over-winner-name').innerText = winner.name;
-      $('game-over-winner-score').innerText = `${winner.score} points`;
 
       let mostDangerous = null;
       let lowestCaughtRatio = 999;
@@ -1448,8 +1464,8 @@ const Game = {
 
     const subtitleY = logoBottom + (10 * scale);
     const winnerY = logoBottom + (24 * scale);
-    const winnerH = 96 * scale;
-    const statsY = winnerY + winnerH + (16 * scale);
+    const winnerH = 72 * scale;
+    const statsY = winnerY + winnerH + (14 * scale);
     const statsH = 84 * scale;
     const standingsY = statsY + statsH + (16 * scale);
     const standingsCardH = (52 + allPlayers.length * 36 + 12) * scale;
@@ -1492,7 +1508,7 @@ const Game = {
       ctx.textAlign = 'center';
       ctx.fillText(`GAME RESULTS • ${roundCount} ${roundWord} PLAYED`, w / 2, subtitleY);
 
-      // 5. Winner Box
+      // 5. Winner Box (Oddinary Champion Name Only - no points)
       ctx.fillStyle = 'rgba(24, 26, 32, 0.95)';
       ctx.strokeStyle = '#F1C40F';
       ctx.lineWidth = 3 * scale;
@@ -1506,12 +1522,8 @@ const Game = {
       ctx.fillText('ODDINARY CHAMPION', w / 2, winnerY + (24 * scale));
 
       ctx.fillStyle = '#FFFFFF';
-      ctx.font = `900 ${26 * scale}px Inter, -apple-system, sans-serif`;
-      ctx.fillText(`${winner.name}`, w / 2, winnerY + (58 * scale));
-
-      ctx.fillStyle = '#6BCF2D';
-      ctx.font = `800 ${15 * scale}px Inter, -apple-system, sans-serif`;
-      ctx.fillText(`${winner.score || 0} points`, w / 2, winnerY + (82 * scale));
+      ctx.font = `900 ${25 * scale}px Inter, -apple-system, sans-serif`;
+      ctx.fillText(`${winner.name}`, w / 2, winnerY + (54 * scale));
 
       // 6. Highlights / Stats Row
       let dangerousName = "-";

@@ -352,7 +352,7 @@
         <button id="btn-points-rules" class="btn" style="flex: 1; margin: 0; font-size: 0.85rem;" onclick="AudioEngine.play('click'); Game.showPointsRules()">Scoring Rules</button>
       </div>
 
-      <button id="btn-results-scoreboard" class="btn btn-primary" style="margin-bottom: 0;" onclick="AudioEngine.play('click'); Game.goToScoreboard()">
+      <button id="btn-results-scoreboard" class="btn btn-primary" style="margin-bottom: 0;" onclick="AudioEngine.play('click'); Game.goToScoreboard(true)">
         Leaderboard
       </button>
     </div>
@@ -407,15 +407,14 @@
 
       <!-- Champion Hero Box -->
       <div class="leader-hero-card">
-        <div class="leader-crown"><svg viewBox="0 0 24 24" style="width:48px; height:48px; fill:var(--accent-gold); filter:drop-shadow(0 0 12px rgba(241,196,15,0.6));"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V19H7v2h10v-2h-4v-3.1a5.01 5.01 0 0 0 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg></div>
+        <div class="leader-crown"><svg viewBox="0 0 24 24" style="width:48px; height:48px; fill:var(--accent-gold); filter:drop-shadow(0 0 12px rgba(241,196,15,0.6));"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg></div>
         <div class="leader-subtitle">ODDINARY CHAMPION</div>
         <div id="game-over-winner-name" class="leader-name-display">Player</div>
-        <div id="game-over-winner-score" class="leader-score-display">0 points</div>
       </div>
 
       <!-- Final Leaderboard -->
       <div style="width: 100%; text-align: left;">
-        <div style="font-size: 0.85rem; font-weight: 900; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; margin-left: 4px;">FINAL LEADERBOARD</div>
+        <div style="font-size: 0.85rem; font-weight: 900; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; margin-left: 4px;">LEADERBOARD</div>
         <div id="game-over-ranks-list" style="width: 100%; display: flex; flex-direction: column; gap: 8px;"></div>
       </div>
 
@@ -557,7 +556,7 @@
       <div class="scoring-guide-card detective-card">
         <div class="scoring-card-role text-primary" style="display:flex; align-items:center; gap:6px;"><svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg> DETECTIVE</div>
         <div class="scoring-row">
-          <span><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; margin-right:6px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg> Catch the Oddinary</span>
+          <span>Catch the Oddinary</span>
           <span class="scoring-pts text-primary">+15</span>
         </div>
         <div class="scoring-row-desc">
@@ -720,8 +719,8 @@
 <!-- Confirmation Modal for End Game -->
 <div id="modal-end-game-confirm" class="modal">
   <div class="modal-content" style="text-align: center; max-width: 400px; padding: 25px;">
-    <div style="display:flex; justify-content:center; margin-bottom:8px;"><svg viewBox="0 0 24 24" style="width:48px; height:48px; fill:var(--accent-gold);"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V19H7v2h10v-2h-4v-3.1a5.01 5.01 0 0 0 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg></div>
-    <h2 class="text-white mb-2">End This Game?</h2>
+    <div style="display:flex; justify-content:center; margin-bottom:8px;"><svg viewBox="0 0 24 24" style="width:48px; height:48px; fill:var(--accent-gold); filter:drop-shadow(0 0 12px rgba(241,196,15,0.6));"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg></div>
+    <h2 class="text-white mb-2">End this Game?</h2>
     <p class="text-muted mb-2">Are you ready to crown the Oddinary Champion?</p>
     <div style="display: flex; gap: 10px; margin-top: 20px;">
       <button class="btn" style="flex:1" onclick="Game.cancelEndGame()">Cancel</button>
@@ -787,7 +786,7 @@
       </div>
       <h3 id="forgot-word-label" class="text-muted mb-1" style="font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;">Your secret word is:</h3>
       <div class="forgot-word-box">
-        <h1 id="forgot-word-display" class="text-primary text-glow" style="font-size: 2.2rem; font-weight: 900; margin: 0; letter-spacing: 1px; line-height: 1.2;">WORD</h1>
+        <h1 id="forgot-word-display" class="text-primary" style="font-size: 2.2rem; font-weight: 900; margin: 0; letter-spacing: 1px; line-height: 1.2;">WORD</h1>
       </div>
       <div id="forgot-alliance-hint-container"></div>
       <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="AudioEngine.play('click'); Game.closeForgotWord()">Got It</button>
