@@ -7,8 +7,14 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://oddinary.vercel.app/play.html</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://oddinary.vercel.app/about.html</loc>
-    <lastmod>2026-08-14</lastmod>
+    <lastmod>2026-08-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

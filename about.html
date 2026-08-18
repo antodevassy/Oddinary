@@ -1,229 +1,237 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>About Oddinary - Word Imposter Game</title>
- <meta name="keywords" content="Word Imposter Game, Imposter Game, Party Game, Word Game, Spy Game, Game for Friends, Party Game">
- <link rel="canonical" href="https://oddinary.vercel.app/about.html">
- <meta name="description" content="Learn all about Oddinary - Word Imposter Game. How to play, secret word roles, game modes, scoring rules, and FAQs.">
- <link rel="icon" type="image/png" href="assets/fav-icon.png">
- <link rel="preconnect" href="https://fonts.googleapis.com">
- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
- <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
- <!-- Google AdSense -->
- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9418997406256200" crossorigin="anonymous"></script>
- <style>
- :root {
- --bg-dark: #07080A;
- --bg-card: #181A20;
- --primary: #6BCF2D;
- --primary-glow: #9CFF3A;
- --danger: #D93A3A;
- --accent-gold: #C9A45D;
- --text-main: #F2F2F2;
- --text-sec: #B6B8C0;
- --text-muted: #6C6F78;
- --radius: 16px;
- }
- * { margin: 0; padding: 0; box-sizing: border-box; }
- body {
- font-family: 'Inter', sans-serif;
- background-color: #07080A;
- color: var(--text-main);
- min-height: 100vh;
- display: flex;
- flex-direction: column;
- line-height: 1.6;
- }
- .container {
- max-width: 900px;
- margin: 30px auto;
- padding: 0 20px;
- flex: 1;
- width: 100%;
- }
- .card {
- background: var(--bg-card);
- border: 1px solid rgba(255,255,255,0.08);
- border-radius: var(--radius);
- padding: 30px;
- box-shadow: 0 10px 30px rgba(0,0,0,0.5);
- margin-bottom: 25px;
- }
- .card h1 { font-size: 2.2rem; font-weight: 900; margin-bottom: 10px; color: var(--primary); text-align: left; }
- .card h2 { font-size: 1.3rem; font-weight: 700; margin: 25px 0 12px; color: var(--text-main); border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px; text-align: left; }
- .card h3 { font-size: 1.1rem; font-weight: 700; margin: 15px 0 5px; color: var(--accent-gold); text-align: left; }
- .card p { color: var(--text-sec); margin-bottom: 15px; font-size: 0.95rem; text-align: left; }
- .card ul { margin-left: 20px; margin-bottom: 15px; color: var(--text-sec); font-size: 0.95rem; text-align: left; }
- .card li { margin-bottom: 5px; text-align: left; }
- .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0; }
- .feature-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; }
- .feature-box h4 { color: var(--primary); font-size: 1rem; font-weight: 700; margin-bottom: 8px; text-align: left; }
- .feature-box p { color: var(--text-sec); font-size: 0.95rem; text-align: left; margin: 0; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>About Oddinary - Word Imposter Game</title>
+  <meta name="description" content="Learn all about Oddinary - Word Imposter Game. Discover the origin story, social deduction mechanics, game modes, scoring rules, and how to play with friends on one phone.">
+  <meta name="keywords" content="Word Imposter Game, Oddinary, Imposter Game, Party Game, Word Game, Spy Game, Social deduction game, Pass and play">
+  <meta name="author" content="Anto Devassy V.P">
+  <link rel="canonical" href="https://oddinary.vercel.app/about.html">
 
- /* Footer - Centered exact match to homepage */
- .footer-copyright {
- padding: 15px 10px 25px 10px;
- text-align: center !important;
- color: var(--text-muted);
- font-size: 0.85rem;
- width: 100%;
- margin-top: auto;
- margin-bottom: 10px;
- display: flex;
- flex-direction: column;
- align-items: center;
- justify-content: center;
- }
- .footer-copyright p {
- text-align: center !important;
- margin: 0;
- }
- .footer-copyright .footer-links {
- margin-top: 6px;
- }
- .footer-copyright a {
- color: var(--text-sec);
- text-decoration: none;
- margin: 0 6px;
- font-weight: 500;
- transition: color 0.2s ease;
- }
- .footer-copyright a:hover {
- color: var(--primary);
- }
-
- /* Mobile Footer Sizing: Exactly 2 lines (1. Copyrights, 2. Links) */
- @media (max-width: 600px) {
- .footer-copyright {
- font-size: 0.72rem;
- padding: 10px 4px 18px 4px;
- }
- .footer-copyright p {
- white-space: nowrap;
- }
- .footer-copyright .footer-links {
- margin-top: 4px;
- }
- .footer-copyright a {
- margin: 0 3px;
- }
- }
-
- @media (max-width: 360px) {
- .footer-copyright {
- font-size: 0.68rem;
- }
- .footer-copyright a {
- margin: 0 2px;
- }
- }
- .btn-back {
- display: inline-flex;
- align-items: center;
- gap: 8px;
- background: var(--primary);
- color: var(--bg-dark);
- font-weight: 700;
- padding: 10px 18px;
- border-radius: 12px;
- text-decoration: none;
- margin-bottom: 20px;
- transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
- }
- .btn-back:hover {
- background: var(--primary-glow);
- transform: translateX(-3px);
- }
- .btn-back svg {
- width: 18px;
- height: 18px;
- stroke-width: 2.8;
- transition: transform 0.2s ease;
- }
- .btn-back:hover svg {
- transform: translateX(-2px);
- }
- </style>
+  <link rel="icon" type="image/png" href="assets/fav-icon.png">
+  <link rel="apple-touch-icon" href="assets/fav-icon.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#07080A">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800;900&family=Space+Grotesk:wght@600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .about-container {
+      max-width: 800px;
+      margin: 40px auto 60px;
+      padding: 0 20px;
+      width: 100%;
+    }
+    .about-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius);
+      padding: 35px 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      margin-bottom: 25px;
+      text-align: left;
+    }
+    .about-card h1 {
+      font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+      font-weight: 900;
+      margin-bottom: 12px;
+      color: var(--primary);
+      font-family: 'Outfit', sans-serif;
+    }
+    .about-card h2 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin: 30px 0 14px;
+      color: var(--text-main);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 8px;
+      font-family: 'Outfit', sans-serif;
+    }
+    .about-card h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin: 18px 0 6px;
+      color: var(--accent-gold);
+    }
+    .about-card p {
+      color: var(--text-sec);
+      margin-bottom: 15px;
+      font-size: 0.96rem;
+      line-height: 1.65;
+    }
+    .about-card ul {
+      margin-left: 20px;
+      margin-bottom: 15px;
+      color: var(--text-sec);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .about-card li {
+      margin-bottom: 6px;
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .about-feature-box {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .about-feature-box h4 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+    .about-feature-box p {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      margin-bottom: 0;
+      line-height: 1.45;
+    }
+    .about-cta-box {
+      background: linear-gradient(135deg, rgba(107, 207, 45, 0.1), rgba(0, 0, 0, 0.4));
+      border: 1px solid rgba(107, 207, 45, 0.3);
+      border-radius: 16px;
+      padding: 30px 20px;
+      text-align: center;
+      margin-top: 30px;
+    }
+    .btn-top-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 10px 18px;
+      border-radius: 12px;
+      text-decoration: none;
+      margin-bottom: 20px;
+      transition: all 0.2s ease;
+    }
+    .btn-top-back:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--bg-card-hover);
+    }
+  </style>
 </head>
-<body>
- <div class="container">
- <a href="index.html" class="btn-back">
- <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
- <path d="M15 18l-6-6 6-6"/>
- </svg>
- <span>Back to Game</span>
- </a>
- 
- <div class="card">
- <h1>About Oddinary</h1>
- <p><strong>Oddinary</strong> is a party game of secret words, clever clues, social deduction, and imposter hunting designed for friends, family, and group gatherings.</p>
+<body class="landing-page-body">
 
- <h2>What is Oddinary?</h2>
- <p>In Oddinary, 3 to 30 players gather around a single mobile device or desktop browser. Every player receives a secret word on their turn. Most players receive the <em>Common Word</em>, while one or more players receive the <em>Odd Word</em> (or no word at all, depending on game settings).</p>
+  <!-- TOP NAVIGATION -->
+  <header class="landing-nav-header">
+    <div class="landing-nav-container">
+      <a href="index.html" class="nav-brand">
+        <img src="assets/fav-icon.png" alt="Oddinary Icon" class="nav-brand-icon">
+        <span class="nav-brand-name">Oddinary</span>
+      </a>
+      <nav class="nav-links-desktop">
+        <a href="index.html#how-it-works">How It Works</a>
+        <a href="index.html#modes">Game Modes</a>
+        <a href="index.html#scoring">Scoring</a>
+        <a href="index.html#faq">FAQ</a>
+      </nav>
+      <a href="play.html" class="btn btn-primary nav-cta-btn">PLAY GAME</a>
+    </div>
+  </header>
 
- <div class="grid">
- <div class="feature-box">
- <h4>🕵🏻 Secret Roles</h4>
- <p>Each round assigns secret roles seamlessly for every player.</p>
- </div>
- <div class="feature-box">
- <h4>🔍 Clue & Investigation</h4>
- <p>Players give subtle clues about their word without spoiling it to the Imposters.</p>
- </div>
- <div class="feature-box">
- <h4>🗳️ In-App & Real Voting</h4>
- <p>Support for built-in automated scoring & voting, or real-life verbal investigation (points are not calculated when voting mode is OFF).</p>
- </div>
- </div>
+  <div class="about-container">
+    <a href="index.html" class="btn-top-back">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+      <span>Back to Homepage</span>
+    </a>
 
- <h2>Game Modes</h2>
- <h3>Stealth Mode (Default)</h3>
- <p>In Stealth Mode, the Imposter receives a secret word, but does not know they are the Imposter. They must blend into the game using the descriptions provided by the other players.</p>
+    <div class="about-card">
+      <h1>About Oddinary - Word Imposter Game</h1>
+      <p><strong>Oddinary - Word Imposter Game</strong> is a fast-paced social deduction and word association party game designed for groups of friends, family gatherings, team events, and game nights. Playable on a single shared phone with zero setup or accounts required.</p>
 
- <h3>Classic Imposter Mode</h3>
- <p>When Stealth Mode is disabled, the Imposter is directly told that they are the <strong>IMPOSTER</strong>. They receive no word and must lie from the start to blend in with the other players.</p>
+      <h2>The Concept</h2>
+      <p>Everyone receives a secret word. One or more players receive something slightly different (or no word at all) — they are the <strong>Oddinaries</strong>. Players take turns giving subtle one-sentence clues without giving the secret away. Afterwards, everyone investigates, debates suspicious clues, and votes to uncover the Oddinary.</p>
 
- <h2>Points Rules</h2>
- <p>When in-app voting is enabled, points are awarded based on performance:</p>
+      <div class="about-grid">
+        <div class="about-feature-box">
+          <h4>Single-Device Play</h4>
+          <p>Pass one phone around the circle. No need for everyone to download apps or create accounts.</p>
+        </div>
+        <div class="about-feature-box">
+          <h4>Stealth & Classic Modes</h4>
+          <p>In Stealth Mode, the Oddinary doesn't know they have the odd word. In Classic Mode, they bluff from clue one.</p>
+        </div>
+        <div class="about-feature-box">
+          <h4>Secret Alliance</h4>
+          <p>Play with 2+ Oddinaries who secretly recognize each other and coordinate their deceptive clues.</p>
+        </div>
+        <div class="about-feature-box">
+          <h4>Instant & Free</h4>
+          <p>Play directly in your browser with 3 to 30 players anytime.</p>
+        </div>
+      </div>
 
- <p style="font-weight: 700; color: var(--primary); margin-bottom: 5px;">DETECTIVES</p>
- <ul>
- <li><strong>+15 Points</strong> for each correctly identified Imposter.</li>
- <li><strong>0 Points</strong> for an incorrect identification.</li>
- </ul>
+      <h2>Game Modes Explained</h2>
+      <h3>Stealth Mode</h3>
+      <p>In Stealth Mode, the Oddinary receives a word that is closely related to the common word (e.g. <em>Coffee</em> vs <em>Tea</em>, or <em>Burger</em> vs <em>Pizza</em>). The Oddinary does <strong>not</strong> know their word is different. They describe their word sincerely until they realize someone else's clues don't quite match up.</p>
 
- <p style="font-weight: 700; color: var(--danger); margin-bottom: 5px;">IMPOSTERS</p>
- <ul>
- <li><strong>0 Points</strong> if caught by receiving the most votes.</li>
- <li><strong>+10 Points</strong> if suspected but successfully survived.</li>
- <li><strong>+20 Points</strong> if received zero votes.</li>
- <li><strong>Betrayal:</strong> +5 points for voting against a fellow Imposter.</li>
- </ul>
- <p style="font-size: 0.85rem; font-style: italic; color: var(--text-muted);">Note: Imposters are considered caught if they receive the most votes or are tied for the highest count.</p>
+      <h3>Classic Mode</h3>
+      <p>When Stealth Mode is turned off, the Oddinary receives no word and is directly notified: <strong>"YOU ARE THE ODDINARY"</strong>. They must bluff on the spot and deduce the common word from other players' clues.</p>
 
- <h2>Frequently Asked Questions (FAQ)</h2>
- <h3>Is Oddinary free to play?</h3>
- <p>Yes! Oddinary is completely free to play directly in your web browser.</p>
+      <h2>Scoring Rules & Championship</h2>
+      <p>In-app Secret Voting automatically tracks player scores across multiple rounds to crown the <strong>Oddinary Champion</strong>:</p>
+      
+      <p style="font-weight: 800; color: var(--primary); margin-bottom: 4px;">DETECTIVES (Common Word Players)</p>
+      <ul>
+        <li><strong>+15 Points</strong> for each correctly identified Oddinary.</li>
+        <li><strong>0 Points</strong> for an incorrect vote.</li>
+      </ul>
 
- <h3>How many players can play?</h3>
- <p>Oddinary supports anywhere from 3 players up to 30 players in a single game session.</p>
+      <p style="font-weight: 800; color: var(--danger); margin-bottom: 4px;">ODDINARY (The Imposters)</p>
+      <ul>
+        <li><strong>0 Points</strong> if caught (received highest votes or tied for highest).</li>
+        <li><strong>+10 Points</strong> if survived the round without receiving the most votes.</li>
+        <li><strong>+20 Points</strong> if completely undetected (zero votes received).</li>
+        <li><strong>+5 Bonus Points</strong> for Betrayal (an Oddinary voting against another Oddinary).</li>
+      </ul>
 
- <h3>Do we need multiple devices?</h3>
- <p>No! Oddinary is designed as a pass-and-play game, requiring only one shared device passed from player to player during secret word reveal and voting.</p>
- </div>
- </div>
+      <div class="about-cta-box">
+        <h3 style="color: var(--text-main); font-size: 1.4rem; margin-top: 0;">Ready to Play Oddinary?</h3>
+        <p style="color: var(--text-sec); margin-bottom: 18px;">Gather 3 to 30 friends and jump into a match right now.</p>
+        <a href="play.html" class="btn btn-primary" style="max-width: 280px; margin: 0 auto; display: inline-flex;">
+          PLAY GAME
+        </a>
+      </div>
+    </div>
+  </div>
 
- <div class="footer-copyright">
- <p>© <span class="copyright-year">2026</span> Oddinary by <a href="https://www.instagram.com/antodevassy.vp" target="_blank" rel="noopener noreferrer" class="author-link">Anto Devassy V.P</a>. All rights reserved.</p>
- <p class="footer-links">
- <a href="about.html">About</a> | 
- <a href="privacy.html">Privacy Policy</a> | 
- <a href="terms.html">Terms of Service</a> | 
- <a href="contact.html">Contact</a>
- </p>
- </div>
- <script>document.querySelectorAll('.copyright-year').forEach(el => el.innerText = new Date().getFullYear());</script>
+  <!-- FOOTER -->
+  <footer class="landing-footer">
+    <div class="footer-inner">
+      <p class="footer-copy">&copy; <span class="copyright-year">2026</span> Oddinary by <a href="https://www.instagram.com/antodevassy.vp" target="_blank" rel="noopener noreferrer" class="author-link">Anto Devassy V.P</a>. All rights reserved.</p>
+      <div class="footer-nav-links">
+        <a href="index.html">Home</a> | 
+        <a href="about.html">About</a> | 
+        <a href="privacy.html">Privacy Policy</a> | 
+        <a href="terms.html">Terms of Service</a> | 
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/install.js"></script>
+  <script>
+    document.querySelectorAll('.copyright-year').forEach(el => el.innerText = new Date().getFullYear());
+  </script>
 </body>
 </html>
+

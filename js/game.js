@@ -30,7 +30,7 @@ const State = {
  round: 0,
  config: { 
  shuffle: false, 
- timer: false, 
+ timer: true, 
  timerDuration: 3, 
  imposterCount: 1, 
  imposterHasWord: true, 
@@ -44,6 +44,7 @@ const State = {
  pendingRemovePlayerId: null,
  selectedTargets: [],
  timerInterval: null,
+ timerPaused: false,
  discussionTimeLeft: 0,
  stats: {
  imposterCountTimes: {},
@@ -54,114 +55,184 @@ const State = {
 };
 
 const $ = (id) => document.getElementById(id);
-const Screens = ['landing', 'setup', 'reveal', 'discuss', 'voting', 'voting-complete', 'results', 'scoreboard'];
+const Screens = ['landing', 'setup', 'reveal', 'discuss', 'voting', 'voting-complete', 'results', 'scoreboard', 'game-over'];
 let shouldPreventRefresh = true;
 
 // Prevent refresh warning during active game
 window.addEventListener('beforeunload', (e) => {
- const landingEl = $('screen-landing');
- const isLanding = landingEl && landingEl.classList.contains('active');
- if (!shouldPreventRefresh || isLanding) return;
+  const landingEl = $('screen-landing');
+  const isLanding = landingEl && landingEl.classList.contains('active');
+  if (!shouldPreventRefresh || isLanding) return;
 
- if (State.round > 0) {
- Analytics.logEvent('game_abandoned', { round: State.round });
- e.preventDefault();
- e.returnValue = '';
- }
+  if (State.round > 0) {
+    Analytics.logEvent('game_abandoned', { round: State.round });
+    e.preventDefault();
+    e.returnValue = '';
+  }
 });
 
 // --- Game Controller Engine ---
 const Game = {
- init: () => {
- Game.loadSession();
- if (State.players.length === 0) {
- State.players = [
- { id: 101, name: "", score: 0 },
- { id: 102, name: "", score: 0 },
- { id: 103, name: "", score: 0 }
- ];
- }
- AudioEngine.muted = !State.config.sound;
- },
+  init: () => {
+    Game.loadSession();
+    if (!State.players || State.players.length === 0) {
+      State.players = [
+        { id: 101, name: "", score: 0 },
+        { id: 102, name: "", score: 0 },
+        { id: 103, name: "", score: 0 }
+      ];
+    }
+    AudioEngine.muted = !State.config.sound;
+    Game.updatePlayerCountBadge();
+    Game.updateRoundBadges();
 
- saveSession: () => {
- const data = {
- players: State.players,
- config: State.config,
- round: State.round,
- stats: State.stats
- };
- StorageManager.saveSession(data);
- },
+    // If on play.html or setup screen is present, render setup inputs & settings!
+    if ($('players-list')) {
+      Game.renderSetupInputs();
+      Game.renderRecentPlayerChips();
+      Game.updateImposterUI();
 
- loadSession: () => {
- const data = StorageManager.loadSession();
- if (data) {
- if (data.players) State.players = data.players;
- if (data.config) State.config = { ...State.config, ...data.config };
- if (data.round) State.round = data.round;
- if (data.stats) State.stats = data.stats;
- if (State.config.voting === undefined) State.config.voting = true;
- if (State.config.secretAlliance === undefined) State.config.secretAlliance = false;
- if (State.config.sound === undefined) State.config.sound = true;
- }
- },
+      if ($('setting-imposter-word')) $('setting-imposter-word').checked = State.config.imposterHasWord;
+      if ($('setting-voting')) $('setting-voting').checked = State.config.voting !== false;
+      if ($('setting-shuffle')) $('setting-shuffle').checked = State.config.shuffle;
+      if ($('setting-secret-alliance')) $('setting-secret-alliance').checked = State.config.secretAlliance;
+      if ($('setting-timer')) $('setting-timer').checked = State.config.timer !== false;
+      if ($('setting-sound')) $('setting-sound').checked = State.config.sound !== false;
+      if (State.config.timer !== false) {
+        if ($('timer-slider-container')) $('timer-slider-container').classList.remove('hidden');
+      } else {
+        if ($('timer-slider-container')) $('timer-slider-container').classList.add('hidden');
+      }
+    }
+  },
 
- showScreen: (name) => {
- Screens.forEach(s => {
- const el = $(`screen-${s}`);
- if (el) el.classList.remove('active');
- });
- const target = $(`screen-${name}`);
- if (target) target.classList.add('active');
- window.scrollTo(0, 0);
+  updateRoundBadges: () => {
+    const roundText = `ROUND ${State.round || 1}`;
+    ['reveal-round-badge', 'discuss-round-badge', 'voting-round-badge', 'results-round-badge', 'scoreboard-round-badge'].forEach(id => {
+      const el = $(id);
+      if (el) el.innerText = roundText;
+    });
+  },
 
- if (name === 'landing' || name === 'setup') {
- AudioEngine.playBGM('menu');
- } else if (name === 'reveal') {
- AudioEngine.playBGM('reveal');
- } else if (name === 'discuss') {
- AudioEngine.playBGM('investigation');
- } else if (name === 'voting' || name === 'voting-complete') {
- AudioEngine.playBGM('voting');
- } else if (name === 'results' || name === 'scoreboard') {
- AudioEngine.playBGM('results');
- }
- },
+  updatePlayerCountBadge: () => {
+    const badge = $('setup-player-count-badge');
+    if (badge) {
+      badge.innerText = `${State.players.length} Players`;
+    }
+  },
 
- toggleRules: () => {
- const modal = $('modal-rules');
- if (modal) modal.classList.toggle('open');
- },
+  toggleAdvancedSettingsAccordion: () => {
+    const content = $('advanced-settings-content');
+    const arrow = $('advanced-accordion-icon');
+    if (!content) return;
+    const isCollapsed = content.classList.contains('collapsed');
+    if (isCollapsed) {
+      content.classList.remove('collapsed');
+      if (arrow) arrow.innerText = '▲';
+    } else {
+      content.classList.add('collapsed');
+      if (arrow) arrow.innerText = '▼';
+    }
+  },
 
- toggleSoundSetting: (enabled) => {
- State.config.sound = enabled;
- AudioEngine.muted = !enabled;
- if (enabled) {
- AudioEngine.play('click');
- } else {
- AudioEngine.stopBGM();
- }
- Game.saveSession();
- },
+  saveSession: () => {
+    const data = {
+      players: State.players,
+      config: State.config,
+      round: State.round,
+      stats: State.stats
+    };
+    StorageManager.saveSession(data);
+  },
 
- showAllianceInfo: () => $('modal-alliance-info').classList.add('open'),
- closeAllianceInfo: () => $('modal-alliance-info').classList.remove('open'),
+  loadSession: () => {
+    const data = StorageManager.loadSession();
+    if (data) {
+      if (data.players) State.players = data.players;
+      if (data.config) State.config = { ...State.config, ...data.config };
+      if (data.round) State.round = data.round;
+      if (data.stats) State.stats = data.stats;
+      if (State.config.voting === undefined || !data.round || data.round === 0) State.config.voting = true;
+      if (State.config.timer === undefined || !data.round || data.round === 0) State.config.timer = true;
+      if (State.config.secretAlliance === undefined) State.config.secretAlliance = false;
+      if (State.config.sound === undefined) State.config.sound = true;
+    }
+  },
 
- toggleTimerSettings: () => {
- const enabled = $('setting-timer').checked;
- const sliderContainer = $('timer-slider-container');
- if (enabled) {
- sliderContainer.classList.remove('hidden');
- } else {
- sliderContainer.classList.add('hidden');
- }
- },
+  showScreen: (name) => {
+    Screens.forEach(s => {
+      const el = $(`screen-${s}`);
+      if (el) el.classList.remove('active');
+    });
+    const target = $(`screen-${name}`);
+    if (target) target.classList.add('active');
+    window.scrollTo(0, 0);
 
- updateTimerValue: (value) => {
- $('timer-value-display').innerText = `${value} min`;
- State.config.timerDuration = parseInt(value);
- },
+    if (name === 'landing' || name === 'setup') {
+      AudioEngine.playBGM('menu');
+    } else if (name === 'reveal') {
+      AudioEngine.playBGM('reveal');
+    } else if (name === 'discuss') {
+      AudioEngine.playBGM('investigation');
+    } else if (name === 'voting' || name === 'voting-complete') {
+      AudioEngine.playBGM('voting');
+    } else if (name === 'results' || name === 'scoreboard' || name === 'game-over') {
+      AudioEngine.playBGM('results');
+    }
+  },
+
+  toggleRules: () => {
+    const modal = $('modal-rules');
+    if (modal) modal.classList.toggle('open');
+  },
+
+  toggleSoundSetting: (enabled) => {
+    State.config.sound = enabled;
+    AudioEngine.muted = !enabled;
+    if (enabled) {
+      AudioEngine.play('click');
+    } else {
+      AudioEngine.stopBGM();
+    }
+    Game.saveSession();
+  },
+
+  showAllianceInfo: () => $('modal-alliance-info') && $('modal-alliance-info').classList.add('open'),
+  closeAllianceInfo: () => $('modal-alliance-info') && $('modal-alliance-info').classList.remove('open'),
+
+  showShuffleInfo: () => $('modal-shuffle-info') && $('modal-shuffle-info').classList.add('open'),
+  closeShuffleInfo: () => $('modal-shuffle-info') && $('modal-shuffle-info').classList.remove('open'),
+
+  showTimerInfo: () => $('modal-timer-info') && $('modal-timer-info').classList.add('open'),
+  closeTimerInfo: () => $('modal-timer-info') && $('modal-timer-info').classList.remove('open'),
+
+  showSoundInfo: () => $('modal-sound-info') && $('modal-sound-info').classList.add('open'),
+  closeSoundInfo: () => $('modal-sound-info') && $('modal-sound-info').classList.remove('open'),
+
+    toggleVotingSetting: (checked) => {
+    State.config.voting = !!checked;
+    Game.saveSession();
+  },
+
+  toggleTimerSettings: () => {
+    const enabled = $('setting-timer') && $('setting-timer').checked;
+    State.config.timer = !!enabled;
+    const sliderContainer = $('timer-slider-container');
+    if (sliderContainer) {
+      if (enabled) {
+        sliderContainer.classList.remove('hidden');
+      } else {
+        sliderContainer.classList.add('hidden');
+      }
+    }
+    Game.saveSession();
+  },
+
+  updateTimerValue: (value) => {
+    const display = $('timer-value-display');
+    if (display) display.innerText = `${value} min`;
+    State.config.timerDuration = parseInt(value);
+  },
 
  goToSetup: () => {
  Analytics.logEvent('start_game_clicked');
@@ -171,67 +242,74 @@ const Game = {
  Game.updateImposterUI();
  
  $('setting-imposter-word').checked = State.config.imposterHasWord;
- $('setting-voting').checked = State.config.voting;
+ $('setting-voting').checked = State.config.voting !== false;
  $('setting-shuffle').checked = State.config.shuffle;
  $('setting-secret-alliance').checked = State.config.secretAlliance;
  $('setting-timer').checked = State.config.timer;
  $('setting-sound').checked = State.config.sound;
- if (State.config.timer) $('timer-slider-container').classList.remove('hidden');
+ if (State.config.timer) {
+   $('timer-slider-container').classList.remove('hidden');
+ } else {
+   $('timer-slider-container').classList.add('hidden');
+ }
  },
 
  goHome: () => Game.showScreen('landing'),
 
  addPlayer: (name = "") => {
- if (State.players.length >= 30) {
- Game.showAlert("Maximum 30 players!", "Limit Reached");
- return;
- }
- State.players.push({ id: Date.now() + Math.floor(Math.random()*100), name: name, score: 0 });
- Game.saveSession();
- Game.renderSetupInputs(true);
- Game.updateImposterUI();
- },
+    if (State.players.length >= 30) {
+      Game.showAlert("Maximum 30 players!", "Limit Reached");
+      return;
+    }
+    State.players.push({ id: Date.now() + Math.floor(Math.random()*100), name: name, score: 0 });
+    Game.saveSession();
+    Game.renderSetupInputs(true);
+    Game.updatePlayerCountBadge();
+    Game.updateImposterUI();
+  },
 
- quickAddRecentPlayer: (name) => {
- if (!name) return;
- AudioEngine.play('click');
- 
- // Find first empty player input or add a new player
- const emptyPlayer = State.players.find(p => !p.name.trim());
- if (emptyPlayer) {
- emptyPlayer.name = name;
- } else {
- if (State.players.length >= 30) {
- Game.showAlert("Maximum 30 players!", "Limit Reached");
- return;
- }
- State.players.push({ id: Date.now() + Math.floor(Math.random()*100), name: name, score: 0 });
- }
- Game.saveSession();
- Game.renderSetupInputs();
- Game.renderRecentPlayerChips();
- Game.updateImposterUI();
- },
+  quickAddRecentPlayer: (name) => {
+    if (!name) return;
+    AudioEngine.play('click');
+    
+    // Find first empty player input or add a new player
+    const emptyPlayer = State.players.find(p => !p.name.trim());
+    if (emptyPlayer) {
+      emptyPlayer.name = name;
+    } else {
+      if (State.players.length >= 30) {
+        Game.showAlert("Maximum 30 players!", "Limit Reached");
+        return;
+      }
+      State.players.push({ id: Date.now() + Math.floor(Math.random()*100), name: name, score: 0 });
+    }
+    Game.saveSession();
+    Game.renderSetupInputs();
+    Game.renderRecentPlayerChips();
+    Game.updatePlayerCountBadge();
+    Game.updateImposterUI();
+  },
 
- clearSavedPlayersHistory: () => {
- AudioEngine.play('click');
- StorageManager.clearSavedPlayers();
- Game.renderRecentPlayerChips();
- },
+  clearSavedPlayersHistory: () => {
+    AudioEngine.play('click');
+    StorageManager.clearSavedPlayers();
+    Game.renderRecentPlayerChips();
+  },
 
- removePlayer: (index) => {
- if (State.players.length <= 3) return Game.showAlert("Minimum 3 players required!", "Warning");
- State.players.splice(index, 1);
- 
- const maxImposters = Math.max(1, Math.floor(State.players.length / 3));
- if (State.config.imposterCount > maxImposters) {
- State.config.imposterCount = maxImposters;
- }
+  removePlayer: (index) => {
+    if (State.players.length <= 3) return Game.showAlert("Minimum 3 players required!", "Warning");
+    State.players.splice(index, 1);
+    
+    const maxImposters = Math.max(1, Math.floor(State.players.length / 3));
+    if (State.config.imposterCount > maxImposters) {
+      State.config.imposterCount = maxImposters;
+    }
 
- Game.saveSession();
- Game.renderSetupInputs();
- Game.updateImposterUI();
- },
+    Game.saveSession();
+    Game.renderSetupInputs();
+    Game.updatePlayerCountBadge();
+    Game.updateImposterUI();
+  },
  
  validatePlayerName: (index) => {
  const errorEl = $('setup-error');
@@ -371,10 +449,11 @@ const Game = {
  Game.setupNextRound();
  },
 
- setupNextRound: () => {
- State.round++;
- State.players.forEach(p => p.roundScore = 0);
- const pair = wordSelector.getRandomPair();
+  setupNextRound: () => {
+    State.round++;
+    Game.updateRoundBadges();
+    State.players.forEach(p => p.roundScore = 0);
+    const pair = wordSelector.getRandomPair();
  
  if (Math.random() > 0.5) {
  State.words.common = pair[0];
@@ -426,26 +505,26 @@ const Game = {
  if (existingHint) existingHint.remove();
 
  if (role === 'odd') {
- if (State.config.imposterHasWord) {
- wordEl.innerText = State.words.odd;
- labelEl.innerText = "Your secret word is:";
- wordEl.classList.remove('text-danger');
- } else {
- labelEl.innerText = "You are the";
- wordEl.innerText = "IMPOSTER";
- wordEl.classList.add('text-danger');
- }
+      if (State.config.imposterHasWord) {
+        wordEl.innerText = State.words.odd;
+        labelEl.innerText = "Your secret word is:";
+        wordEl.classList.remove('text-danger');
+      } else {
+        labelEl.innerText = "You are the";
+        wordEl.innerText = "ODDINARY";
+        wordEl.classList.add('text-danger');
+      }
 
- if (State.config.secretAlliance && State.oddPlayerIds.length > 1) {
- const partnerIds = State.oddPlayerIds.filter(id => id !== playerId);
- const partnerNames = partnerIds.map(id => State.players.find(p => p.id === id).name);
- 
- const allianceHint = document.createElement('div');
- allianceHint.className = 'alliance-card-hint';
- allianceHint.innerHTML = `🤝 <strong>Secret Alliance:</strong> ${partnerNames.join(', ')} ${partnerNames.length > 1 ? 'are also Imposters' : 'is also an Imposter'}`;
- cardBack.appendChild(allianceHint);
- }
- } else {
+      if (State.config.secretAlliance && State.oddPlayerIds.length > 1) {
+        const partnerIds = State.oddPlayerIds.filter(id => id !== playerId);
+        const partnerNames = partnerIds.map(id => State.players.find(p => p.id === id).name);
+        
+        const allianceHint = document.createElement('div');
+        allianceHint.className = 'alliance-card-hint';
+        allianceHint.innerHTML = `<span style="display:inline-flex; vertical-align:-2px; margin-right:4px;"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:var(--primary);"><path d="M2 12h20c0-1.7-1.5-2.8-3.2-2.8h-.8L16.5 4.2C16.2 2.9 15 2 13.6 2h-3.2C9 2 7.8 2.9 7.5 4.2L6 9.2H5.2C3.5 9.2 2 10.3 2 12zm4.5 2.5C4.6 14.5 3 16.1 3 18s1.6 3.5 3.5 3.5 3.5-1.6 3.5-3.5c0-.4-.1-.7-.2-1h4.4c-.1.3-.2.6-.2 1 0 1.9 1.6 3.5 3.5 3.5s3.5-1.6 3.5-3.5-1.6-3.5-3.5-3.5c-1.4 0-2.6.8-3.1 2h-4.8c-.5-1.2-1.7-2-3.1-2z"/></svg></span> <strong>Secret Alliance:</strong> ${partnerNames.join(', ')} ${partnerNames.length > 1 ? 'are also Oddinaries' : 'is also an Oddinary'}`;
+        cardBack.appendChild(allianceHint);
+      }
+    } else {
  labelEl.innerText = "Your secret word is:";
  wordEl.innerText = State.words.common;
  wordEl.classList.remove('text-danger');
@@ -496,51 +575,56 @@ const Game = {
  }, 600);
  },
 
- startDiscussion: () => {
- Game.showScreen('discuss');
- const timerContainer = $('timer-container');
- const discussTimerSettings = $('discuss-timer-settings');
- 
- const vBtn = $('btn-start-voting');
- if (vBtn) vBtn.innerText = !State.config.voting ? "Reveal Imposter" : "Start Voting";
+  startDiscussion: () => {
+    Game.updateRoundBadges();
+    Game.showScreen('discuss');
+    const timerContainer = $('timer-container');
+    const discussTimerSettings = $('discuss-timer-settings');
+    
+    const vBtn = $('btn-start-voting');
+    if (vBtn) vBtn.innerText = !State.config.voting ? "Reveal Oddinary" : "Start Voting";
 
- if (State.config.timer) {
- timerContainer.classList.remove('hidden');
- discussTimerSettings.classList.add('hidden');
- State.discussionTimeLeft = State.config.timerDuration * 60;
- Game.tickDiscussionTimer();
- } else {
- timerContainer.classList.add('hidden');
- discussTimerSettings.classList.remove('hidden');
- const discussCheck = $('discuss-setting-timer');
- if (discussCheck) discussCheck.checked = false;
- const sliderCont = $('discuss-timer-slider-container');
- if (sliderCont) sliderCont.classList.add('hidden');
- }
- },
+    if (State.config.timer) {
+      timerContainer.classList.remove('hidden');
+      discussTimerSettings.classList.add('hidden');
+      State.discussionTimeLeft = State.config.timerDuration * 60;
+      Game.tickDiscussionTimer();
+    } else {
+      timerContainer.classList.add('hidden');
+      discussTimerSettings.classList.remove('hidden');
+      const discussCheck = $('discuss-setting-timer');
+      if (discussCheck) discussCheck.checked = false;
+      const sliderCont = $('discuss-timer-slider-container');
+      if (sliderCont) sliderCont.classList.add('hidden');
+    }
+  },
 
- tickDiscussionTimer: () => {
- clearTimeout(State.timerInterval);
- const timerDisplay = $('timer-display');
- const tick = () => {
- if (State.discussionTimeLeft < 0) return;
- const m = Math.floor(State.discussionTimeLeft / 60).toString().padStart(2,'0');
- const s = (State.discussionTimeLeft % 60).toString().padStart(2,'0');
- timerDisplay.innerText = `${m}:${s}`;
- 
- if (State.discussionTimeLeft > 0) {
- if (State.discussionTimeLeft <= 5) {
- AudioEngine.play('tick');
- }
- State.discussionTimeLeft--;
- State.timerInterval = setTimeout(tick, 1000); 
- } else {
- AudioEngine.play('alarm');
- Game.showAlert("Investigation time is up! Start voting now.", "⌛ Time's Up");
- }
- };
- tick();
- },
+  tickDiscussionTimer: () => {
+    clearTimeout(State.timerInterval);
+    const timerDisplay = $('timer-display');
+    const tick = () => {
+      if (State.discussionTimeLeft < 0) return;
+      const m = Math.floor(State.discussionTimeLeft / 60).toString().padStart(2,'0');
+      const s = (State.discussionTimeLeft % 60).toString().padStart(2,'0');
+      if (timerDisplay) timerDisplay.innerText = `${m}:${s}`;
+      
+      if (State.discussionTimeLeft > 0) {
+        if (State.discussionTimeLeft <= 10) {
+          if (timerDisplay) timerDisplay.classList.add('timer-urgent');
+          AudioEngine.play('tick');
+        } else {
+          if (timerDisplay) timerDisplay.classList.remove('timer-urgent');
+        }
+        State.discussionTimeLeft--;
+        State.timerInterval = setTimeout(tick, 1000); 
+      } else {
+        if (timerDisplay) timerDisplay.classList.remove('timer-urgent');
+        AudioEngine.play('alarm');
+        Game.showAlert("Investigation time is up! Start voting now.", "Time's Up");
+      }
+    };
+    tick();
+  },
 
  addDiscussionTime: (seconds) => {
  const wasStopped = State.discussionTimeLeft <= 0;
@@ -593,189 +677,231 @@ const Game = {
  Game.goToScoreboard();
  },
 
- showForgotWord: () => {
- const list = $('forgot-word-player-list');
- list.innerHTML = "";
- 
- State.players.forEach(p => {
- const item = document.createElement('div');
- item.className = "player-select-item";
- item.innerText = p.name;
- item.onclick = () => Game.askForgotConfirm(p.id);
- list.appendChild(item);
- });
- 
- $('modal-forgot-word').classList.add('open');
- },
+  showForgotWord: () => {
+    // Pause investigation timer if running
+    if (State.discussionTimeLeft > 0 && State.timerInterval) {
+      State.timerPaused = true;
+      clearTimeout(State.timerInterval);
+    }
 
- closeForgotWord: () => $('modal-forgot-word').classList.remove('open'),
+    const list = $('forgot-word-player-list');
+    if (!list) return;
+    list.innerHTML = "";
+    
+    // Switch to step 1
+    if ($('forgot-step-select')) $('forgot-step-select').classList.remove('hidden');
+    if ($('forgot-step-confirm')) $('forgot-step-confirm').classList.add('hidden');
+    if ($('forgot-step-reveal')) $('forgot-step-reveal').classList.add('hidden');
+    
+    State.players.forEach(p => {
+      const btn = document.createElement('button');
+      btn.className = "forgot-player-btn";
+      btn.innerHTML = `
+        <span style="display:flex; align-items:center; gap:10px;">
+          <svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:var(--primary); opacity:0.85;"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          ${p.name}
+        </span>
+        <svg class="player-chevron" viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+      `;
+      btn.onclick = () => {
+        AudioEngine.play('click');
+        Game.askForgotConfirm(p.id);
+      };
+      list.appendChild(btn);
+    });
+    
+    if ($('modal-forgot-word')) $('modal-forgot-word').classList.add('open');
+  },
 
- askForgotConfirm: (playerId) => {
- State.pendingForgotPlayer = playerId;
- const player = State.players.find(p => p.id === playerId);
- $('confirm-forgot-name').innerText = player.name;
- $('modal-forgot-word').classList.remove('open');
- $('modal-confirm-forgot').classList.add('open');
- },
+  closeForgotWord: () => {
+    if ($('modal-forgot-word')) $('modal-forgot-word').classList.remove('open');
+    State.pendingForgotPlayer = null;
+    
+    // Resume investigation timer if it was paused
+    if (State.timerPaused && State.discussionTimeLeft > 0) {
+      State.timerPaused = false;
+      Game.tickDiscussionTimer();
+    }
+  },
 
- cancelForgotConfirm: () => {
- $('modal-confirm-forgot').classList.remove('open');
- State.pendingForgotPlayer = null;
- $('modal-forgot-word').classList.add('open');
- },
+  askForgotConfirm: (playerId) => {
+    State.pendingForgotPlayer = playerId;
+    const player = State.players.find(p => p.id === playerId);
+    if (player && $('confirm-forgot-name')) $('confirm-forgot-name').innerText = player.name;
+    
+    // Smooth in-place transition to Step 2 (no modal flashes)
+    if ($('forgot-step-select')) $('forgot-step-select').classList.add('hidden');
+    if ($('forgot-step-confirm')) $('forgot-step-confirm').classList.remove('hidden');
+  },
 
- showForgotWordReveal: () => {
- const playerId = State.pendingForgotPlayer;
- const role = State.roles[playerId];
- const labelEl = $('forgot-word-label');
- const wordEl = $('forgot-word-display');
- const modalContent = document.querySelector('#modal-word-reveal .modal-content');
- 
- const existingHint = modalContent.querySelector('.alliance-card-hint');
- if (existingHint) existingHint.remove();
- 
- if (role === 'odd') {
- if (State.config.imposterHasWord) {
- wordEl.innerText = State.words.odd;
- labelEl.innerText = "Your word is:";
- wordEl.classList.remove('text-danger');
- wordEl.classList.add('text-primary');
- } else {
- labelEl.innerText = "You are the";
- wordEl.innerText = "IMPOSTER";
- wordEl.classList.add('text-danger');
- wordEl.classList.remove('text-primary');
- }
+  cancelForgotConfirm: () => {
+    State.pendingForgotPlayer = null;
+    // Smooth in-place transition back to Step 1
+    if ($('forgot-step-confirm')) $('forgot-step-confirm').classList.add('hidden');
+    if ($('forgot-step-select')) $('forgot-step-select').classList.remove('hidden');
+  },
 
- if (State.config.secretAlliance && State.oddPlayerIds.length > 1) {
- const partnerIds = State.oddPlayerIds.filter(id => id !== playerId);
- const partnerNames = partnerIds.map(id => State.players.find(p => p.id === id).name);
- 
- const allianceHint = document.createElement('div');
- allianceHint.className = 'alliance-card-hint';
- allianceHint.innerHTML = `🤝 <strong>Secret Alliance:</strong> ${partnerNames.join(', ')} ${partnerNames.length > 1 ? 'are also Imposters' : 'is also an Imposter'}`;
- modalContent.appendChild(allianceHint);
- }
- } else {
- labelEl.innerText = "Your word is:";
- wordEl.innerText = State.words.common;
- wordEl.classList.remove('text-danger');
- wordEl.classList.add('text-primary');
- }
- 
- $('modal-word-reveal').classList.add('open');
- $('modal-confirm-forgot').classList.remove('open');
- },
+  showForgotWordReveal: () => {
+    const playerId = State.pendingForgotPlayer;
+    const role = State.roles[playerId];
+    const labelEl = $('forgot-word-label');
+    const wordEl = $('forgot-word-display');
+    const hintContainer = $('forgot-alliance-hint-container');
+    if (hintContainer) hintContainer.innerHTML = "";
+    
+    if (role === 'odd') {
+      if (State.config.imposterHasWord) {
+        if (wordEl) {
+          wordEl.innerText = State.words.odd;
+          wordEl.classList.remove('text-danger');
+          wordEl.classList.add('text-primary');
+        }
+        if (labelEl) labelEl.innerText = "Your secret word is:";
+      } else {
+        if (labelEl) labelEl.innerText = "You are the";
+        if (wordEl) {
+          wordEl.innerText = "ODDINARY";
+          wordEl.classList.add('text-danger');
+          wordEl.classList.remove('text-primary');
+        }
+      }
 
- closeWordReveal: () => {
- $('modal-word-reveal').classList.remove('open');
- State.pendingForgotPlayer = null;
- },
+      if (State.config.secretAlliance && State.oddPlayerIds.length > 1 && hintContainer) {
+        const partnerIds = State.oddPlayerIds.filter(id => id !== playerId);
+        const partnerNames = partnerIds.map(id => State.players.find(p => p.id === id).name);
+        
+        hintContainer.innerHTML = `
+          <div class="alliance-card-hint" style="margin-top: 12px;">
+            <span style="display:inline-flex; vertical-align:-2px; margin-right:4px;"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:var(--primary);"><path d="M2 12h20c0-1.7-1.5-2.8-3.2-2.8h-.8L16.5 4.2C16.2 2.9 15 2 13.6 2h-3.2C9 2 7.8 2.9 7.5 4.2L6 9.2H5.2C3.5 9.2 2 10.3 2 12zm4.5 2.5C4.6 14.5 3 16.1 3 18s1.6 3.5 3.5 3.5 3.5-1.6 3.5-3.5c0-.4-.1-.7-.2-1h4.4c-.1.3-.2.6-.2 1 0 1.9 1.6 3.5 3.5 3.5s3.5-1.6 3.5-3.5-1.6-3.5-3.5-3.5c-1.4 0-2.6.8-3.1 2h-4.8c-.5-1.2-1.7-2-3.1-2z"/></svg></span>
+            <strong>Secret Alliance:</strong> ${partnerNames.join(', ')} ${partnerNames.length > 1 ? 'are also Oddinaries' : 'is also an Oddinary'}
+          </div>
+        `;
+      }
+    } else {
+      if (labelEl) labelEl.innerText = "Your secret word is:";
+      if (wordEl) {
+        wordEl.innerText = State.words.common;
+        wordEl.classList.remove('text-danger');
+        wordEl.classList.add('text-primary');
+      }
+    }
+    
+    // Smooth in-place transition to Step 3
+    if ($('forgot-step-confirm')) $('forgot-step-confirm').classList.add('hidden');
+    if ($('forgot-step-reveal')) $('forgot-step-reveal').classList.remove('hidden');
+  },
 
- showPointsRules: () => $('modal-points-rules').classList.add('open'),
- closePointsRules: () => $('modal-points-rules').classList.remove('open'),
+  closeWordReveal: () => {
+    Game.closeForgotWord();
+  },
 
- startVoting: () => {
- clearTimeout(State.timerInterval);
- State.stepIndex = 0;
- State.votes = {};
- State.selectedTargets = [];
+  showPointsRules: () => $('modal-points-rules').classList.add('open'),
+  closePointsRules: () => $('modal-points-rules').classList.remove('open'),
 
- if (!State.config.voting) {
- Game.revealImpostersRL();
- } else {
- Game.showVotingScreen();
- }
- },
+  startVoting: () => {
+    clearTimeout(State.timerInterval);
+    State.stepIndex = 0;
+    State.votes = {};
+    State.selectedTargets = [];
 
- revealImpostersRL: () => {
- State.players.forEach(p => p.roundScore = 0);
- const oddIds = State.oddPlayerIds || [];
- const imposterNames = oddIds.map(id => {
- const player = State.players.find(p => p.id === id);
- return player ? player.name : '';
- }).filter(Boolean);
+    if (!State.config.voting) {
+      Game.revealImpostersRL();
+    } else {
+      Game.showVotingScreen();
+    }
+  },
 
- Game.triggerSuspenseReveal(imposterNames, 0, () => {
- Game.renderResults({}, "IMPOSTER REVEALED");
- });
- },
+  revealImpostersRL: () => {
+    State.players.forEach(p => p.roundScore = 0);
+    const oddIds = State.oddPlayerIds || [];
+    const imposterNames = oddIds.map(id => {
+      const player = State.players.find(p => p.id === id);
+      return player ? player.name : '';
+    }).filter(Boolean);
 
- showVotingScreen: () => {
- const voterId = State.playerOrder[State.stepIndex];
- const voter = State.players.find(p => p.id === voterId);
- State.selectedTargets = [];
- 
- $('voter-name').innerText = voter.name;
- 
- const list = $('voting-list');
- list.innerHTML = "";
- 
- State.players.forEach(p => {
- if (p.id === voterId) return; 
- 
- const btn = document.createElement('BUTTON');
- btn.className = "btn";
- btn.id = `vote-btn-${p.id}`;
- btn.innerText = p.name; 
- btn.onclick = () => Game.toggleVoteSelect(p.id);
- list.appendChild(btn);
- });
+    Game.triggerSuspenseReveal(imposterNames, 0, () => {
+      Game.renderResults({}, "ODDINARY REVEALED");
+    });
+  },
 
- const activeImposterCount = State.oddPlayerIds.length;
+  showVotingScreen: () => {
+    const voterId = State.playerOrder[State.stepIndex];
+    const voter = State.players.find(p => p.id === voterId);
+    State.selectedTargets = [];
+    
+    $('voter-name').innerText = voter.name;
+    
+    const list = $('voting-list');
+    list.innerHTML = "";
+    
+    const optionsContainer = document.createElement('div');
+    optionsContainer.className = "voting-options-list";
+    
+    State.players.forEach(p => {
+      if (p.id === voterId) return; 
+      
+      const btn = document.createElement('button');
+      btn.className = "vote-option-btn";
+      btn.id = `vote-btn-${p.id}`;
+      btn.innerText = p.name; 
+      btn.onclick = () => Game.toggleVoteSelect(p.id);
+      optionsContainer.appendChild(btn);
+    });
+    list.appendChild(optionsContainer);
 
- const controls = document.createElement('div');
- controls.className = "content-area";
- controls.innerHTML = `
- <p class="text-muted" style="margin-top: 10px;">Select ${activeImposterCount} player${activeImposterCount > 1 ? 's' : ''}</p>
- <button id="btn-confirm-votes" class="btn btn-primary" style="opacity: 0.5; pointer-events: none;" onclick="Game.confirmMultiVotes()">Submit Votes</button>
- `;
- list.appendChild(controls);
- 
- Game.showScreen('voting');
- },
+    const activeImposterCount = State.oddPlayerIds.length;
 
- toggleVoteSelect: (targetId) => {
- AudioEngine.play('click');
- const idx = State.selectedTargets.indexOf(targetId);
- const max = State.oddPlayerIds.length;
- const btn = $(`vote-btn-${targetId}`);
+    const controls = document.createElement('div');
+    controls.className = "voting-controls-box";
+    controls.innerHTML = `
+      <p class="text-muted" style="font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin: 0;">
+        Select ${activeImposterCount} ${activeImposterCount > 1 ? 'Oddinaries' : 'Oddinary'}
+      </p>
+      <button id="btn-confirm-votes" class="btn btn-primary" style="width: 100%; margin: 0; opacity: 0.4; pointer-events: none;" onclick="Game.confirmMultiVotes()">Submit Votes</button>
+    `;
+    list.appendChild(controls);
+    
+    Game.updateRoundBadges();
+    Game.showScreen('voting');
+  },
 
- if (idx > -1) {
- State.selectedTargets.splice(idx, 1);
- btn.style.borderColor = "var(--text-muted)";
- btn.style.background = "var(--bg-card)";
- } else {
- if (State.selectedTargets.length >= max) {
- if (max === 1) {
- const oldId = State.selectedTargets[0];
- const oldBtn = $(`vote-btn-${oldId}`);
- if (oldBtn) {
- oldBtn.style.borderColor = "var(--text-muted)";
- oldBtn.style.background = "var(--bg-card)";
- }
- State.selectedTargets = [targetId];
- btn.style.borderColor = "var(--primary)";
- btn.style.background = "#1D3B13";
- } else {
- return;
- }
- } else {
- State.selectedTargets.push(targetId);
- btn.style.borderColor = "var(--primary)";
- btn.style.background = "#1D3B13";
- }
- }
+  toggleVoteSelect: (targetId) => {
+    AudioEngine.play('click');
+    const idx = State.selectedTargets.indexOf(targetId);
+    const max = State.oddPlayerIds.length;
+    const btn = $(`vote-btn-${targetId}`);
 
- const confirmBtn = $('btn-confirm-votes');
- if (State.selectedTargets.length === max) {
- confirmBtn.style.opacity = "1";
- confirmBtn.style.pointerEvents = "auto";
- } else {
- confirmBtn.style.opacity = "0.5";
- confirmBtn.style.pointerEvents = "none";
- }
- },
+    if (idx > -1) {
+      State.selectedTargets.splice(idx, 1);
+      if (btn) btn.classList.remove('selected');
+    } else {
+      if (State.selectedTargets.length >= max) {
+        if (max === 1) {
+          const oldId = State.selectedTargets[0];
+          const oldBtn = $(`vote-btn-${oldId}`);
+          if (oldBtn) oldBtn.classList.remove('selected');
+          State.selectedTargets = [targetId];
+          if (btn) btn.classList.add('selected');
+        } else {
+          return;
+        }
+      } else {
+        State.selectedTargets.push(targetId);
+        if (btn) btn.classList.add('selected');
+      }
+    }
+
+    const confirmBtn = $('btn-confirm-votes');
+    if (confirmBtn) {
+      if (State.selectedTargets.length === max) {
+        confirmBtn.style.opacity = "1";
+        confirmBtn.style.pointerEvents = "auto";
+      } else {
+        confirmBtn.style.opacity = "0.4";
+        confirmBtn.style.pointerEvents = "none";
+      }
+    }
+  },
 
  confirmMultiVotes: () => {
  AudioEngine.play('click');
@@ -863,45 +989,44 @@ const Game = {
  imposterPlayer.roundScore += 10;
  }
  });
+    let isPerfectEscape = oddIds.every(id => (voteCounts[id] || 0) === 0);
+    let roundStatus = isAnyCaught ? 
+      (caughtImposters.length > 1 ? "Oddinaries Caught!" : "Oddinary Caught!") : 
+      (isPerfectEscape ? "Perfect Escape!" : (oddIds.length > 1 ? "Oddinaries Escaped!" : "Oddinary Escaped!"));
+    
+    State.players.forEach(p => p.score += p.roundScore);
+    Game.saveSession();
 
- let isPerfectEscape = oddIds.every(id => (voteCounts[id] || 0) === 0);
- let roundStatus = isAnyCaught ? 
- (caughtImposters.length > 1 ? "Imposters Caught!" : "Imposter Caught!") : 
- (isPerfectEscape ? "Perfect Escape!" : (oddIds.length > 1 ? "Imposters Escaped!" : "Imposter Escaped!"));
- 
- State.players.forEach(p => p.score += p.roundScore);
- Game.saveSession();
+    const imposterNames = oddIds.map(id => State.players.find(p => p.id === id).name);
+    State.pendingRevealData = {
+      imposterNames: imposterNames,
+      highestVoteCount: maxVotes,
+      voteCounts: voteCounts,
+      roundStatus: roundStatus
+    };
+    Game.showScreen('voting-complete');
+  },
 
- const imposterNames = oddIds.map(id => State.players.find(p => p.id === id).name);
- State.pendingRevealData = {
- imposterNames: imposterNames,
- highestVoteCount: maxVotes,
- voteCounts: voteCounts,
- roundStatus: roundStatus
- };
- Game.showScreen('voting-complete');
- },
+  startImposterRevealAnimation: () => {
+    if (!State.config.voting) {
+      const oddIds = State.oddPlayerIds || [];
+      const imposterNames = oddIds.map(id => {
+        const player = State.players.find(p => p.id === id);
+        return player ? player.name : '';
+      }).filter(Boolean);
 
- startImposterRevealAnimation: () => {
- if (!State.config.voting) {
- const oddIds = State.oddPlayerIds || [];
- const imposterNames = oddIds.map(id => {
- const player = State.players.find(p => p.id === id);
- return player ? player.name : '';
- }).filter(Boolean);
+      Game.triggerSuspenseReveal(imposterNames, 0, () => {
+        Game.renderResults({}, "ODDINARY REVEALED");
+      });
+      return;
+    }
 
- Game.triggerSuspenseReveal(imposterNames, 0, () => {
- Game.renderResults({}, "IMPOSTER REVEALED");
- });
- return;
- }
-
- if (!State.pendingRevealData) return;
- const data = State.pendingRevealData;
- Game.triggerSuspenseReveal(data.imposterNames, data.highestVoteCount, () => {
- Game.renderResults(data.voteCounts, data.roundStatus);
- });
- },
+    if (!State.pendingRevealData) return;
+    const data = State.pendingRevealData;
+    Game.triggerSuspenseReveal(data.imposterNames, data.highestVoteCount, () => {
+      Game.renderResults(data.voteCounts, data.roundStatus);
+    });
+  },
 
  triggerSuspenseReveal: (imposterNames, voteCount, callback) => {
  const overlay = $('suspense-overlay');
@@ -914,6 +1039,8 @@ const Game = {
  overlay.classList.remove('hidden');
  nameBox.classList.remove('reveal-active');
  dotsEl.innerText = ".";
+ dotsEl.style.opacity = "1";
+ dotsEl.style.transition = "opacity 0.3s ease";
  
  AudioEngine.play('suspense');
 
@@ -925,13 +1052,21 @@ const Game = {
  else clearInterval(interval);
  }, 350);
 
+ // Fade out dots before revealing the name
  setTimeout(() => {
+ dotsEl.style.opacity = "0";
+ }, 900);
+
+ setTimeout(() => {
+ dotsEl.style.display = "none";
  nameBox.classList.add('reveal-active');
  AudioEngine.play('reveal');
  }, 1200);
 
  setTimeout(() => {
  overlay.classList.add('hidden');
+ dotsEl.style.display = "";
+ dotsEl.style.opacity = "1";
  if (callback) callback();
  }, 2800);
  },
@@ -981,29 +1116,30 @@ const Game = {
  
  const sorted = [...State.players].sort((a,b) => b.roundScore - a.roundScore);
  sorted.forEach((p, idx) => {
- const isImposter = State.oddPlayerIds.includes(p.id);
- const medal = idx === 0 ? "🥇" : (idx === 1 ? "🥈" : (idx === 2 ? "🥉" : ""));
- const icon = isImposter ? "🕵🏻" : (medal || "👤");
- 
- const card = document.createElement('div');
- card.style.background = isImposter ? "#2D1515" : "var(--bg-card)";
- card.style.border = isImposter ? "1px solid rgba(217, 58, 58, 0.3)" : "1px solid rgba(255,255,255,0.06)";
- card.style.padding = "10px 14px";
- card.style.borderRadius = "12px";
- card.style.display = "flex";
- card.style.justifyContent = "space-between";
- card.style.alignItems = "center";
+    const isImposter = State.oddPlayerIds.includes(p.id);
+    const roleIcon = isImposter 
+      ? `<svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:var(--danger); display:block;"><path d="M2 12h20c0-1.7-1.5-2.8-3.2-2.8h-.8L16.5 4.2C16.2 2.9 15 2 13.6 2h-3.2C9 2 7.8 2.9 7.5 4.2L6 9.2H5.2C3.5 9.2 2 10.3 2 12zm4.5 2.5C4.6 14.5 3 16.1 3 18s1.6 3.5 3.5 3.5 3.5-1.6 3.5-3.5c0-.4-.1-.7-.2-1h4.4c-.1.3-.2.6-.2 1 0 1.9 1.6 3.5 3.5 3.5s3.5-1.6 3.5-3.5-1.6-3.5-3.5-3.5c-1.4 0-2.6.8-3.1 2h-4.8c-.5-1.2-1.7-2-3.1-2z"/></svg>`
+      : `<svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:var(--primary); display:block;"><path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>`;
+    
+    const card = document.createElement('div');
+    card.style.background = isImposter ? "#2D1515" : "var(--bg-card)";
+    card.style.border = isImposter ? "1px solid rgba(217, 58, 58, 0.3)" : "1px solid rgba(255,255,255,0.06)";
+    card.style.padding = "10px 14px";
+    card.style.borderRadius = "12px";
+    card.style.display = "flex";
+    card.style.justifyContent = "space-between";
+    card.style.alignItems = "center";
 
- card.innerHTML = `
- <div style="display:flex; align-items:center; gap: 8px;">
- <span style="font-size: 1.1rem;">${icon}</span>
- <span style="font-weight: 700; color: ${isImposter ? 'var(--danger)' : 'white'}; font-size: 0.95rem;">${p.name}</span>
- </div>
- <div style="font-weight: 900; color: ${p.roundScore > 0 ? 'var(--primary)' : 'var(--text-muted)'}; font-size: 1.05rem;">
- +${p.roundScore}
- </div>
- `;
- list.appendChild(card);
+    card.innerHTML = `
+      <div style="display:flex; align-items:center; gap: 8px;">
+        <span style="display:flex; align-items:center;">${roleIcon}</span>
+        <span style="font-weight: 700; color: ${isImposter ? 'var(--danger)' : 'white'}; font-size: 0.95rem;">${p.name}</span>
+      </div>
+      <div style="font-weight: 900; color: ${p.roundScore > 0 ? 'var(--primary)' : 'var(--text-muted)'}; font-size: 1.05rem;">
+        +${p.roundScore}
+      </div>
+    `;
+    list.appendChild(card);
  });
 
  const noVotingNote = $('no-voting-results-note');
@@ -1016,10 +1152,12 @@ const Game = {
  }
 
  Analytics.logEvent('round_completed', { round: State.round });
+ Game.updateRoundBadges();
  Game.showScreen('results');
  },
 
  goToScoreboard: () => {
+ Game.updateRoundBadges();
  const area = $('scoreboard-list');
  area.innerHTML = "";
  
@@ -1044,22 +1182,22 @@ const Game = {
  const sorted = [...State.players].sort((a,b) => b.score - a.score);
 
  sorted.forEach((p, idx) => {
- const item = document.createElement('div');
- item.className = "list-item";
- if (idx === 0) item.style.borderColor = "var(--accent-gold)";
- 
- const medalEmoji = idx === 0 ? "🥇" : (idx === 1 ? "🥈" : (idx === 2 ? "🥉" : `#${idx+1}`));
+    const item = document.createElement('div');
+    item.className = "list-item";
+    if (idx === 0) item.style.borderColor = "var(--accent-gold)";
+    
+    const rankColor = idx === 0 ? "var(--accent-gold)" : (idx === 1 ? "#CBD5E1" : (idx === 2 ? "#CD7F32" : "var(--text-muted)"));
 
- item.innerHTML = `
- <div style="display:flex; align-items:center; flex: 1;">
- <span style="font-weight:900; font-size:1.1rem; width:35px; text-align:center; margin-right:8px;">${medalEmoji}</span>
- <span style="font-size:1.1rem; font-weight:bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">${p.name}</span>
- </div>
- <div style="text-align:right;">
- <span class="text-primary" style="font-weight:900; font-size:1.15rem; display:block;">${p.score}</span>
- </div>
- `;
- area.appendChild(item);
+    item.innerHTML = `
+      <div style="display:flex; align-items:center; flex: 1;">
+        <span style="font-weight:900; font-size:1.1rem; width:35px; text-align:center; margin-right:8px; color: ${rankColor};">#${idx+1}</span>
+        <span style="font-size:1.1rem; font-weight:bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">${p.name}</span>
+      </div>
+      <div style="text-align:right;">
+        <span class="text-primary" style="font-weight:900; font-size:1.15rem; display:block;">${p.score}</span>
+      </div>
+    `;
+    area.appendChild(item);
  });
 
  Game.showScreen('scoreboard');
@@ -1129,84 +1267,305 @@ const Game = {
  closeRearrangePlayers: () => $('modal-manage-players').classList.remove('open'),
 
  showGameOverScreen: () => {
- Analytics.logEvent('game_completed', { total_rounds: State.round });
- 
- const allPointsZero = State.players.every(p => (p.score || 0) === 0);
+    Analytics.logEvent('game_completed', { total_rounds: State.round });
+    
+    const sorted = [...State.players].sort((a,b) => (b.score || 0) - (a.score || 0));
+    const allPointsZero = State.players.every(p => (p.score || 0) === 0);
 
- if (allPointsZero || State.round === 0) {
- $('game-over-winner-name').innerText = "-";
- $('game-over-winner-score').innerText = "0 points";
- $('stat-dangerous-imposter-name').innerText = "-";
- $('stat-dangerous-imposter-sub').innerText = "-";
- $('stat-best-detective-name').innerText = "-";
- $('stat-best-detective-sub').innerText = "-";
- $('stat-most-suspected-name').innerText = "-";
- $('stat-most-suspected-sub').innerText = "-";
- } else {
- const sorted = [...State.players].sort((a,b) => b.score - a.score);
- const winner = sorted[0] || { name: 'Player', score: 0 };
+    // 1. Populate Ranks List
+    const ranksList = $('game-over-ranks-list');
+    if (ranksList) {
+      ranksList.innerHTML = '';
+      sorted.forEach((p, idx) => {
+        const rankColor = idx === 0 ? "var(--accent-gold)" : (idx === 1 ? "#CBD5E1" : (idx === 2 ? "#CD7F32" : "var(--text-muted)"));
+        const item = document.createElement('div');
+        item.className = 'list-item';
+        item.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.1rem; font-weight: 900; min-width: 28px; text-align: center; color: ${rankColor};">#${idx + 1}</span>
+            <span style="font-weight: 800; font-size: 1.05rem; color: var(--text-main);">${p.name}</span>
+          </div>
+          <span style="font-weight: 900; color: var(--primary); font-size: 1.15rem;">${p.score || 0} pts</span>
+        `;
+        ranksList.appendChild(item);
+      });
+    }
 
- $('game-over-winner-name').innerText = winner.name;
- $('game-over-winner-score').innerText = `${winner.score} points`;
+    if (allPointsZero || State.round === 0) {
+      $('game-over-winner-name').innerText = sorted[0] ? sorted[0].name : "Player";
+      $('game-over-winner-score').innerText = "0 points";
+      $('stat-dangerous-imposter-name').innerText = "-";
+      $('stat-dangerous-imposter-sub').innerText = "-";
+      $('stat-best-detective-name').innerText = "-";
+      $('stat-best-detective-sub').innerText = "-";
+      $('stat-most-suspected-name').innerText = "-";
+      $('stat-most-suspected-sub').innerText = "-";
+    } else {
+      const winner = sorted[0] || { name: 'Player', score: 0 };
+      $('game-over-winner-name').innerText = winner.name;
+      $('game-over-winner-score').innerText = `${winner.score} points`;
 
- let mostDangerous = null;
- let lowestCaughtRatio = 999;
- State.players.forEach(p => {
- const imposterTimes = State.stats.imposterCountTimes[p.id] || 0;
- const caughtTimes = State.stats.imposterCaughtTimes[p.id] || 0;
- if (imposterTimes > 0) {
- const ratio = caughtTimes / imposterTimes;
- if (ratio < lowestCaughtRatio) {
- lowestCaughtRatio = ratio;
- mostDangerous = { player: p, caught: caughtTimes };
- }
- }
- });
- if (mostDangerous) {
- $('stat-dangerous-imposter-name').innerText = mostDangerous.player.name;
- $('stat-dangerous-imposter-sub').innerText = `Caught ${mostDangerous.caught} time${mostDangerous.caught !== 1 ? 's' : ''}`;
- } else {
- $('stat-dangerous-imposter-name').innerText = "-";
- $('stat-dangerous-imposter-sub').innerText = "-";
- }
+      let mostDangerous = null;
+      let lowestCaughtRatio = 999;
+      State.players.forEach(p => {
+        const imposterTimes = State.stats.imposterCountTimes[p.id] || 0;
+        const caughtTimes = State.stats.imposterCaughtTimes[p.id] || 0;
+        if (imposterTimes > 0) {
+          const ratio = caughtTimes / imposterTimes;
+          if (ratio < lowestCaughtRatio) {
+            lowestCaughtRatio = ratio;
+            mostDangerous = { player: p, caught: caughtTimes };
+          }
+        }
+      });
+      if (mostDangerous) {
+        $('stat-dangerous-imposter-name').innerText = mostDangerous.player.name;
+        $('stat-dangerous-imposter-sub').innerText = `Caught ${mostDangerous.caught} time${mostDangerous.caught !== 1 ? 's' : ''}`;
+      } else {
+        $('stat-dangerous-imposter-name').innerText = "-";
+        $('stat-dangerous-imposter-sub').innerText = "-";
+      }
 
- let bestDetective = null;
- let maxGuesses = 0;
- State.players.forEach(p => {
- const guesses = State.stats.correctGuesses[p.id] || 0;
- if (guesses > maxGuesses) {
- maxGuesses = guesses;
- bestDetective = { player: p, guesses: guesses };
- }
- });
- if (bestDetective) {
- $('stat-best-detective-name').innerText = bestDetective.player.name;
- $('stat-best-detective-sub').innerText = `${bestDetective.guesses} correct guess${bestDetective.guesses !== 1 ? 'es' : ''}`;
- } else {
- $('stat-best-detective-name').innerText = "-";
- $('stat-best-detective-sub').innerText = "-";
- }
+      let bestDetective = null;
+      let maxGuesses = 0;
+      State.players.forEach(p => {
+        const guesses = State.stats.correctGuesses[p.id] || 0;
+        if (guesses > maxGuesses) {
+          maxGuesses = guesses;
+          bestDetective = { player: p, guesses: guesses };
+        }
+      });
+      if (bestDetective) {
+        $('stat-best-detective-name').innerText = bestDetective.player.name;
+        $('stat-best-detective-sub').innerText = `${bestDetective.guesses} correct guess${bestDetective.guesses !== 1 ? 'es' : ''}`;
+      } else {
+        $('stat-best-detective-name').innerText = "-";
+        $('stat-best-detective-sub').innerText = "-";
+      }
 
- let mostSuspected = null;
- let maxVotes = 0;
- State.players.forEach(p => {
- const votes = State.stats.votesReceived[p.id] || 0;
- if (votes > maxVotes) {
- maxVotes = votes;
- mostSuspected = { player: p, votes: votes };
- }
- });
- if (mostSuspected) {
- $('stat-most-suspected-name').innerText = mostSuspected.player.name;
- $('stat-most-suspected-sub').innerText = `Suspected ${mostSuspected.votes} time${mostSuspected.votes !== 1 ? 's' : ''}`;
- } else {
- $('stat-most-suspected-name').innerText = "-";
- $('stat-most-suspected-sub').innerText = "-";
- }
- }
+      let mostSuspected = null;
+      let maxVotes = 0;
+      State.players.forEach(p => {
+        const votes = State.stats.votesReceived[p.id] || 0;
+        if (votes > maxVotes) {
+          maxVotes = votes;
+          mostSuspected = { player: p, votes: votes };
+        }
+      });
+      if (mostSuspected) {
+        $('stat-most-suspected-name').innerText = mostSuspected.player.name;
+        $('stat-most-suspected-sub').innerText = `Suspected ${mostSuspected.votes} time${mostSuspected.votes !== 1 ? 's' : ''}`;
+      } else {
+        $('stat-most-suspected-name').innerText = "-";
+        $('stat-most-suspected-sub').innerText = "-";
+      }
+    }
 
- Game.showScreen('game-over');
- },
+    Game.showScreen('game-over');
+  },
+
+  playAgain: () => {
+    State.players.forEach(p => p.score = 0);
+    State.round = 0;
+    State.stats = { imposterCountTimes: {}, imposterCaughtTimes: {}, correctGuesses: {}, votesReceived: {} };
+    Game.saveSession();
+    Game.setupNextRound();
+  },
+
+  startNewGameSetup: () => {
+    State.round = 0;
+    State.stats = { imposterCountTimes: {}, imposterCaughtTimes: {}, correctGuesses: {}, votesReceived: {} };
+    State.players.forEach(p => p.score = 0);
+    State.config.timer = true;
+    State.config.voting = true;
+    Game.saveSession();
+    Game.goToSetup();
+  },
+
+  openShareResultsModal: () => {
+    Game.generateShareCanvas();
+    const modal = $('modal-share-results');
+    if (modal) modal.classList.add('open');
+  },
+
+  closeShareResultsModal: () => {
+    const modal = $('modal-share-results');
+    if (modal) modal.classList.remove('open');
+  },
+
+  generateShareCanvas: () => {
+    const canvas = $('share-card-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+
+    // 1. Dark Background
+    ctx.fillStyle = '#07080A';
+    ctx.fillRect(0, 0, w, h);
+
+    // 2. Ambient Gradient Glow
+    const grad = ctx.createRadialGradient(w / 2, 120, 10, w / 2, 120, 300);
+    grad.addColorStop(0, 'rgba(107, 207, 45, 0.25)');
+    grad.addColorStop(1, 'rgba(7, 8, 10, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // 3. Card Border
+    ctx.strokeStyle = 'rgba(107, 207, 45, 0.4)';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(12, 12, w - 24, h - 24);
+
+    // 4. Header Title
+    ctx.fillStyle = '#6BCF2D';
+    ctx.font = '900 23px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('ODDINARY - WORD IMPOSTER GAME', w / 2, 54);
+    // Subtitle
+    ctx.fillStyle = '#F1C40F';
+    ctx.font = '800 15px Inter, sans-serif';
+    ctx.fillText(`GAME RESULTS • ${State.round || 1} ROUNDS PLAYED`, w / 2, 82);
+
+    // 5. Winner Box
+    const sorted = [...State.players].sort((a,b) => (b.score || 0) - (a.score || 0));
+    const winner = sorted[0] || { name: 'Player', score: 0 };
+
+    ctx.fillStyle = 'rgba(24, 26, 32, 0.95)';
+    ctx.strokeStyle = '#F1C40F';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(40, 106, w - 80, 120, 16);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#F1C40F';
+    ctx.font = '900 13px Inter, sans-serif';
+    ctx.fillText('ODDINARY CHAMPION', w / 2, 134);
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '900 30px Inter, sans-serif';
+    ctx.fillText(`${winner.name}`, w / 2, 172);
+
+    ctx.fillStyle = '#6BCF2D';
+    ctx.font = '800 18px Inter, sans-serif';
+    ctx.fillText(`${winner.score || 0} points`, w / 2, 204);
+
+    // 6. Final Leaderboard Card
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(40, 240, w - 80, 280, 16);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#6E7382';
+    ctx.font = '800 13px Inter, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('FINAL STANDINGS', 60, 272);
+
+    ctx.textAlign = 'right';
+    ctx.fillText('POINTS', w - 60, 272);
+
+    const topPlayers = sorted.slice(0, 5);
+    let yPos = 308;
+
+    topPlayers.forEach((p, idx) => {
+      const medal = `#${idx + 1}`;
+      ctx.fillStyle = idx === 0 ? '#F1C40F' : '#FFFFFF';
+      ctx.font = '700 17px Inter, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(`${medal}  ${p.name}`, 60, yPos);
+
+      ctx.fillStyle = '#6BCF2D';
+      ctx.font = '800 17px Inter, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(`${p.score || 0} pts`, w - 60, yPos);
+      yPos += 38;
+    });
+
+    // 7. Footer text
+    ctx.fillStyle = '#6E7382';
+    ctx.font = '600 13px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Play free on single phone at https://oddinary.vercel.app/', w / 2, 565);
+  },
+
+  doNativeShare: async () => {
+    const sorted = [...State.players].sort((a,b) => (b.score || 0) - (a.score || 0));
+    const winner = sorted[0] || { name: 'Player', score: 0 };
+    const text = `${winner.name} won Oddinary - Word Imposter Game with ${winner.score || 0} points!\nCan you catch the Oddinary? Play free at https://oddinary.vercel.app/`;
+
+    const canvas = $('share-card-canvas');
+    if (canvas && navigator.canShare) {
+      try {
+        canvas.toBlob(async (blob) => {
+          if (blob && navigator.share) {
+            const file = new File([blob], 'oddinary-champion.png', { type: 'image/png' });
+            if (navigator.canShare({ files: [file] })) {
+              await navigator.share({
+                title: 'Oddinary - Word Imposter Game Results',
+                text: text,
+                files: [file]
+              });
+              return;
+            }
+          }
+          if (navigator.share) {
+            await navigator.share({
+              title: 'Oddinary - Word Imposter Game Results',
+              text: text,
+              url: 'https://oddinary.vercel.app/'
+            });
+          }
+        });
+        return;
+      } catch (err) {
+        console.log('Share canceled or not allowed:', err);
+      }
+    }
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Oddinary - Word Imposter Game Results',
+          text: text,
+          url: 'https://oddinary.vercel.app/'
+        });
+      } catch (e) {}
+    } else {
+      Game.copyShareText();
+    }
+  },
+
+  downloadShareImage: () => {
+    const canvas = $('share-card-canvas');
+    if (!canvas) return;
+    const link = document.createElement('a');
+    link.download = `oddinary-champion-round-${State.round || 1}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    Game.showAlert('Results image downloaded to your device!', 'Saved');
+  },
+
+  copyShareText: () => {
+    const sorted = [...State.players].sort((a,b) => (b.score || 0) - (a.score || 0));
+    const winner = sorted[0] || { name: 'Player', score: 0 };
+    let msg = `Oddinary - Word Imposter Game\nChampion: ${winner.name} (${winner.score || 0} pts)\n\nFinal Leaderboard:\n`;
+    sorted.forEach((p, idx) => {
+      const rank = `${idx + 1}.`;
+      msg += `${rank} ${p.name}: ${p.score || 0} pts\n`;
+    });
+    msg += `\nPlay free with friends on one phone: https://oddinary.vercel.app/`;
+
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(msg).then(() => {
+        Game.showAlert('Match summary copied to clipboard!', 'Copied');
+      });
+    } else {
+      Game.showAlert(msg, 'Match Summary');
+    }
+  },
 
  playAgain: () => {
  State.players.forEach(p => p.score = 0);
@@ -1356,7 +1715,7 @@ const Game = {
  
  $('setting-shuffle').checked = State.config.shuffle;
  $('setting-timer').checked = State.config.timer;
- $('setting-voting').checked = State.config.voting;
+ $('setting-voting').checked = State.config.voting !== false;
  $('setting-secret-alliance').checked = State.config.secretAlliance;
  $('setting-sound').checked = State.config.sound;
  $('timer-duration-slider').value = State.config.timerDuration;
@@ -1554,8 +1913,8 @@ const Game = {
  cancelEndGame: () => $('modal-end-game-confirm').classList.remove('open'),
 
  confirmEndGame: () => {
- StorageManager.clearSession();
- shouldPreventRefresh = false;
- location.href = 'index.html';
- }
+    const modal = $('modal-end-game-confirm');
+    if (modal) modal.classList.remove('open');
+    Game.showGameOverScreen();
+  }
 };

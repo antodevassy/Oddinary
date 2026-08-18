@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Play Oddinary - Word Imposter Game</title>
+  <meta name="description" content="Play Oddinary - Word Imposter Game with friends on a single device! Pass and play, give subtle clues, catch the spy, and uncover the imposter.">
+  <meta name="keywords" content="Word Imposter Game, Oddinary, Imposter Game, Party Game, Word Game, Spy Game, Social Deduction Game">
+  <meta name="author" content="Anto Devassy V.P">
+  <meta name="robots" content="index, follow">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://oddinary.vercel.app/play.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://oddinary.vercel.app/play.html">
+  <meta property="og:site_name" content="Oddinary - Word Imposter Game">
+  <meta property="og:title" content="Play Oddinary - Word Imposter Game">
+  <meta property="og:description" content="Gather your friends, describe your secret word, and catch the imposter in this fast-paced party game!">
+  <meta property="og:image" content="https://oddinary.vercel.app/assets/logo.png">
+
+  <!-- PWA & Favicon -->
+  <link rel="icon" type="image/png" href="assets/fav-icon.png">
+  <link rel="apple-touch-icon" href="assets/fav-icon.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#07080A">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800;900&family=Space+Grotesk:wght@600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9418997406256200" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="game-page-body">
+
+<div id="app">
+  <!-- 1. Player Setup Screen -->
+  <div id="screen-setup" class="screen active">
+    <div class="setup-wrapper">
+      <!-- Game Title Header -->
+      <div class="game-top-bar">
+        <a href="index.html" class="top-bar-home-btn" title="Back to Homepage">
+          <svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round;"><path d="M15 18l-6-6 6-6"/></svg>
+          <span>Home</span>
+        </a>
+      </div>
+
+      <!-- QUICK START CARD -->
+      <div class="setup-section-card quick-start-card">
+        <div class="setup-section-title">
+          <span style="display:flex; align-items:center; gap:6px;"><svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor;"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg> PLAYERS</span>
+          <span id="setup-player-count-badge" class="badge">3 Players</span>
+        </div>
+
+        <!-- Recent Players Quick-Add -->
+        <div id="recent-players-container" class="recent-players-container hidden"></div>
+
+        <!-- Players Input List -->
+        <div id="players-list" style="width: 100%;"></div>
+
+        <button class="btn btn-add-player" onclick="AudioEngine.play('click'); Game.addPlayer()">
+          + Add Player
+        </button>
+        <div id="setup-error" class="error-msg"></div>
+
+        <!-- Imposters / Oddinaries Stepper -->
+        <div class="imposters-quick-select">
+          <div class="setting-left">
+            <span style="display:flex; align-items:center; gap:6px; font-weight:800; font-size:1rem;"><svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor;"><path d="M2 12h20c0-1.7-1.5-2.8-3.2-2.8h-.8L16.5 4.2C16.2 2.9 15 2 13.6 2h-3.2C9 2 7.8 2.9 7.5 4.2L6 9.2H5.2C3.5 9.2 2 10.3 2 12zm4.5 2.5C4.6 14.5 3 16.1 3 18s1.6 3.5 3.5 3.5 3.5-1.6 3.5-3.5c0-.4-.1-.7-.2-1h4.4c-.1.3-.2.6-.2 1 0 1.9 1.6 3.5 3.5 3.5s3.5-1.6 3.5-3.5-1.6-3.5-3.5-3.5c-1.4 0-2.6.8-3.1 2h-4.8c-.5-1.2-1.7-2-3.1-2z"/></svg> Oddinaries</span>
+          </div>
+          <div class="setting-right">
+            <div class="stepper-control">
+              <button id="setup-imposter-minus" class="stepper-btn" onclick="AudioEngine.play('click'); Game.adjustImposterCount(-1, 'setup')">−</button>
+              <span id="setup-imposter-count-display" class="stepper-value">1</span>
+              <button id="setup-imposter-plus" class="stepper-btn" onclick="AudioEngine.play('click'); Game.adjustImposterCount(1, 'setup')">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRIMARY START GAME BUTTON -->
+        <button class="btn btn-primary btn-start-game" onclick="AudioEngine.play('click'); Game.startGame()">
+          START GAME
+        </button>
+      </div>
+
+      <!-- COLLAPSIBLE ADVANCED SETTINGS -->
+      <div class="setup-section-card advanced-settings-card">
+        <div class="advanced-settings-header" onclick="Game.toggleAdvancedSettingsAccordion()">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor;"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+            <span style="font-weight: 800; letter-spacing: 0.5px;">Advanced Settings</span>
+          </div>
+          <span id="advanced-accordion-icon" class="accordion-arrow" style="display:inline-flex; align-items:center; transition:transform 0.2s ease;"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor; display:block;"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></span>
+        </div>
+
+        <div id="advanced-settings-content" class="advanced-settings-content collapsed">
+          <div class="settings-group">
+            <!-- 1. Stealth Mode -->
+            <div class="setting-item">
+              <div class="setting-left">
+                <span>Stealth Mode</span>
+                <button class="setting-info-btn" onclick="Game.showStealthModeInfo()" title="What is Stealth Mode?"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor; display:block;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button>
+              </div>
+              <div class="setting-right">
+                <label class="switch">
+                  <input type="checkbox" id="setting-imposter-word" checked>
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- 2. Secret Alliance -->
+            <div class="setting-item">
+              <div class="setting-left">
+                <span>Secret Alliance</span>
+                <button class="setting-info-btn" onclick="Game.showAllianceInfo()" title="What is Secret Alliance?"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor; display:block;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button>
+              </div>
+              <div class="setting-right">
+                <label class="switch">
+                  <input type="checkbox" id="setting-secret-alliance" onchange="Game.toggleSecretAllianceSetting(this, 'setup')">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- 3. Voting -->
+            <div class="setting-item">
+              <div class="setting-left">
+                <span>Voting</span>
+                <button class="setting-info-btn" onclick="Game.showVotingInfo()" title="What is Voting?"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor; display:block;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button>
+              </div>
+              <div class="setting-right">
+                <label class="switch">
+                  <input type="checkbox" id="setting-voting" checked onchange="Game.toggleVotingSetting(this.checked)">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- 4. Shuffle Players Order -->
+            <div class="setting-item">
+              <div class="setting-left">
+                <span>Shuffle Player Order</span>
+              </div>
+              <div class="setting-right">
+                <label class="switch">
+                  <input type="checkbox" id="setting-shuffle">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- 5. Investigation Timer -->
+            <div class="setting-item">
+              <div class="setting-left">
+                <span>Investigation Timer</span>
+              </div>
+              <div class="setting-right">
+                <label class="switch">
+                  <input type="checkbox" id="setting-timer" checked onchange="Game.toggleTimerSettings()">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div id="timer-slider-container" class="timer-control">
+              <div class="timer-label">Timer Duration</div>
+              <div class="timer-value" id="timer-value-display">3 min</div>
+              <input type="range" min="1" max="5" value="3" class="slider-input" id="timer-duration-slider" oninput="Game.updateTimerValue(this.value)">
+              <div class="slider-ticks">
+                <span>1 min</span>
+                <span>5 min</span>
+              </div>
+            </div>
+
+            <!-- 6. Sound Effects -->
+            <div class="setting-item">
+              <div class="setting-left">
+                <span>Sound & Haptics</span>
+              </div>
+              <div class="setting-right">
+                <label class="switch">
+                  <input type="checkbox" id="setting-sound" checked onchange="Game.toggleSoundSetting(this.checked)">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+  <!-- 2. Word Reveal (Pass N Play) -->
+  <div id="screen-reveal" class="screen">
+    <div class="screen-round-header">
+      <span class="round-badge" id="reveal-round-badge">ROUND 1</span>
+    </div>
+    <div class="close-btn" onclick="Game.askCloseReveal()" title="Exit Round" style="display:flex; align-items:center; justify-content:center;"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor; display:block;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></div>
+    
+    <div class="content-area" style="display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; max-width: 440px; margin: 0 auto;">
+      <p class="text-muted" style="font-size: 0.88rem; font-weight: 700; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 1px;">Pass Device To</p>
+      <h1 id="reveal-player-name" class="text-primary text-glow" style="font-size: 2.4rem; margin: 0 0 4px; font-weight: 900; letter-spacing: 0.5px;">Player</h1>
+      <p id="reveal-counter" class="text-muted" style="font-size: 0.85rem; font-weight: 700; margin-bottom: 12px;">Player 1/3</p>
+      
+      <div class="card-container" onclick="Game.flipCard()">
+        <div class="card" id="word-card">
+          <!-- Card Front -->
+          <div class="card-face card-front">
+            <div class="card-medallion">
+              <svg viewBox="0 0 24 24" style="width:44px; height:44px; fill:var(--primary);"><path d="M2 12h20c0-1.7-1.5-2.8-3.2-2.8h-.8L16.5 4.2C16.2 2.9 15 2 13.6 2h-3.2C9 2 7.8 2.9 7.5 4.2L6 9.2H5.2C3.5 9.2 2 10.3 2 12zm4.5 2.5C4.6 14.5 3 16.1 3 18s1.6 3.5 3.5 3.5 3.5-1.6 3.5-3.5c0-.4-.1-.7-.2-1h4.4c-.1.3-.2.6-.2 1 0 1.9 1.6 3.5 3.5 3.5s3.5-1.6 3.5-3.5-1.6-3.5-3.5-3.5c-1.4 0-2.6.8-3.1 2h-4.8c-.5-1.2-1.7-2-3.1-2z"/></svg>
+            </div>
+            <h2 class="card-front-title">Tap to Reveal</h2>
+            <p class="card-front-subtitle">Keep screen hidden from others</p>
+          </div>
+          <!-- Card Back -->
+          <div class="card-face card-back">
+            <div class="card-back-label" id="reveal-role-label">Your secret word is:</div>
+            <div class="card-back-word-wrap">
+              <h1 id="secret-word-display" class="card-word-title">WORD</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button id="btn-next-player" class="btn btn-primary hidden" onclick="Game.nextReveal()" style="width: 100%; max-width: 400px; margin: 16px auto 0;">Hide & Pass</button>
+    </div>
+  </div>
+
+  <!-- 3. Discussion / Investigation Phase -->
+  <div id="screen-discuss" class="screen">
+    <div class="screen-round-header">
+      <span class="round-badge" id="discuss-round-badge">ROUND 1</span>
+    </div>
+    <div class="close-btn" onclick="Game.askCloseReveal()" title="Exit Round" style="display:flex; align-items:center; justify-content:center;"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor; display:block;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></div>
+
+    <div class="content-area" style="display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; max-width: 440px; margin: 0 auto;">
+      <div class="pulse-anim"><svg viewBox="0 0 24 24" style="width:46px; height:46px; fill:none; stroke:var(--accent-gold); stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>
+      <h1 class="text-gold" style="letter-spacing: 1px; margin: 6px 0 4px; text-align: center;">INVESTIGATION</h1>
+      <p class="text-c text-muted" style="max-width: 360px; margin: 0 auto 12px; line-height: 1.5; font-size: 0.95rem; text-align: center;">Describe your word with a subtle clue. Listen closely and spot the Oddinary.</p>
+      
+      <div id="timer-container" class="hidden timer-box">
+        <div id="timer-display" class="timer-main-digits">03:00</div>
+        <button id="btn-add-time" class="btn btn-pill" onclick="Game.addDiscussionTime(60)">+ 1 Min</button>
+      </div>
+
+      <!-- On-the-fly Timer Toggle (if disabled at start) -->
+      <div id="discuss-timer-settings" class="hidden" style="width: 100%; max-width: 340px; margin: 12px auto; display: flex; flex-direction: column; align-items: center;">
+        <div class="switch-container" style="display: flex; align-items: center; justify-content: space-between; width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 12px 18px; border-radius: 14px; box-sizing: border-box;">
+          <span style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Investigation Timer</span>
+          <label class="switch">
+            <input type="checkbox" id="discuss-setting-timer" onchange="Game.toggleDiscussTimerSettings()">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div id="discuss-timer-slider-container" class="timer-control hidden" style="margin: 10px auto 0; padding: 14px 18px; width: 100%;">
+          <div class="timer-label">Duration</div>
+          <div class="timer-value" id="discuss-timer-value-display">3 min</div>
+          <input type="range" min="1" max="5" value="3" class="slider-input" id="discuss-timer-duration-slider" oninput="Game.updateDiscussTimerValue(this.value)">
+          <div class="slider-ticks">
+            <span>1 min</span>
+            <span>5 min</span>
+          </div>
+          <button class="btn btn-primary" onclick="Game.runLocalTimer()" style="margin-top: 12px; width: 100%;">Start Timer</button>
+        </div>
+      </div>
+      
+      <!-- Action Buttons -->
+      <div style="display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 340px; margin: 18px auto 0; align-items: center;">
+        <button class="btn" onclick="Game.showForgotWord()" style="width: 100%; margin: 0;">Forgot Your Word?</button>
+        <button id="btn-start-voting" class="btn btn-primary" onclick="Game.startVoting()" style="width: 100%; margin: 0;">Start Voting</button>
+      </div>
+    </div>
+
+    <!-- Ad Slot -->
+    <div class="ad-slot-container">
+      <ins class="adsbygoogle" style="display:block; width:100%; text-align:center;" data-ad-client="ca-pub-9418997406256200" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      <script>try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e){}</script>
+    </div>
+  </div>
+
+  <!-- 4. Voting Phase -->
+  <div id="screen-voting" class="screen">
+    <div class="screen-round-header">
+      <span class="round-badge" id="voting-round-badge">ROUND 1</span>
+    </div>
+    <div class="close-btn" onclick="Game.askCloseReveal()" title="Exit Round" style="display:flex; align-items:center; justify-content:center;"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor; display:block;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></div>
+
+    <div class="voting-wrapper">
+      <h3 class="text-c text-muted">Pass phone to</h3>
+      <h1 id="voter-name" class="text-primary text-glow" style="font-size: 2.3rem;">Player</h1>
+      <h2 class="text-c" style="letter-spacing: 0.5px;">WHO DO YOU SUSPECT?</h2>
+      
+      <div class="content-area" id="voting-list"></div>
+    </div>
+  </div>
+
+  <!-- 5. Voting Complete Screen -->
+  <div id="screen-voting-complete" class="screen">
+    <div class="voting-complete-box">
+      <div style="display:flex; justify-content:center; margin-bottom:12px;"><svg viewBox="0 0 24 24" style="width:58px; height:58px; fill:var(--accent-gold);"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
+      <h1 class="text-gold" style="font-size: 2.2rem; letter-spacing: 1px;">VOTING COMPLETE!</h1>
+      <p class="text-muted">All votes have been cast. Ready to unmask the Oddinary?</p>
+      <button class="btn btn-primary btn-reveal-action" onclick="AudioEngine.play('click'); Game.startImposterRevealAnimation()">
+        REVEAL ODDINARY
+      </button>
+    </div>
+  </div>
+
+  <!-- 6. Results Screen (Round Complete) -->
+  <div id="screen-results" class="screen">
+    <div class="results-wrapper">
+      <div class="screen-round-header">
+        <span class="round-badge" id="results-round-badge">ROUND 1</span>
+      </div>
+      <h1 class="text-c text-gold" style="letter-spacing: 1px;">ROUND COMPLETE</h1>
+      
+      <div id="results-imposter-card" class="results-banner-card">
+        <h1 id="round-status-header" style="font-size: 1.7rem; margin: 0; font-weight: 900; letter-spacing: 1px; color: var(--primary);">ODDINARY CAUGHT!</h1>
+      </div>
+
+      <!-- Words Card -->
+      <div class="results-words-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="text-muted" style="font-size: 0.9rem;">Common Word:</span>
+          <strong id="res-common-word" class="text-primary" style="font-size: 1.15rem;">Word</strong>
+        </div>
+        <div id="res-odd-word-row" style="display:flex; justify-content:space-between; align-items:center; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px;">
+          <span class="text-muted" style="font-size: 0.9rem;">Odd Word:</span>
+          <strong id="res-odd-word" class="text-danger" style="font-size: 1.15rem;">Word</strong>
+        </div>
+      </div>
+
+      <!-- Round Score List -->
+      <div style="width: 100%; text-align: left;">
+        <div style="font-size: 0.85rem; font-weight: 900; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; margin-left: 4px;">ROUND SCORE</div>
+        <p id="no-voting-results-note" class="text-muted hidden" style="font-size: 0.82rem; font-style: italic; margin-bottom: 8px; margin-left: 4px; display:flex; align-items:center; gap:6px;"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg> Group Voting: Points are not calculated when secret voting is disabled.</p>
+        <div id="round-score-list" style="width: 100%; display: flex; flex-direction: column; gap: 8px;"></div>
+      </div>
+
+      <div style="display: flex; gap: 8px; width: 100%;">
+        <button id="btn-view-votes" class="btn" style="flex: 1; margin: 0; font-size: 0.85rem;" onclick="AudioEngine.play('click'); Game.showVotingBreakdown()">View Votes</button>
+        <button id="btn-points-rules" class="btn" style="flex: 1; margin: 0; font-size: 0.85rem;" onclick="AudioEngine.play('click'); Game.showPointsRules()">Scoring Rules</button>
+      </div>
+
+      <button id="btn-results-scoreboard" class="btn btn-primary" style="margin-bottom: 0;" onclick="AudioEngine.play('click'); Game.goToScoreboard()">
+        Leaderboard
+      </button>
+    </div>
+
+    <!-- Ad Slot -->
+    <div class="ad-slot-container">
+      <ins class="adsbygoogle" style="display:block; width:100%; text-align:center;" data-ad-client="ca-pub-9418997406256200" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      <script>try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e){}</script>
+    </div>
+  </div>
+
+  <!-- 7. Leaderboard Screen -->
+  <div id="screen-scoreboard" class="screen">
+    <div class="results-wrapper">
+      <div class="screen-round-header">
+        <span class="round-badge" id="scoreboard-round-badge">ROUND 1</span>
+      </div>
+      <h1 class="text-c text-gold" style="letter-spacing: 1px; margin-bottom: 5px;">LEADERBOARD</h1>
+      <p id="scoreboard-no-voting-note" class="text-muted text-c hidden" style="font-size: 0.82rem; font-style: italic; margin-bottom: 6px; display:flex; align-items:center; justify-content:center; gap:6px;"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg> Group Voting active: Points are calculated only during Secret Voting mode.</p>
+
+      <div class="content-area" id="scoreboard-list" style="width: 100%;"></div>
+      
+      <div style="display: flex; gap: 8px; width: 100%; margin-top: 5px; align-items: center;">
+        <button class="btn" onclick="AudioEngine.play('click'); Game.openManagePlayers()" style="flex: 1; margin: 0; font-size: 0.85rem;">Players</button>
+        <button class="btn" onclick="AudioEngine.play('click'); Game.openMidgameSettings()" style="flex: 1; margin: 0; font-size: 0.85rem;">Settings</button>
+        <button id="btn-reset-scores" class="btn btn-icon btn-danger" onclick="AudioEngine.play('click'); Game.askResetScores()" style="margin: 0; border-radius: var(--radius); padding: 10px 14px; min-width: 44px; display: flex; align-items: center; justify-content: center;" title="Reset Scores">
+          <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: currentColor;"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+        </button>
+      </div>
+      
+      <button id="btn-back-to-results" class="btn" style="margin-bottom: 0;" onclick="AudioEngine.play('click'); Game.backToResults()">Back to Imposter Reveal</button>
+      <button class="btn btn-primary" style="margin-bottom: 0;" onclick="AudioEngine.play('click'); Game.setupNextRound()">NEXT ROUND</button>
+      
+      <button class="btn btn-danger" style="margin-top: 5px; width: 100%;" onclick="AudioEngine.play('click'); Game.askEndGame()">End Game</button>
+    </div>
+
+    <!-- Ad Slot -->
+    <div class="ad-slot-container">
+      <ins class="adsbygoogle" style="display:block; width:100%; text-align:center;" data-ad-client="ca-pub-9418997406256200" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      <script>try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e){}</script>
+    </div>
+  </div>
+
+  <!-- 8. Game Over / Champion Screen -->
+  <div id="screen-game-over" class="screen">
+    <div class="results-wrapper">
+      <h1 class="text-gold text-c" style="letter-spacing: 2px;">GAME OVER</h1>
+
+      <!-- Champion Hero Box -->
+      <div class="leader-hero-card">
+        <div class="leader-crown"><svg viewBox="0 0 24 24" style="width:48px; height:48px; fill:var(--accent-gold); filter:drop-shadow(0 0 12px rgba(241,196,15,0.6));"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V19H7v2h10v-2h-4v-3.1a5.01 5.01 0 0 0 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg></div>
+        <div class="leader-subtitle">ODDINARY CHAMPION</div>
+        <div id="game-over-winner-name" class="leader-name-display">Player</div>
+        <div id="game-over-winner-score" class="leader-score-display">0 points</div>
+      </div>
+
+      <!-- Final Leaderboard -->
+      <div style="width: 100%; text-align: left;">
+        <div style="font-size: 0.85rem; font-weight: 900; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; margin-left: 4px;">FINAL LEADERBOARD</div>
+        <div id="game-over-ranks-list" style="width: 100%; display: flex; flex-direction: column; gap: 8px;"></div>
+      </div>
+
+      <!-- Highlights & Stats Grid -->
+      <div class="summary-grid" style="margin-top: 10px;">
+        <div class="stat-card">
+          <div class="stat-icon"><svg viewBox="0 0 24 24" style="width:26px; height:26px; fill:var(--danger);"><path d="M2 12h20c0-1.7-1.5-2.8-3.2-2.8h-.8L16.5 4.2C16.2 2.9 15 2 13.6 2h-3.2C9 2 7.8 2.9 7.5 4.2L6 9.2H5.2C3.5 9.2 2 10.3 2 12zm4.5 2.5C4.6 14.5 3 16.1 3 18s1.6 3.5 3.5 3.5 3.5-1.6 3.5-3.5c0-.4-.1-.7-.2-1h4.4c-.1.3-.2.6-.2 1 0 1.9 1.6 3.5 3.5 3.5s3.5-1.6 3.5-3.5-1.6-3.5-3.5-3.5c-1.4 0-2.6.8-3.1 2h-4.8c-.5-1.2-1.7-2-3.1-2z"/></svg></div>
+          <div class="stat-label">Dangerous Oddinary</div>
+          <div id="stat-dangerous-imposter-name" class="stat-value">-</div>
+          <div id="stat-dangerous-imposter-sub" class="stat-subtext">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><svg viewBox="0 0 24 24" style="width:26px; height:26px; fill:var(--primary);"><path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></div>
+          <div class="stat-label">Best Detective</div>
+          <div id="stat-best-detective-name" class="stat-value">-</div>
+          <div id="stat-best-detective-sub" class="stat-subtext">-</div>
+        </div>
+        <div class="stat-card stat-card-full">
+          <div class="stat-icon"><svg viewBox="0 0 24 24" style="width:26px; height:26px; fill:var(--accent-gold);"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg></div>
+          <div class="stat-label">Most Suspected Player</div>
+          <div id="stat-most-suspected-name" class="stat-value">-</div>
+          <div id="stat-most-suspected-sub" class="stat-subtext">-</div>
+        </div>
+      </div>
+
+      <!-- Game Over Action Buttons -->
+      <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 10px;">
+        <button class="btn btn-primary" onclick="AudioEngine.play('click'); Game.playAgain()">
+          PLAY AGAIN (Rematch)
+        </button>
+        <button class="btn" style="border-color: var(--accent-gold); color: var(--accent-gold);" onclick="AudioEngine.play('click'); Game.openShareResultsModal()">
+          SHARE RESULTS
+        </button>
+        <button class="btn" onclick="AudioEngine.play('click'); Game.startNewGameSetup()">
+          NEW GAME (Change Players)
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODALS ================= -->
+
+<!-- Suspense Reveal Overlay -->
+<div id="suspense-overlay" class="suspense-overlay hidden">
+  <div class="suspense-title">THE ODDINARY WAS</div>
+  <div class="suspense-dots" id="suspense-dots">.</div>
+  <div class="suspense-name-box" id="suspense-name-box">
+    <div style="display:flex; justify-content:center; margin-bottom:8px;"><svg viewBox="0 0 24 24" style="width:54px; height:54px; fill:var(--primary);"><path d="M2 12h20c0-1.7-1.5-2.8-3.2-2.8h-.8L16.5 4.2C16.2 2.9 15 2 13.6 2h-3.2C9 2 7.8 2.9 7.5 4.2L6 9.2H5.2C3.5 9.2 2 10.3 2 12zm4.5 2.5C4.6 14.5 3 16.1 3 18s1.6 3.5 3.5 3.5 3.5-1.6 3.5-3.5c0-.4-.1-.7-.2-1h4.4c-.1.3-.2.6-.2 1 0 1.9 1.6 3.5 3.5 3.5s3.5-1.6 3.5-3.5-1.6-3.5-3.5-3.5c-1.4 0-2.6.8-3.1 2h-4.8c-.5-1.2-1.7-2-3.1-2z"/></svg></div>
+    <div id="suspense-imposter-name" class="suspense-imposter-name">PLAYER</div>
+  </div>
+</div>
+
+<!-- Share Results Modal -->
+<div id="modal-share-results" class="modal">
+  <div class="modal-content" style="max-width: 440px; text-align: center;">
+    <h2 class="text-primary mb-1">Share Game Results</h2>
+    <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 15px;">Show off your victory to friends & group chats!</p>
+    
+    <div class="share-canvas-preview-box">
+      <canvas id="share-card-canvas" width="600" height="600" style="width: 100%; max-width: 320px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); margin: 0 auto; display: block;"></canvas>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px;">
+      <button id="btn-native-share" class="btn btn-primary" onclick="Game.doNativeShare()">
+        Share Card
+      </button>
+      <button class="btn" onclick="Game.downloadShareImage()">
+        Download Image
+      </button>
+      <button class="btn" onclick="Game.copyShareText()">
+        Copy Text Summary
+      </button>
+      <button class="btn btn-secondary-outline" onclick="Game.closeShareResultsModal()">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Setting Info Modals -->
+<div id="modal-stealth-info" class="modal">
+  <div class="modal-content" style="max-width: 400px; padding: 25px;">
+    <h2 class="text-primary mb-2 text-c">Stealth Mode</h2>
+    <div style="text-align: left; line-height: 1.6; color: var(--text-sec);">
+      <p style="margin-bottom: 15px;">
+        <strong style="color: var(--primary);">ON:</strong> Oddinaries receive a secret word that is slightly different from the common word. They must blend in without knowing their word is different.
+      </p>
+      <p>
+        <strong style="color: var(--danger);">OFF:</strong> Oddinaries receive no word. Their card displays <strong>"ODDINARY"</strong>. They must bluff and guess the word from other players' clues.
+      </p>
+    </div>
+    <button class="btn btn-primary mt-2" onclick="AudioEngine.play('click'); Game.closeStealthModeInfo()">Got It</button>
+  </div>
+</div>
+
+<div id="modal-alliance-info" class="modal">
+  <div class="modal-content" style="max-width: 400px; padding: 25px;">
+    <h2 class="text-primary mb-2 text-c">Secret Alliance</h2>
+    <div style="text-align: left; line-height: 1.6; color: var(--text-sec);">
+      <p style="margin-bottom: 15px;">
+        <strong style="color: var(--primary);">ON:</strong> When playing with 2 or more Oddinaries, each Oddinary sees their fellow Oddinary partners listed on their card so they can coordinate.
+      </p>
+      <p>
+        <strong style="color: var(--danger);">OFF:</strong> Oddinaries do not know who else is an Oddinary and must operate independently.
+      </p>
+    </div>
+    <button class="btn btn-primary mt-2" onclick="AudioEngine.play('click'); Game.closeAllianceInfo()">Got It</button>
+  </div>
+</div>
+
+<div id="modal-voting-info" class="modal">
+  <div class="modal-content" style="max-width: 400px; padding: 25px;">
+    <h2 class="text-primary mb-2 text-c">Voting</h2>
+    <div style="text-align: left; line-height: 1.6; color: var(--text-sec);">
+      <p style="margin-bottom: 15px;">
+        <strong style="color: var(--primary);">ON:</strong> Players pass the phone to cast private secret votes. The app automatically calculates points and tracks leaderboard standings.
+      </p>
+      <p>
+        <strong style="color: var(--danger);">OFF:</strong> Verbal group voting in real life without passing the phone. Players vote out loud and tap to reveal the Oddinary directly (scores are not calculated).
+      </p>
+    </div>
+    <button class="btn btn-primary mt-2" onclick="AudioEngine.play('click'); Game.closeVotingInfo()">Got It</button>
+  </div>
+</div>
+
+
+
+
+<!-- Points Rules Modal -->
+<div id="modal-points-rules" class="modal">
+  <div class="modal-content" style="max-width: 440px;">
+    <h2 class="text-primary mb-2 text-c" style="letter-spacing: 0.5px;">HOW TO SCORE</h2>
+    
+    <div style="display: flex; flex-direction: column; gap: 10px; text-align: left;">
+      <div class="scoring-guide-card detective-card">
+        <div class="scoring-card-role text-primary" style="display:flex; align-items:center; gap:6px;"><svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor;"><path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg> DETECTIVE</div>
+        <div class="scoring-row">
+          <span><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor; margin-right:6px;"><path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg> Catch the Oddinary</span>
+          <span class="scoring-pts text-primary">+15</span>
+        </div>
+      </div>
+
+      <div class="scoring-guide-card imposter-card">
+        <div class="scoring-card-role text-danger" style="display:flex; align-items:center; gap:6px;"><svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:currentColor;"><path d="M2 12h20c0-1.7-1.5-2.8-3.2-2.8h-.8L16.5 4.2C16.2 2.9 15 2 13.6 2h-3.2C9 2 7.8 2.9 7.5 4.2L6 9.2H5.2C3.5 9.2 2 10.3 2 12zm4.5 2.5C4.6 14.5 3 16.1 3 18s1.6 3.5 3.5 3.5 3.5-1.6 3.5-3.5c0-.4-.1-.7-.2-1h4.4c-.1.3-.2.6-.2 1 0 1.9 1.6 3.5 3.5 3.5s3.5-1.6 3.5-3.5-1.6-3.5-3.5-3.5c-1.4 0-2.6.8-3.1 2h-4.8c-.5-1.2-1.7-2-3.1-2z"/></svg> ODDINARY</div>
+        <div class="scoring-row">
+          <span>Survive the vote</span>
+          <span class="scoring-pts text-primary">+10</span>
+        </div>
+        <div class="scoring-row">
+          <span>Get zero votes</span>
+          <span class="scoring-pts text-primary">+20</span>
+        </div>
+        <div class="scoring-row">
+          <span>Betray another Oddinary</span>
+          <span class="scoring-pts text-gold">+5</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expandable Rules Breakdown -->
+    <div style="margin-top: 15px; text-align: left; background: rgba(255,255,255,0.02); border-radius: 12px; padding: 12px 14px; border: 1px solid rgba(255,255,255,0.06);">
+      <div style="font-weight: 700; color: var(--text-sec); font-size: 0.85rem; margin-bottom: 6px;">Scoring Rules Explained:</div>
+      <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">
+        <p>• Oddinaries are <strong>caught</strong> if they receive the most votes or are tied for highest votes (0 pts for being caught).</p>
+        <p style="margin-top: 4px;">• <strong>Betrayal:</strong> An Oddinary who votes against another Oddinary earns +5 bonus points.</p>
+        <p style="margin-top: 4px;">• Detectives earn +15 pts for each correct vote cast for an Oddinary.</p>
+      </div>
+    </div>
+
+    <button class="btn btn-primary mt-2" onclick="AudioEngine.play('click'); Game.closePointsRules()">Got It</button>
+  </div>
+</div>
+
+<!-- Mid-game Settings Modal -->
+<div id="modal-midgame-settings" class="modal">
+  <div class="modal-content" style="max-width: 460px; padding: 22px;">
+    <h2 class="text-primary mb-2 text-c" style="letter-spacing: 0.5px;">GAME SETTINGS</h2>
+
+    <div class="settings-group" style="margin-bottom: 20px;">
+      <!-- 1. Oddinaries -->
+      <div class="setting-item">
+        <div class="setting-left">
+          <span style="display:flex; align-items:center; gap:6px;"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M2 12h20c0-1.7-1.5-2.8-3.2-2.8h-.8L16.5 4.2C16.2 2.9 15 2 13.6 2h-3.2C9 2 7.8 2.9 7.5 4.2L6 9.2H5.2C3.5 9.2 2 10.3 2 12zm4.5 2.5C4.6 14.5 3 16.1 3 18s1.6 3.5 3.5 3.5 3.5-1.6 3.5-3.5c0-.4-.1-.7-.2-1h4.4c-.1.3-.2.6-.2 1 0 1.9 1.6 3.5 3.5 3.5s3.5-1.6 3.5-3.5-1.6-3.5-3.5-3.5c-1.4 0-2.6.8-3.1 2h-4.8c-.5-1.2-1.7-2-3.1-2z"/></svg> Oddinaries</span>
+        </div>
+        <div class="setting-right">
+          <div class="stepper-control">
+            <button id="mid-imposter-minus" class="stepper-btn" onclick="AudioEngine.play('click'); Game.adjustImposterCount(-1, 'mid')">−</button>
+            <span id="mid-imposter-count-display" class="stepper-value">1</span>
+            <button id="mid-imposter-plus" class="stepper-btn" onclick="AudioEngine.play('click'); Game.adjustImposterCount(1, 'mid')">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Stealth Mode -->
+      <div class="setting-item">
+        <div class="setting-left">
+          <span>Stealth Mode</span>
+          <button class="setting-info-btn" onclick="Game.showStealthModeInfo()"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor; display:block;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button>
+        </div>
+        <div class="setting-right">
+          <label class="switch">
+            <input type="checkbox" id="mid-setting-imposter-word">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 3. Secret Alliance -->
+      <div class="setting-item">
+        <div class="setting-left">
+          <span>Secret Alliance</span>
+          <button class="setting-info-btn" onclick="Game.showAllianceInfo()"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor; display:block;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button>
+        </div>
+        <div class="setting-right">
+          <label class="switch">
+            <input type="checkbox" id="mid-setting-secret-alliance" onchange="Game.toggleSecretAllianceSetting(this, 'mid')">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 4. Voting -->
+      <div class="setting-item">
+        <div class="setting-left">
+          <span>Voting</span>
+          <button class="setting-info-btn" onclick="Game.showVotingInfo()" title="What is Voting?"><svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor; display:block;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></button>
+        </div>
+        <div class="setting-right">
+          <label class="switch">
+            <input type="checkbox" id="mid-setting-voting">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 5. Shuffle Players Order -->
+      <div class="setting-item">
+        <div class="setting-left">
+          <span>Shuffle Player Order</span>
+        </div>
+        <div class="setting-right">
+          <label class="switch">
+            <input type="checkbox" id="mid-setting-shuffle">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 6. Investigation Timer -->
+      <div class="setting-item">
+        <div class="setting-left">
+          <span>Investigation Timer</span>
+        </div>
+        <div class="setting-right">
+          <label class="switch">
+            <input type="checkbox" id="mid-setting-timer" checked onchange="Game.toggleMidTimerSettings()">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div id="mid-timer-slider-container" class="timer-control">
+        <div class="timer-label">Timer Duration</div>
+        <div class="timer-value" id="mid-timer-value-display">3 min</div>
+        <input type="range" min="1" max="5" value="3" class="slider-input" id="mid-timer-duration-slider" oninput="Game.updateMidTimerValue(this.value)">
+        <div class="slider-ticks">
+          <span>1 min</span>
+          <span>5 min</span>
+        </div>
+      </div>
+
+      <!-- 7. Sound Effects -->
+      <div class="setting-item">
+        <div class="setting-left">
+          <span>Sound & Haptics</span>
+        </div>
+        <div class="setting-right">
+          <label class="switch">
+            <input type="checkbox" id="mid-setting-sound" checked onchange="Game.toggleSoundSetting(this.checked)">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 10px;">
+      <button class="btn" style="flex:1; margin:0;" onclick="AudioEngine.play('click'); Game.closeMidgameSettings()">Cancel</button>
+      <button class="btn btn-primary" style="flex:1; margin:0;" onclick="AudioEngine.play('click'); Game.saveMidgameSettings()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Voting Breakdown Modal -->
+<div id="modal-voting-breakdown" class="modal">
+  <div class="modal-content">
+    <h2 class="text-primary mb-2 text-c">Voting Breakdown</h2>
+    <div id="voting-breakdown-list" style="width: 100%; margin: 15px 0;"></div>
+    <button class="btn btn-primary" onclick="AudioEngine.play('click'); Game.closeVotingBreakdown()">Close</button>
+  </div>
+</div>
+
+<!-- Confirmation Modal for End Game -->
+<div id="modal-end-game-confirm" class="modal">
+  <div class="modal-content" style="text-align: center; max-width: 400px; padding: 25px;">
+    <div style="display:flex; justify-content:center; margin-bottom:8px;"><svg viewBox="0 0 24 24" style="width:48px; height:48px; fill:var(--accent-gold);"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V19H7v2h10v-2h-4v-3.1a5.01 5.01 0 0 0 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg></div>
+    <h2 class="text-white mb-2">End This Game?</h2>
+    <p class="text-muted mb-2">Are you ready to crown the Oddinary Champion and view final standings?</p>
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button class="btn" style="flex:1" onclick="Game.cancelEndGame()">Cancel</button>
+      <button class="btn btn-danger" style="flex:1" onclick="Game.confirmEndGame()">End Game</button>
+    </div>
+  </div>
+</div>
+
+<!-- Close Reveal Confirmation Modal -->
+<div id="modal-close-reveal" class="modal">
+  <div class="modal-content" style="text-align: center;">
+    <h2 class="text-white mb-2">Go to Leaderboard?</h2>
+    <p class="text-muted mb-2">Are you sure you want to leave this round?</p>
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button class="btn" style="flex:1" onclick="Game.cancelCloseReveal()">Cancel</button>
+      <button class="btn btn-primary" style="flex:1" onclick="Game.confirmCloseReveal()">Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- Forgot Word Modal (Unified, Sleek & Flicker-Free) -->
+<div id="modal-forgot-word" class="modal">
+  <div class="modal-content" style="max-width: 420px; padding: 24px 20px; text-align: center; position: relative;">
+    
+    <!-- Step 1: Select Name -->
+    <div id="forgot-step-select" class="forgot-step">
+      <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+        <div class="modal-icon-badge">
+          <svg viewBox="0 0 24 24" style="width:24px; height:24px; fill:var(--primary);"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+        </div>
+      </div>
+      <h2 class="text-primary mb-1" style="font-size: 1.35rem; letter-spacing: 0.5px;">Forgot Your Word?</h2>
+      <p class="text-muted mb-3" style="font-size: 0.88rem; line-height: 1.4;">Select your name to privately verify your secret word.</p>
+      <div id="forgot-word-player-list" class="forgot-player-grid"></div>
+      <button class="btn" style="width: 100%; margin-top: 16px; border-color: rgba(255,255,255,0.15);" onclick="AudioEngine.play('click'); Game.closeForgotWord()">Back to Investigation</button>
+    </div>
+
+    <!-- Step 2: Privacy Check -->
+    <div id="forgot-step-confirm" class="forgot-step hidden">
+      <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+        <div class="modal-icon-badge warning-badge">
+          <svg viewBox="0 0 24 24" style="width:24px; height:24px; fill:var(--accent-gold);"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        </div>
+      </div>
+      <h2 class="text-white mb-1" style="font-size: 1.3rem;">Privacy Check</h2>
+      <p class="text-muted" style="font-size: 0.88rem;">Make sure only <strong id="confirm-forgot-name" class="text-primary" style="font-size: 1.05rem;">Player</strong> is looking at the screen!</p>
+      <div class="forgot-privacy-card">
+        <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:currentColor; opacity:0.8; flex-shrink:0;"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        <span>Hide screen from other players</span>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 20px; width: 100%;">
+        <button class="btn" style="flex: 1; margin: 0;" onclick="AudioEngine.play('click'); Game.cancelForgotConfirm()">Back</button>
+        <button class="btn btn-primary" style="flex: 1.3; margin: 0;" onclick="AudioEngine.play('click'); Game.showForgotWordReveal()">Reveal Word</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Reveal Word -->
+    <div id="forgot-step-reveal" class="forgot-step hidden">
+      <div style="display: flex; justify-content: center; margin-bottom: 10px;">
+        <div class="modal-icon-badge">
+          <svg viewBox="0 0 24 24" style="width:24px; height:24px; fill:var(--primary);"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        </div>
+      </div>
+      <h3 id="forgot-word-label" class="text-muted mb-1" style="font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;">Your secret word is:</h3>
+      <div class="forgot-word-box">
+        <h1 id="forgot-word-display" class="text-primary text-glow" style="font-size: 2.2rem; font-weight: 900; margin: 0; letter-spacing: 1px; line-height: 1.2;">WORD</h1>
+      </div>
+      <div id="forgot-alliance-hint-container"></div>
+      <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="AudioEngine.play('click'); Game.closeForgotWord()">Got It</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- General Alert Modal -->
+<div id="modal-alert" class="modal" style="z-index: 99999 !important;">
+  <div class="modal-content" style="text-align: center; max-width: 400px; padding: 25px;">
+    <div style="display:flex; justify-content:center; margin-bottom:10px;"><svg viewBox="0 0 24 24" style="width:48px; height:48px; fill:var(--accent-gold);"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg></div>
+    <h2 id="alert-title" class="text-primary mb-2" style="font-size: 1.4rem;">Notice</h2>
+    <p id="alert-message" class="text-white mb-2" style="line-height: 1.5; font-size: 0.95rem; margin: 15px 0;">Notice message</p>
+    <button class="btn btn-primary" style="margin-top: 15px; width: 100%;" onclick="AudioEngine.play('click'); Game.closeAlert()">Got It</button>
+  </div>
+</div>
+
+<!-- Manage Players Mid-game Modal -->
+<div id="modal-manage-players" class="modal">
+  <div class="modal-content" style="max-width: 440px; padding: 22px;">
+    <h2 class="text-primary mb-1 text-c">Manage Players</h2>
+    <p id="manage-players-subtext" class="text-muted text-c mb-2" style="font-size: 0.82rem;">Add, edit, remove, or drag to reorder players</p>
+    
+    <button class="btn" onclick="AudioEngine.play('click'); Game.openAddPlayerMidgame()" style="border-style: dashed; width: 100%; margin-bottom: 12px; font-size: 0.85rem;">+ Add New Player</button>
+    
+    <div id="manage-players-list" style="width: 100%; max-height: 280px; overflow-y: auto; margin-bottom: 15px;"></div>
+    
+    <button class="btn btn-primary" style="width: 100%;" onclick="AudioEngine.play('click'); Game.closeManagePlayers()">Done</button>
+  </div>
+</div>
+
+<div id="modal-add-player-midgame" class="modal" style="z-index: 20000 !important;">
+  <div class="modal-content" style="max-width: 400px; padding: 25px;">
+    <h2 class="text-primary mb-2 text-c">Add New Player</h2>
+    <input type="text" id="new-player-name-midgame" placeholder="Enter player name" style="width: 100%; margin: 15px 0;" autocomplete="off">
+    <div id="add-player-midgame-error" class="error-msg" style="margin-bottom: 10px;"></div>
+    <div style="display: flex; gap: 10px; margin-top: 10px;">
+      <button class="btn" style="flex:1" onclick="Game.closeAddPlayerMidgame()">Cancel</button>
+      <button class="btn btn-primary" style="flex:1" onclick="Game.confirmAddPlayerMidgame()">Add</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-remove-player-confirm" class="modal" style="z-index: 20000 !important;">
+  <div class="modal-content" style="text-align: center; max-width: 400px; padding: 25px;">
+    <h2 class="text-white mb-2">Remove Player?</h2>
+    <p class="text-muted mb-2">Are you sure you want to remove <span id="remove-player-name" class="text-danger" style="font-weight: bold;">Player</span>?</p>
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button class="btn" style="flex:1" onclick="Game.closeRemovePlayerConfirm()">Cancel</button>
+      <button class="btn btn-danger" style="flex:1" onclick="Game.confirmRemovePlayerMidgame()">Remove</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-reset-scores-confirm" class="modal">
+  <div class="modal-content" style="text-align: center; max-width: 400px; padding: 25px;">
+    <h2 class="text-white mb-2">Reset Scores?</h2>
+    <p class="text-muted mb-2">Are you sure you want to reset all scores to 0?</p>
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button class="btn" style="flex:1" onclick="Game.cancelResetScores()">Cancel</button>
+      <button class="btn btn-danger" style="flex:1" onclick="Game.confirmResetScores()">Reset</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/words-data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/game.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/install.js"></script>
+</body>
+</html>

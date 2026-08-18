@@ -1,884 +1,426 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
- <title>Oddinary - Word Imposter Game | Party Game for Friends</title>
- <meta name="description" content="Play Oddinary - the ultimate Word Imposter Game & Party Game for friends! Give subtle clues, spot secret words, catch the spy, and uncover the imposter in this fun social deduction word game for 3 to 30 players.">
- <meta name="keywords" content="Word Imposter Game, Imposter Game, Party Game, Word Game, Spy Game, Game for Friends, Party Game, social deduction game, secret word game, pass and play, oddinary">
- <meta name="author" content="Anto Devassy V.P">
- <meta name="robots" content="index, follow">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Oddinary - Word Imposter Game | Party Game for Friends</title>
+  <meta name="description" content="Play Oddinary - Word Imposter Game! Give subtle clues, spot secret words, catch the spy, and uncover the imposter in this social deduction word game for 3 to 30 players on one device.">
+  <meta name="keywords" content="Word Imposter Game, Oddinary, Imposter Game, Party Game, Word Game, Spy Game, Game for Friends, social deduction game, secret word game, pass and play">
+  <meta name="author" content="Anto Devassy V.P">
+  <meta name="robots" content="index, follow">
 
- <!-- Canonical URL -->
- <link rel="canonical" href="https://oddinary.vercel.app/">
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://oddinary.vercel.app/">
 
- <!-- Open Graph / Facebook / WhatsApp -->
- <meta property="og:type" content="website">
- <meta property="og:url" content="https://oddinary.vercel.app/">
- <meta property="og:site_name" content="Oddinary - Word Imposter Game">
- <meta property="og:title" content="Oddinary - Word Imposter Game | Party Game for Friends">
- <meta property="og:description" content="Play Oddinary - the ultimate Word Imposter Game & Party Game for friends! Give clues, catch the spy, and find the imposter.">
- <meta property="og:image" content="https://oddinary.vercel.app/assets/logo.png">
- <meta property="og:image:width" content="1200">
- <meta property="og:image:height" content="630">
- <meta property="og:locale" content="en_US">
+  <!-- Open Graph / Facebook / WhatsApp -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://oddinary.vercel.app/">
+  <meta property="og:site_name" content="Oddinary - Word Imposter Game">
+  <meta property="og:title" content="Oddinary - Word Imposter Game | Party Game for Friends">
+  <meta property="og:description" content="Everyone gets a word. One player gets something different. Give your clue. Find the imposter. Play on one phone!">
+  <meta property="og:image" content="https://oddinary.vercel.app/assets/logo.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="en_US">
 
- <!-- Twitter / X -->
- <meta name="twitter:card" content="summary_large_image">
- <meta name="twitter:url" content="https://oddinary.vercel.app/">
- <meta name="twitter:title" content="Oddinary - Word Imposter Game | Party Game for Friends">
- <meta name="twitter:description" content="Gather your friends, describe your secret word, and catch the imposter in this fast-paced party game!">
- <meta name="twitter:image" content="https://oddinary.vercel.app/assets/logo.png">
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://oddinary.vercel.app/">
+  <meta name="twitter:title" content="Oddinary - Word Imposter Game">
+  <meta name="twitter:description" content="Gather your friends, describe your secret word, and catch the imposter in this fast-paced party game!">
+  <meta name="twitter:image" content="https://oddinary.vercel.app/assets/logo.png">
 
- <!-- PWA & Favicon -->
- <link rel="icon" type="image/png" href="assets/fav-icon.png">
- <link rel="apple-touch-icon" href="assets/fav-icon.png">
- <link rel="manifest" href="manifest.json">
- <meta name="theme-color" content="#07080A">
- <meta name="apple-mobile-web-app-capable" content="yes">
- <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <!-- PWA & Favicon -->
+  <link rel="icon" type="image/png" href="assets/fav-icon.png">
+  <link rel="apple-touch-icon" href="assets/fav-icon.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#07080A">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
- <!-- Fonts -->
- <link rel="preconnect" href="https://fonts.googleapis.com">
- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
- <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800;900&family=Space+Grotesk:wght@600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
- <!-- Google AdSense -->
- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9418997406256200" crossorigin="anonymous"></script>
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9418997406256200" crossorigin="anonymous"></script>
 
- <!-- Schema.org Structured Data -->
- <script type="application/ld+json">
- {
- "@context": "https://schema.org",
- "@type": "SoftwareApplication",
- "name": "Oddinary - Word Imposter Game",
- "alternateName": "Oddinary Party Game",
- "url": "https://oddinary.vercel.app/",
- "image": "https://oddinary.vercel.app/assets/logo.png",
- "description": "The ultimate Party Game of secret words, social deduction, spy hunting, and finding the imposter for groups of 3 to 30 friends.",
- "applicationCategory": "GameApplication",
- "genre": ["Party Game", "Word Game", "Imposter Game", "Social Deduction", "Spy Game"],
- "operatingSystem": "Any (Web, iOS, Android)",
- "keywords": "Word Imposter Game, Imposter Game, Party Game, Word Game, Spy Game, Game for Friends, Party Game",
- "offers": {
- "@type": "Offer",
- "price": "0",
- "priceCurrency": "USD"
- },
- "author": {
- "@type": "Person",
- "name": "Anto Devassy V.P"
- },
- "numberOfPlayers": {
- "@type": "QuantitativeValue",
- "minValue": 3,
- "maxValue": 30
- }
- }
- </script>
- <link rel="stylesheet" href="style.css">
+  <!-- Schema.org Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Oddinary - Word Imposter Game",
+    "alternateName": "Oddinary Party Game",
+    "url": "https://oddinary.vercel.app/",
+    "image": "https://oddinary.vercel.app/assets/logo.png",
+    "description": "The ultimate party word game of secret clues, bluffing, social deduction, and spy hunting for groups of 3 to 30 friends on a single phone.",
+    "applicationCategory": "GameApplication",
+    "genre": ["Party Game", "Word Game", "Imposter Game", "Social Deduction", "Spy Game"],
+    "operatingSystem": "Any (Web, iOS, Android)",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Anto Devassy V.P"
+    },
+    "numberOfPlayers": {
+      "@type": "QuantitativeValue",
+      "minValue": 3,
+      "maxValue": 30
+    }
+  }
+  </script>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="landing-page-body">
 
-<div id="app">
- <!-- 1. Landing Screen -->
- <div id="screen-landing" class="screen active">
- <!-- Center Hero Stack -->
- <div class="landing-hero">
- <div class="landing-logo-box">
- <img src="assets/logo.png" alt="Oddinary Logo" class="logo-img" onerror="this.src='';this.innerHTML='<h1>Oddinary</h1>'">
- </div>
- 
- <div class="landing-buttons">
- <button class="btn btn-primary" onclick="AudioEngine.play('click'); Game.goToSetup();">Start Game</button>
- <button class="btn" onclick="AudioEngine.play('click'); Game.toggleRules();">How to Play?</button>
- </div>
- </div>
+  <!-- TOP NAVIGATION BAR (Play Button 1 of 2) -->
+  <header class="landing-nav-header">
+    <div class="landing-nav-container">
+      <a href="index.html" class="nav-brand">
+        <img src="assets/fav-icon.png" alt="Oddinary Icon" class="nav-brand-icon">
+        <span class="nav-brand-name">Oddinary</span>
+      </a>
+      <nav class="nav-links-desktop">
+        <a href="#how-it-works">How It Works</a>
+        <a href="#modes">Game Modes</a>
+        <a href="#scoring">Scoring</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <a href="play.html" class="btn btn-primary nav-cta-btn">PLAY GAME</a>
+    </div>
+  </header>
 
- <div class="footer-copyright">
- <p>© <span class="copyright-year">2026</span> Oddinary by <a href="https://www.instagram.com/antodevassy.vp" target="_blank" rel="noopener noreferrer" class="author-link">Anto Devassy V.P</a>. All rights reserved.</p>
- <p class="footer-links">
- <a href="about.html">About</a> | 
- <a href="privacy.html">Privacy Policy</a> | 
- <a href="terms.html">Terms of Service</a> | 
- <a href="contact.html">Contact</a>
- <span id="install-link-separator"> | </span><a href="#" id="install-app-link" onclick="event.preventDefault(); InstallPrompt.show();">Install App</a>
- </p>
- </div>
- </div>
+  <!-- HERO SECTION -->
+  <section class="landing-hero-section">
+    <div class="landing-hero-inner">
+      <div class="hero-logo-wrapper">
+        <img src="assets/logo.png" alt="Oddinary - Word Imposter Game" class="hero-logo-img">
+      </div>
 
- <!-- How To Play Modal Overlay -->
- <div id="modal-rules" class="modal">
- <div class="modal-content" style="max-width: 440px;">
- <h2 class="text-primary mb-2 text-c" style="letter-spacing: 0.5px;">HOW TO PLAY</h2>
- <div class="how-to-play-container">
- <div class="how-to-play-step">
- <div class="step-number">1</div>
- <div class="step-body">
- <div class="step-title">GET YOUR WORD</div>
- <div class="step-desc">Everyone receives a secret word.</div>
- </div>
- </div>
- <div class="how-to-play-step">
- <div class="step-number">2</div>
- <div class="step-body">
- <div class="step-title">GIVE A CLUE</div>
- <div class="step-desc">Describe your word without saying it.</div>
- </div>
- </div>
- <div class="how-to-play-step">
- <div class="step-number">3</div>
- <div class="step-body">
- <div class="step-title">FIND THE IMPOSTER</div>
- <div class="step-desc">Listen carefully. Someone's word is different.</div>
- </div>
- </div>
- <div class="how-to-play-step">
- <div class="step-number">4</div>
- <div class="step-body">
- <div class="step-title">VOTE</div>
- <div class="step-desc">Pick who you think is suspicious.</div>
- </div>
- </div>
- <div class="how-to-play-step">
- <div class="step-number">5</div>
- <div class="step-body">
- <div class="step-title">SCORE</div>
- <div class="step-desc">Earn points and become the Oddinary champion.</div>
- </div>
- </div>
- </div>
- <button class="btn btn-primary mt-2" onclick="AudioEngine.play('click'); Game.toggleRules()">Got It</button>
- </div>
- </div>
+      <!-- Concept Pitch in 5 Seconds -->
+      <div class="hero-pitch-card">
+        <p class="hero-pitch-line"><span class="pitch-bullet">•</span> Everyone gets a secret word.</p>
+        <p class="hero-pitch-line"><span class="pitch-bullet">•</span> One player gets something different.</p>
+        <p class="hero-pitch-line highlight-pitch"><span class="pitch-bullet">•</span> Give your clue. Spot the Oddinary.</p>
+      </div>
 
- <!-- 2. Player Setup -->
- <div id="screen-setup" class="screen">
- <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; max-width: 500px;">
- <!-- PLAYERS SECTION CARD -->
- <div class="setup-section-card">
- <div class="setup-section-title">
- <span>PLAYERS</span>
- </div>
- 
- <!-- List Container -->
- <div id="recent-players-container" class="recent-players-container hidden"></div>
- <div id="players-list" style="width: 100%;">
- <!-- Dynamic Inputs -->
- </div>
- 
- <button class="btn" onclick="AudioEngine.play('click'); Game.addPlayer()" style="border-style: dashed; margin-bottom: 0; margin-top: 5px;">+ Add Player</button>
- <div id="setup-error" class="error-msg" style="margin-top: 8px;"></div>
- </div>
+      <!-- Single Primary Action Button (Play Button 2 of 2) -->
+      <div class="hero-actions-group">
+        <a href="play.html" class="btn btn-primary hero-btn-play">
+          <span>PLAY NOW</span>
+        </a>
+      </div>
 
- <!-- GAME SETTINGS SECTION CARD -->
- <div class="setup-section-card">
- <div class="setup-section-title">
- <span>GAME SETTINGS</span>
- </div>
+      <!-- Value & Trust Badges -->
+      <div class="hero-badges-grid">
+        <div class="hero-badge-pill">
+          <span class="badge-text"><strong>3–30 Players</strong><small>Scales to any group size</small></span>
+        </div>
+        <div class="hero-badge-pill">
+          <span class="badge-text"><strong>One Device</strong><small>Pass & play anywhere</small></span>
+        </div>
+        <div class="hero-badge-pill">
+          <span class="badge-text"><strong>No Account Required</strong><small>Zero sign-up friction</small></span>
+        </div>
+        <div class="hero-badge-pill">
+          <span class="badge-text"><strong>100% Free</strong><small>Instant in your browser</small></span>
+        </div>
+      </div>
+    </div>
+  </section>
 
- <div class="settings-group">
- <!-- 1. Imposters -->
- <div class="setting-item">
- <div class="setting-left">
- <span>Imposters</span>
- </div>
- <div class="setting-right">
- <div class="stepper-control">
- <button id="setup-imposter-minus" class="stepper-btn" onclick="AudioEngine.play('click'); Game.adjustImposterCount(-1, 'setup')">−</button>
- <span id="setup-imposter-count-display" class="stepper-value">1</span>
- <button id="setup-imposter-plus" class="stepper-btn" onclick="AudioEngine.play('click'); Game.adjustImposterCount(1, 'setup')">+</button>
- </div>
- </div>
- </div>
+  <!-- 5-STEP VISUAL HOW IT WORKS TIMELINE -->
+  <section id="how-it-works" class="landing-section">
+    <div class="section-container">
+      <div class="section-header-box">
+        <span class="section-tag">STEP-BY-STEP</span>
+        <h2 class="section-title">How the Game Works</h2>
+        <p class="section-subtitle">Learn Oddinary in 30 seconds. Pass the phone around, share clever clues, and hunt the spy.</p>
+      </div>
 
- <!-- 2. Stealth Mode -->
- <div class="setting-item">
- <div class="setting-left">
- <span>Stealth Mode</span>
- <button class="setting-info-btn" onclick="Game.showStealthModeInfo()" title="What is Stealth Mode?">
- <svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
- </button>
- </div>
- <div class="setting-right">
- <label class="switch">
- <input type="checkbox" id="setting-imposter-word" checked>
- <span class="slider"></span>
- </label>
- </div>
- </div>
+      <div class="visual-timeline-grid">
+        <!-- Step 1 -->
+        <div class="timeline-card">
+          <div class="timeline-step-badge">01</div>
+          <h3 class="timeline-step-title">RECEIVE</h3>
+          <div class="timeline-sample-card">
+            <span class="sample-label">Secret Word</span>
+            <span class="sample-word text-primary">PIZZA</span>
+          </div>
+          <p class="timeline-step-desc">Pass the phone around. Every player secretly checks their word and keeps it hidden.</p>
+        </div>
 
- <!-- 3. Secret Alliance -->
- <div class="setting-item">
- <div class="setting-left">
- <span>Secret Alliance</span>
- <button class="setting-info-btn" onclick="Game.showAllianceInfo()" title="What is Secret Alliance?">
- <svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
- </button>
- </div>
- <div class="setting-right">
- <label class="switch">
- <input type="checkbox" id="setting-secret-alliance" onchange="Game.toggleSecretAllianceSetting(this, 'setup')">
- <span class="slider"></span>
- </label>
- </div>
- </div>
+        <!-- Step 2 -->
+        <div class="timeline-card">
+          <div class="timeline-step-badge">02</div>
+          <h3 class="timeline-step-title">GIVE A CLUE</h3>
+          <div class="timeline-speech-bubble">
+            <span>"You can eat it at a party."</span>
+          </div>
+          <p class="timeline-step-desc">Take turns giving a 1-sentence clue. Don't make it too obvious, or the Oddinary will catch on.</p>
+        </div>
 
- <!-- 4. Voting -->
- <div class="setting-item">
- <div class="setting-left">
- <span>Voting</span>
- <button class="setting-info-btn" onclick="Game.showVotingInfo()" title="What is Voting?">
- <svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
- </button>
- </div>
- <div class="setting-right">
- <label class="switch">
- <input type="checkbox" id="setting-voting" checked>
- <span class="slider"></span>
- </label>
- </div>
- </div>
+        <!-- Step 3 -->
+        <div class="timeline-card">
+          <div class="timeline-step-badge">03</div>
+          <h3 class="timeline-step-title">INVESTIGATE</h3>
+          <div class="timeline-speech-bubble bubble-suspect">
+            <span>"Wait... why did Rahul say Italian?"</span>
+          </div>
+          <p class="timeline-step-desc">Listen carefully to every description. Someone is the hidden Oddinary.</p>
+        </div>
 
- <!-- 5. Shuffle Players Order -->
- <div class="setting-item">
- <div class="setting-left">
- <span>Shuffle Players Order</span>
- </div>
- <div class="setting-right">
- <label class="switch">
- <input type="checkbox" id="setting-shuffle">
- <span class="slider"></span>
- </label>
- </div>
- </div>
+        <!-- Step 4 -->
+        <div class="timeline-card">
+          <div class="timeline-step-badge">04</div>
+          <h3 class="timeline-step-title">VOTE</h3>
+          <div class="timeline-speech-bubble">
+            <span>"I think Rahul is the Oddinary."</span>
+          </div>
+          <p class="timeline-step-desc">Pass the phone to vote privately in secret, or debate out loud with group voting.</p>
+        </div>
 
- <!-- 6. Investigation Timer -->
- <div class="setting-item">
- <div class="setting-left">
- <span>Investigation Timer</span>
- </div>
- <div class="setting-right">
- <label class="switch">
- <input type="checkbox" id="setting-timer" onchange="Game.toggleTimerSettings()">
- <span class="slider"></span>
- </label>
- </div>
- </div>
- 
- <div id="timer-slider-container" class="timer-control hidden" style="margin: 12px auto; padding: 16px 12px; background: var(--bg-card); border-radius: 14px; border: 1px solid rgba(255,255,255,0.12); width: 100%; max-width: 360px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
- <p class="text-muted" style="margin-bottom: 6px; font-size: 0.85rem; text-align: center; width: 100%;">Timer Duration</p>
- <div class="timer-value text-c" id="timer-value-display" style="font-size: 1.4rem; font-weight: 800; text-align: center; width: 100%; color: var(--primary);">3 min</div>
- <input type="range" min="1" max="5" value="3" class="slider-input" id="timer-duration-slider" oninput="Game.updateTimerValue(this.value)" style="margin: 12px auto; width: 85%; display: block;">
- <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.75rem; width: 85%; margin: 0 auto;">
- <span>1 min</span>
- <span>5 min</span>
- </div>
- </div>
+        <!-- Step 5 -->
+        <div class="timeline-card">
+          <div class="timeline-step-badge">05</div>
+          <h3 class="timeline-step-title">REVEAL</h3>
+          <div class="timeline-sample-card imposter-reveal-sample">
+            <span class="sample-label">The Oddinary Was</span>
+            <span class="sample-word text-danger">Rahul</span>
+          </div>
+          <p class="timeline-step-desc">Unmask the Oddinary, calculate points, celebrate victories, and advance to the next round.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
- <!-- 7. Sound Effects -->
- <div class="setting-item">
- <div class="setting-left">
- <span>Sound Effects</span>
- </div>
- <div class="setting-right">
- <label class="switch">
- <input type="checkbox" id="setting-sound" checked onchange="Game.toggleSoundSetting(this.checked)">
- <span class="slider"></span>
- </label>
- </div>
- </div>
- </div>
- </div>
- 
- <!-- Setup Actions -->
- <div style="width: 100%; display: flex; flex-direction: column; gap: 8px;">
- <button class="btn btn-primary" onclick="AudioEngine.play('click'); Game.startGame()" style="margin-bottom: 0;">START GAME</button>
- <button class="btn" onclick="AudioEngine.play('click'); Game.goHome()" style="margin-bottom: 0;">Back</button>
- </div>
- </div>
- </div>
+  <!-- GAME MODES SECTION -->
+  <section id="modes" class="landing-section alt-bg-section">
+    <div class="section-container">
+      <div class="section-header-box">
+        <span class="section-tag">GAMEPLAY OPTIONS</span>
+        <h2 class="section-title">Exciting Game Modes</h2>
+        <p class="section-subtitle">Customize each match to match your group's preferences and skill level.</p>
+      </div>
 
- <!-- 3. Word Reveal (Pass N Play) -->
- <div id="screen-reveal" class="screen">
- <div class="close-btn" onclick="Game.askCloseReveal()" title="Close">✕</div>
- <div class="content-area">
- <h3 class="text-muted">Pass device to</h3>
- <h1 id="reveal-player-name" class="text-primary text-glow mb-2" style="font-size: 2.5rem;">Player Name</h1>
- 
- <p id="reveal-counter" class="text-muted" style="margin-bottom: 10px;">Player 1/3</p>
- 
- <div class="card-container" onclick="Game.flipCard()">
- <div class="card" id="word-card">
- <div class="card-face card-front">
- <span style="font-size: 3rem;">🕵🏻</span>
- <h3><br>Tap to Reveal</h3>
- <p class="text-muted"><br>Keep it secret!</p>
- </div>
- <div class="card-face card-back">
- <p id="reveal-role-label" class="text-muted">Your secret word is:</p>
- <br>
- <h1 id="secret-word-display" style="font-size: 2.2rem; color: var(--primary); line-height: 1.2;">WORD</h1>
- </div>
- </div>
- </div>
- </div>
- <button id="btn-next-player" class="btn btn-primary hidden" onclick="Game.nextReveal()">Hide & Pass</button>
- </div>
+      <div class="modes-grid">
+        <div class="mode-card">
+          <h3 class="mode-title">Stealth Mode</h3>
+          <p class="mode-desc">The Oddinary receives a slightly different word (e.g. <em>Burger</em> vs <em>Pizza</em>) and <strong>does not know they are the Oddinary</strong>. Total confusion and hilarious revelations guaranteed.</p>
+        </div>
 
- <!-- 4. Discussion Phase -->
- <div id="screen-discuss" class="screen">
- <div class="close-btn" onclick="Game.askCloseReveal()" title="Close">✕</div>
- <div class="content-area">
- <div class="pulse-anim">🔍</div>
- <h1 class="text-gold" style="letter-spacing: 1px;">INVESTIGATION IN PROGRESS</h1>
- <p class="text-c text-muted">Describe your word, but don't say it directly. Find the Imposter.</p>
- <br>
- <div id="timer-container" class="hidden" style="margin: 30px 0; display: flex; flex-direction: column; align-items: center; gap: 15px;">
- <div id="timer-display" style="font-size: 3rem; font-weight: 900; color: var(--text-main); line-height: 1;">
- 03:00
- </div>
- <button id="btn-add-time" class="btn" style="padding: 10px 20px; font-size: 0.95rem; width: auto; min-height: 0; border-radius: 20px;" onclick="Game.addDiscussionTime(60)">+ 1 Min</button>
- </div>
+        <div class="mode-card">
+          <h3 class="mode-title">Classic Mode</h3>
+          <p class="mode-desc">The Oddinary receives no word at all and is told directly <em>"YOU ARE THE ODDINARY"</em>. They must bluff on the spot and figure out the word from other players' clues.</p>
+        </div>
 
- <!-- New: Investigation Timer Toggle (if not enabled at start) -->
- <div id="discuss-timer-settings" class="content-area hidden" style="width: 100%; max-width: 400px; margin-bottom: 20px;">
- <div class="switch-container" style="margin-bottom: 5px; padding: 12px 15px;">
- <span style="font-size: 0.9rem;">Investigation Timer</span>
- <label class="switch">
- <input type="checkbox" id="discuss-setting-timer" onchange="Game.toggleDiscussTimerSettings()">
- <span class="slider"></span>
- </label>
- </div>
- 
- <div id="discuss-timer-slider-container" class="timer-control hidden" style="margin: 5px auto; padding: 15px; width: 100%;">
- <p class="text-muted" style="margin-bottom: 5px; font-size: 0.8rem;">Timer Duration</p>
- <div class="timer-value" id="discuss-timer-value-display" style="font-size: 1.5rem; margin: 10px 0;">3 min</div>
- <input type="range" min="1" max="5" value="3" class="slider-input" id="discuss-timer-duration-slider" oninput="Game.updateDiscussTimerValue(this.value)" style="margin: 10px 0;">
- <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.7rem; margin-bottom: 20px;">
- <span>1 min</span>
- <span>5 min</span>
- </div>
- <button class="btn btn-primary" onclick="Game.runLocalTimer()">Start Timer</button>
- </div>
- </div>
- 
- <button class="btn" onclick="Game.showForgotWord()">Forgot Your Word?</button>
- <button id="btn-start-voting" class="btn btn-primary" onclick="Game.startVoting()">Start Voting</button>
- </div>
+        <div class="mode-card">
+          <h3 class="mode-title">Secret Alliance</h3>
+          <p class="mode-desc">Play with 2 or more Oddinaries where partners see each other's names on their cards, coordinating their clues to survive the vote together.</p>
+        </div>
 
- <!-- AdSense Container Slot (Sticks to bottom of screen!) -->
- <div class="ad-slot-container">
- <ins class="adsbygoogle"
- style="display:block; width:100%; text-align:center;"
- data-ad-client="ca-pub-9418997406256200"
- data-ad-format="auto"
- data-full-width-responsive="true"></ins>
- <script>
- try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e){}
- </script>
- </div>
- </div>
+        <div class="mode-card">
+          <h3 class="mode-title">Secret vs. Group Voting</h3>
+          <p class="mode-desc">Choose between <strong>Secret Voting</strong> (private in-app voting with automated scoring) or <strong>Group Voting</strong> (fast real-life verbal voting without phone passing).</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
- <!-- 5. Voting Phase -->
- <div id="screen-voting" class="screen">
- <div class="close-btn" onclick="Game.askCloseReveal()" title="Close">✕</div>
- <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px;">
- <h3 class="text-c text-muted">Pass to</h3>
- <h1 id="voter-name" class="text-primary text-glow" style="font-size: 2.5rem;">Player</h1>
- <h2 class="text-c">WHO DO YOU SUSPECT?</h2><br>
- 
- <div class="content-area" id="voting-list">
- <!-- Voting Buttons -->
- </div>
- </div>
- </div>
+  <!-- SCORING GUIDE SECTION -->
+  <section id="scoring" class="landing-section">
+    <div class="section-container">
+      <div class="section-header-box">
+        <span class="section-tag">REWARDS & RULES</span>
+        <h2 class="section-title">How Scoring Works</h2>
+        <p class="section-subtitle">In-app Secret Voting awards points each round to determine the Oddinary Champion.</p>
+      </div>
 
- <!-- Voting Complete Pre-Reveal Screen -->
- <div id="screen-voting-complete" class="screen">
- <div style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; max-width: 480px; text-align: center; margin: auto;">
- <div style="font-size: 4rem;">📢</div>
- <h1 class="text-gold" style="font-size: 2.2rem; letter-spacing: 1px;">VOTING COMPLETE!</h1>
- <button class="btn btn-primary" style="font-size: 1.2rem; padding: 16px 28px; width: 100%; margin-top: 10px; border-radius: 16px;" onclick="AudioEngine.play('click'); Game.startImposterRevealAnimation()">
- REVEAL IMPOSTER 🕵🏻
- </button>
- </div>
- </div>
+      <div class="scoring-cards-grid">
+        <!-- Detective -->
+        <div class="scoring-guide-card detective-card">
+          <div class="scoring-card-header">
+            <span class="scoring-card-role text-primary">DETECTIVE</span>
+            <span class="scoring-card-sub">Common Word Players</span>
+          </div>
+          <div class="scoring-row">
+            <span>Catch the Oddinary</span>
+            <span class="scoring-pts text-primary">+15</span>
+          </div>
+          <div class="scoring-row-desc">
+            Earned when you correctly cast your secret vote for a real Oddinary.
+          </div>
+        </div>
 
- <!-- Confirmation Modal -->
- <div id="modal-vote-confirm" class="modal">
- <div class="modal-content" style="text-align: center;">
- <h2 class="text-white mb-2">Confirm Vote?</h2>
- <p class="text-muted mb-2">Are you sure you want to vote for: <span id="confirm-vote-name" class="text-primary" style="display: block; font-size: 1.5rem; font-weight: 900; margin-top: 10px;">Player</span></p>
- <div style="display: flex; gap: 10px; margin-top: 20px;">
- <button class="btn" style="flex:1" onclick="Game.cancelVote()">Cancel</button>
- <button class="btn btn-danger" style="flex:1" onclick="Game.confirmVote()">Vote</button>
- </div>
- </div>
- </div>
+        <!-- Oddinary (Imposter) -->
+        <div class="scoring-guide-card imposter-card">
+          <div class="scoring-card-header">
+            <span class="scoring-card-role text-danger">ODDINARY</span>
+            <span class="scoring-card-sub">Imposters / Bluffers</span>
+          </div>
+          <div class="scoring-row">
+            <span>Survive the vote</span>
+            <span class="scoring-pts text-primary">+10</span>
+          </div>
+          <div class="scoring-row">
+            <span>Get zero votes</span>
+            <span class="scoring-pts text-primary">+20</span>
+          </div>
+          <div class="scoring-row">
+            <span>Betray another Oddinary</span>
+            <span class="scoring-pts text-gold">+5</span>
+          </div>
+          <div class="scoring-row-desc">
+            Oddinaries who are caught (receive the most votes) earn 0 points for the round.
+          </div>
+        </div>
+      </div>
 
- <!-- Confirmation Modal for End Game -->
- <div id="modal-end-game-confirm" class="modal">
- <div class="modal-content" style="text-align: center; max-width: 400px; padding: 25px;">
- <h2 class="text-white mb-2">End Game?</h2>
- <p class="text-muted mb-2">Are you sure you want to end the game?</p>
- <div style="display: flex; gap: 10px; margin-top: 20px;">
- <button class="btn" style="flex:1" onclick="Game.cancelEndGame()">Cancel</button>
- <button class="btn btn-danger" style="flex:1" onclick="Game.confirmEndGame()">End Game</button>
- </div>
- </div>
- </div>
+      <!-- Expandable Scoring Details -->
+      <div class="scoring-details-accordion">
+        <details class="scoring-faq-item">
+          <summary>How does the "Betrayal" bonus work? <span class="accordion-arrow">▼</span></summary>
+          <p>When playing with 2 or more Oddinaries, if an Oddinary votes against another Oddinary to blend in, they earn a +5 bonus points.</p>
+        </details>
+        <details class="scoring-faq-item">
+          <summary>What happens if there is a tie in votes? <span class="accordion-arrow">▼</span></summary>
+          <p>If an Oddinary is tied for the highest number of votes, they are considered caught and receive 0 round points.</p>
+        </details>
+        <details class="scoring-faq-item">
+          <summary>Why are points not calculated in Group Voting? <span class="accordion-arrow">▼</span></summary>
+          <p>Group Voting is designed for fast verbal discussions where players debate out loud and reveal the spy directly, making in-app voting calculation optional.</p>
+        </details>
+      </div>
+    </div>
+  </section>
 
- <!-- Close Reveal Confirmation Modal -->
- <div id="modal-close-reveal" class="modal">
- <div class="modal-content" style="text-align: center;">
- <h2 class="text-white mb-2">Go to Leaderboard?</h2>
- <p class="text-muted mb-2">Are you sure you want to leave the word reveal?</p>
- <div style="display: flex; gap: 10px; margin-top: 20px;">
- <button class="btn" style="flex:1" onclick="Game.cancelCloseReveal()">Cancel</button>
- <button class="btn btn-primary" style="flex:1" onclick="Game.confirmCloseReveal()">Continue</button>
- </div>
- </div>
- </div>
+  <!-- FREQUENTLY ASKED QUESTIONS (FAQ) -->
+  <section id="faq" class="landing-section alt-bg-section">
+    <div class="section-container">
+      <div class="section-header-box">
+        <span class="section-tag">QUESTIONS & ANSWERS</span>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-subtitle">Everything you need to know about playing Oddinary - Word Imposter Game.</p>
+      </div>
 
- <!-- Forgot Word Modal -->
- <div id="modal-forgot-word" class="modal">
- <div class="modal-content">
- <h2 class="text-primary mb-2 text-c">Select Your Name</h2>
- <p class="text-muted text-c">Choose your name to see your word.</p>
- <div id="forgot-word-player-list" class="player-select-list">
- <!-- Dynamic player list -->
- </div>
- <button class="btn btn-danger" onclick="Game.closeForgotWord()">Cancel</button>
- </div>
- </div>
+      <div class="faq-accordion-container">
+        <!-- Q1 -->
+        <div class="faq-item">
+          <button class="faq-question" onclick="GameUI.toggleFaq(this)">
+            <span>How many people can play Oddinary?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Oddinary is designed for groups of <strong>3 to 30 players</strong>. It works perfectly for small family game nights, friend gatherings, and large parties.</p>
+          </div>
+        </div>
 
- <!-- Confirm Forgot Word Modal -->
- <div id="modal-confirm-forgot" class="modal">
- <div class="modal-content" style="text-align: center;">
- <h2 class="text-white mb-2">Confirm Selection</h2>
- <p class="text-muted mb-2">Show word for: <span id="confirm-forgot-name" class="text-primary" style="display: block; font-size: 1.5rem; font-weight: 900; margin-top: 10px;">Player</span></p>
- <div style="display: flex; gap: 10px; margin-top: 20px;">
- <button class="btn" style="flex:1" onclick="Game.cancelForgotConfirm()">Cancel</button>
- <button class="btn btn-primary" style="flex:1" onclick="Game.showForgotWordReveal()">Show Word</button>
- </div>
- </div>
- </div>
+        <!-- Q2 -->
+        <div class="faq-item">
+          <button class="faq-question" onclick="GameUI.toggleFaq(this)">
+            <span>Do I need to download an app or install anything?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>No downloads or installations are required. Oddinary runs directly in your mobile or desktop web browser.</p>
+          </div>
+        </div>
 
- <!-- Forgot Word Reveal Modal -->
- <div id="modal-word-reveal" class="modal">
- <div class="modal-content" style="text-align: center;">
- <h2 id="forgot-word-label" class="text-muted mb-2">Your word is:</h2>
- <h1 id="forgot-word-display" class="text-primary text-glow" style="font-size: 3rem; margin: 30px 0;">WORD</h1>
- <button class="btn btn-primary" onclick="Game.closeWordReveal()">Got It</button>
- </div>
- </div>
+        <!-- Q3 -->
+        <div class="faq-item">
+          <button class="faq-question" onclick="GameUI.toggleFaq(this)">
+            <span>Can we play with just one phone?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Yes. Oddinary is a single-device pass-and-play game. You only need one shared smartphone passed around the circle for secret word reveal and voting.</p>
+          </div>
+        </div>
 
- <!-- Stealth Mode Info Modal -->
- <div id="modal-stealth-info" class="modal">
- <div class="modal-content" style="max-width: 400px; padding: 25px;">
- <h2 class="text-primary mb-2 text-c">Stealth Mode</h2>
- <div style="text-align: left; line-height: 1.6; color: var(--text-sec);">
- <p style="margin-bottom: 15px;">
- <strong style="color: var(--primary);">ON:</strong> Imposters receive a secret word that is slightly different from the common word. They must blend in without realizing their word is different.
- </p>
- <p>
- <strong style="color: var(--danger);">OFF:</strong> Imposters receive no word. Their card displays <strong>"IMPOSTER"</strong>. They must figure out the secret word by listening to the clues.
- </p>
- </div>
- <button class="btn btn-primary mt-2" onclick="AudioEngine.play('click'); Game.closeStealthModeInfo()">Got It</button>
- </div>
- </div>
+        <!-- Q4 -->
+        <div class="faq-item">
+          <button class="faq-question" onclick="GameUI.toggleFaq(this)">
+            <span>Does Oddinary require an account or sign up?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>No account is required. Simply enter player names and start playing immediately.</p>
+          </div>
+        </div>
 
- <!-- Secret Alliance Info Modal -->
- <div id="modal-alliance-info" class="modal">
- <div class="modal-content" style="max-width: 400px; padding: 25px;">
- <h2 class="text-primary mb-2 text-c">Secret Alliance</h2>
- <div style="text-align: left; line-height: 1.6; color: var(--text-sec);">
- <p style="margin-bottom: 15px;">
- <strong style="color: var(--primary);">ON:</strong> When playing with 2 or more Imposters, each Imposter will see the names of their fellow Imposter partners on their secret card.
- </p>
- <p>
- <strong style="color: var(--danger);">OFF:</strong> Imposters do not know who the other Imposters are and must play independently.
- </p>
- </div>
- <button class="btn btn-primary mt-2" onclick="AudioEngine.play('click'); Game.closeAllianceInfo()">Got It</button>
- </div>
- </div>
+        <!-- Q5 -->
+        <div class="faq-item">
+          <button class="faq-question" onclick="GameUI.toggleFaq(this)">
+            <span>How many Oddinaries can there be in a game?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>You can set 1 or more Oddinaries based on your player count. The game balances the ratio (1 Oddinary per 3 players) to keep deduction fair and competitive.</p>
+          </div>
+        </div>
 
- <!-- Voting Mode Info Modal -->
- <div id="modal-voting-info" class="modal">
- <div class="modal-content" style="max-width: 400px; padding: 25px;">
- <h2 class="text-primary mb-2 text-c">Voting Mode</h2>
- <div style="text-align: left; line-height: 1.6; color: var(--text-sec);">
- <p style="margin-bottom: 15px;">
- <strong style="color: var(--primary);">ON:</strong> In-app secret voting. Every player selects their suspect on the phone, and the app calculates round scores automatically.
- </p>
- <p>
- <strong style="color: var(--danger);">OFF:</strong> Real-life voting. Players investigate and vote out loud out-of-app. The app reveals the Imposters directly. <span style="display: block; font-style: italic; font-size: 0.85rem; margin-top: 4px; color: var(--text-muted);">⚠️ Note: Points will not be calculated when voting is OFF.</span>
- </p>
- </div>
- <button class="btn btn-primary mt-2" onclick="AudioEngine.play('click'); Game.closeVotingInfo()">Got It</button>
- </div>
- </div>
+        <!-- Q6 -->
+        <div class="faq-item">
+          <button class="faq-question" onclick="GameUI.toggleFaq(this)">
+            <span>What is Stealth Mode?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>In Stealth Mode, the Oddinary receives a word that is closely related to the common word (e.g. <em>Coffee</em> vs <em>Tea</em>), without knowing they are the Oddinary. They only realize something is different by listening closely to other clues.</p>
+          </div>
+        </div>
 
- <!-- Points Rules Modal: Scoring Rules -->
- <div id="modal-points-rules" class="modal">
- <div class="modal-content" style="max-width: 440px;">
- <h2 class="text-primary mb-2 text-c" style="letter-spacing: 0.5px;">Scoring Rules</h2>
- 
- <div style="display: flex; flex-direction: column; gap: 10px; text-align: left;">
- <div style="background: rgba(107, 207, 45, 0.08); border-left: 4px solid var(--primary); padding: 12px 14px; border-radius: 12px;">
- <div style="font-weight: 900; color: var(--primary); font-size: 0.95rem; margin-bottom: 4px; text-transform: uppercase;">Detective</div>
- <div style="display: flex; justify-content: space-between; align-items: center;">
- <span style="font-size: 0.9rem; color: var(--text-main);">🎯 Correctly catch an Imposter</span>
- <span style="font-weight: 900; color: var(--primary); font-size: 1.1rem;">+15</span>
- </div>
- </div>
+        <!-- Q7 -->
+        <div class="faq-item">
+          <button class="faq-question" onclick="GameUI.toggleFaq(this)">
+            <span>What is Secret Alliance?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>When playing with multiple Oddinaries, Secret Alliance shows each Oddinary the names of their fellow conspirators so they can coordinate clues and protect each other.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
- <div style="background: rgba(217, 58, 58, 0.08); border-left: 4px solid var(--danger); padding: 12px 14px; border-radius: 12px;">
- <div style="font-weight: 900; color: var(--danger); font-size: 0.95rem; margin-bottom: 6px; text-transform: uppercase;">Imposter</div>
- <div style="display: flex; flex-direction: column; gap: 8px;">
- <div style="display: flex; justify-content: space-between; align-items: center;">
- <span style="font-size: 0.88rem; color: var(--text-main);">😎 Survive the vote</span>
- <span style="font-weight: 900; color: var(--primary); font-size: 1.05rem;">+10</span>
- </div>
- <div style="display: flex; justify-content: space-between; align-items: center;">
- <span style="font-size: 0.88rem; color: var(--text-main);">👻 Receive zero votes</span>
- <span style="font-weight: 900; color: var(--primary); font-size: 1.05rem;">+20</span>
- </div>
- <div style="display: flex; justify-content: space-between; align-items: center;">
- <span style="font-size: 0.88rem; color: var(--text-main);">🗡️ Betray another Imposter</span>
- <span style="font-weight: 900; color: var(--accent-gold); font-size: 1.05rem;">+5</span>
- </div>
- </div>
- </div>
- </div>
+  <!-- FOOTER -->
+  <footer class="landing-footer">
+    <div class="footer-inner">
+      <p class="footer-copy">&copy; <span class="copyright-year">2026</span> Oddinary by <a href="https://www.instagram.com/antodevassy.vp" target="_blank" rel="noopener noreferrer" class="author-link">Anto Devassy V.P</a>. All rights reserved.</p>
+      <div class="footer-nav-links">
+        <a href="about.html">About</a> | 
+        <a href="privacy.html">Privacy Policy</a> | 
+        <a href="terms.html">Terms of Service</a> | 
+        <a href="contact.html">Contact</a>
+        <span id="install-link-separator"> | </span>
+        <a href="#" id="install-app-link" onclick="event.preventDefault(); InstallPrompt.show();">Install App</a>
+      </div>
+    </div>
+  </footer>
 
- <!-- Visible Detailed Rules -->
- <div style="margin-top: 15px; text-align: left; background: rgba(255,255,255,0.02); border-radius: 12px; padding: 12px 14px; border: 1px solid rgba(255,255,255,0.05);">
- <div style="font-weight: 700; color: var(--text-sec); font-size: 0.85rem; margin-bottom: 6px;">Detailed Rules:</div>
- <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">
- <p>• Imposters are considered <strong>caught</strong> if they receive the most votes or are tied for highest votes.</p>
- <p style="margin-top: 4px;">• If an Imposter is caught, they earn <strong>0 points</strong> for the round.</p>
- <p style="margin-top: 4px;">• <strong>Betrayal:</strong> If you're an Imposter and vote against another Imposter, you earn <strong>+5 points</strong>.</p>
- <p style="margin-top: 4px;">• Detectives gain <strong>+15 points</strong> for every correct vote cast for an Imposter.</p>
- <p style="margin-top: 4px;">• <strong>Voting is OFF:</strong> Points are not calculated when voting mode is disabled.</p>
- </div>
- </div>
-
- <button class="btn btn-primary mt-2" onclick="AudioEngine.play('click'); Game.closePointsRules()">Got it!</button>
- </div>
- </div>
-
- <!-- Mid-game Settings Modal -->
- <div id="modal-midgame-settings" class="modal">
- <div class="modal-content" style="max-width: 460px; padding: 22px;">
- <h2 class="text-primary mb-2 text-c" style="letter-spacing: 0.5px;">GAME SETTINGS</h2>
-
- <div class="settings-group" style="margin-bottom: 20px;">
- <!-- 1. Imposters -->
- <div class="setting-item">
- <div class="setting-left">
- <span>Imposters</span>
- </div>
- <div class="setting-right">
- <div class="stepper-control">
- <button id="mid-imposter-minus" class="stepper-btn" onclick="AudioEngine.play('click'); Game.adjustImposterCount(-1, 'mid')">−</button>
- <span id="mid-imposter-count-display" class="stepper-value">1</span>
- <button id="mid-imposter-plus" class="stepper-btn" onclick="AudioEngine.play('click'); Game.adjustImposterCount(1, 'mid')">+</button>
- </div>
- </div>
- </div>
-
- <!-- 2. Stealth Mode -->
- <div class="setting-item">
- <div class="setting-left">
- <span>Stealth Mode</span>
- <button class="setting-info-btn" onclick="Game.showStealthModeInfo()">
- <svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
- </button>
- </div>
- <div class="setting-right">
- <label class="switch">
- <input type="checkbox" id="mid-setting-imposter-word">
- <span class="slider"></span>
- </label>
- </div>
- </div>
-
- <!-- 3. Secret Alliance -->
- <div class="setting-item">
- <div class="setting-left">
- <span>Secret Alliance</span>
- <button class="setting-info-btn" onclick="Game.showAllianceInfo()">
- <svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
- </button>
- </div>
- <div class="setting-right">
- <label class="switch">
- <input type="checkbox" id="mid-setting-secret-alliance" onchange="Game.toggleSecretAllianceSetting(this, 'mid')">
- <span class="slider"></span>
- </label>
- </div>
- </div>
-
- <!-- 4. Voting -->
- <div class="setting-item">
- <div class="setting-left">
- <span>Voting</span>
- <button class="setting-info-btn" onclick="Game.showVotingInfo()">
- <svg viewBox="0 0 24 24" style="width:16px; height:16px; fill:currentColor;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
- </button>
- </div>
- <div class="setting-right">
- <label class="switch">
- <input type="checkbox" id="mid-setting-voting">
- <span class="slider"></span>
- </label>
- </div>
- </div>
-
- <!-- 5. Shuffle Players Order -->
- <div class="setting-item">
- <div class="setting-left">
- <span>Shuffle Players Order</span>
- </div>
- <div class="setting-right">
- <label class="switch">
- <input type="checkbox" id="mid-setting-shuffle">
- <span class="slider"></span>
- </label>
- </div>
- </div>
-
- <!-- 6. Investigation Timer -->
- <div class="setting-item">
- <div class="setting-left">
- <span>Investigation Timer</span>
- </div>
- <div class="setting-right">
- <label class="switch">
- <input type="checkbox" id="mid-setting-timer" onchange="Game.toggleMidTimerSettings()">
- <span class="slider"></span>
- </label>
- </div>
- </div>
-
- <div id="mid-timer-slider-container" class="timer-control hidden" style="margin: 12px auto; padding: 16px 12px; background: var(--bg-card); border-radius: 14px; border: 1px solid rgba(255,255,255,0.12); width: 100%; max-width: 360px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
- <p class="text-muted" style="margin-bottom: 6px; font-size: 0.85rem; text-align: center; width: 100%;">Timer Duration</p>
- <div class="timer-value text-c" id="mid-timer-value-display" style="font-size: 1.4rem; font-weight: 800; text-align: center; width: 100%; color: var(--primary);">3 min</div>
- <input type="range" min="1" max="5" value="3" class="slider-input" id="mid-timer-duration-slider" oninput="Game.updateMidTimerValue(this.value)" style="margin: 12px auto; width: 85%; display: block;">
- <div style="display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.75rem; width: 85%; margin: 0 auto;">
- <span>1 min</span>
- <span>5 min</span>
- </div>
- </div>
-
- <!-- 7. Sound Effects -->
- <div class="setting-item">
- <div class="setting-left">
- <span>Sound Effects</span>
- </div>
- <div class="setting-right">
- <label class="switch">
- <input type="checkbox" id="mid-setting-sound" checked onchange="Game.toggleSoundSetting(this.checked)">
- <span class="slider"></span>
- </label>
- </div>
- </div>
- </div>
-
- <div style="display: flex; gap: 10px;">
- <button class="btn" style="flex:1; margin:0;" onclick="AudioEngine.play('click'); Game.closeMidgameSettings()">Cancel</button>
- <button class="btn btn-primary" style="flex:1; margin:0;" onclick="AudioEngine.play('click'); Game.saveMidgameSettings()">Save</button>
- </div>
- </div>
- </div>
-
- <!-- Suspense Reveal Overlay -->
- <div id="suspense-overlay" class="suspense-overlay hidden">
- <div class="suspense-title">THE IMPOSTER WAS</div>
- <div class="suspense-dots" id="suspense-dots">.</div>
- <div class="suspense-name-box" id="suspense-name-box">
- <div style="font-size: 3rem;">🕵🏻</div>
- <div id="suspense-imposter-name" class="suspense-imposter-name">PLAYER</div>
- </div>
- </div>
-
- <!-- 6. Results Screen (Round Complete) -->
- <div id="screen-results" class="screen">
- <div style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; max-width: 500px; margin: auto;">
- <h1 class="text-c text-gold" style="letter-spacing: 1px;">ROUND COMPLETE</h1>
- 
- <div id="results-imposter-card" style="background: var(--bg-card); border: 2px solid var(--primary); border-radius: 16px; padding: 18px; width: 100%; text-align: center;">
- <h1 id="round-status-header" style="font-size: 1.8rem; margin: 0; font-weight: 900; letter-spacing: 1px; color: var(--primary);">IMPOSTER CAUGHT!</h1>
- </div>
-
- <!-- Words Card -->
- <div style="background: var(--bg-card); padding: 14px 18px; border-radius: var(--radius); width: 100%; border: 1px solid rgba(255,255,255,0.06);">
- <div style="display:flex; justify-content:space-between; align-items:center;">
- <span class="text-muted" style="font-size: 0.9rem;">Common Word:</span>
- <strong id="res-common-word" class="text-primary" style="font-size: 1.1rem;">Word</strong>
- </div>
- <div id="res-odd-word-row" style="display:flex; justify-content:space-between; align-items:center; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 8px;">
- <span class="text-muted" style="font-size: 0.9rem;">Odd Word:</span>
- <strong id="res-odd-word" class="text-danger" style="font-size: 1.1rem;">Word</strong>
- </div>
- </div>
-
- <!-- Round Score List -->
- <div style="width: 100%; text-align: left;">
- <div style="font-size: 0.85rem; font-weight: 900; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; margin-left: 4px;">ROUND SCORE</div>
- <p id="no-voting-results-note" class="text-muted hidden" style="font-size: 0.82rem; font-style: italic; margin-bottom: 8px; margin-left: 4px; color: var(--text-muted);">⚠️ Voting is OFF: Points are not calculated for this round.</p>
- <div id="round-score-list" style="width: 100%; display: flex; flex-direction: column; gap: 8px;">
- <!-- Filled dynamically -->
- </div>
- </div>
-
- <div class="content-area hidden" id="results-area">
- <!-- Legacy fallback container -->
- </div>
-
- <div style="display: flex; gap: 8px; width: 100%;">
- <button id="btn-view-votes" class="btn" style="flex: 1; margin: 0; font-size: 0.85rem;" onclick="AudioEngine.play('click'); Game.showVotingBreakdown()">View Votes</button>
- <button id="btn-points-rules" class="btn" style="flex: 1; margin: 0; font-size: 0.85rem;" onclick="AudioEngine.play('click'); Game.showPointsRules()">Scoring Rules</button>
- </div>
-
- <button id="btn-results-scoreboard" class="btn btn-primary" style="margin-bottom: 0;" onclick="AudioEngine.play('click'); Game.goToScoreboard()">
- Leaderboard
- </button>
- </div>
-
- <!-- AdSense Container Slot (Sticks to bottom of screen!) -->
- <div class="ad-slot-container">
- <ins class="adsbygoogle"
- style="display:block; width:100%; text-align:center;"
- data-ad-client="ca-pub-9418997406256200"
- data-ad-format="auto"
- data-full-width-responsive="true"></ins>
- <script>
- try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e){}
- </script>
- </div>
- </div>
-
- <!-- Voting Breakdown Modal -->
- <div id="modal-voting-breakdown" class="modal">
- <div class="modal-content">
- <h2 class="text-primary mb-2 text-c">Voting Breakdown</h2>
- <div id="voting-breakdown-list" style="width: 100%; margin: 20px 0;">
- <!-- Filled dynamically -->
- </div>
- <button class="btn btn-primary" onclick="AudioEngine.play('click'); Game.closeVotingBreakdown()">Close</button>
- </div>
- </div>
-
- <!-- General Alert Modal -->
- <div id="modal-alert" class="modal" style="z-index: 99999 !important;">
- <div class="modal-content" style="text-align: center; max-width: 400px; padding: 25px;">
- <div style="font-size: 2.8rem; margin-bottom: 10px;">⚠️</div>
- <h2 id="alert-title" class="text-primary mb-2" style="font-size: 1.4rem;">Notice</h2>
- <p id="alert-message" class="text-white mb-2" style="line-height: 1.5; font-size: 0.95rem; margin: 15px 0;">Alert message text</p>
- <button class="btn btn-primary" style="margin-top: 15px; width: 100%;" onclick="AudioEngine.play('click'); Game.closeAlert()">Got It</button>
- </div>
- </div>
-
- <!-- Mid-game Add Player Modal -->
- <div id="modal-add-player-midgame" class="modal" style="z-index: 20000 !important;">
- <div class="modal-content" style="max-width: 400px; padding: 25px;">
- <h2 class="text-primary mb-2 text-c">Add New Player</h2>
- <input type="text" id="new-player-name-midgame" placeholder="Enter player name" style="width: 100%; margin: 15px 0;" autocomplete="off">
- <div id="add-player-midgame-error" class="error-msg" style="margin-bottom: 10px;"></div>
- <div style="display: flex; gap: 10px; margin-top: 10px;">
- <button class="btn" style="flex:1" onclick="Game.closeAddPlayerMidgame()">Cancel</button>
- <button class="btn btn-primary" style="flex:1" onclick="Game.confirmAddPlayerMidgame()">Add</button>
- </div>
- </div>
- </div>
-
- <!-- Remove Player Confirmation Modal -->
- <div id="modal-remove-player-confirm" class="modal" style="z-index: 20000 !important;">
- <div class="modal-content" style="text-align: center; max-width: 400px; padding: 25px;">
- <h2 class="text-white mb-2">Remove Player?</h2>
- <p class="text-muted mb-2">Are you sure you want to remove <span id="remove-player-name" class="text-danger" style="font-weight: bold;">Player</span>?</p>
- <div style="display: flex; gap: 10px; margin-top: 20px;">
- <button class="btn" style="flex:1" onclick="Game.closeRemovePlayerConfirm()">Cancel</button>
- <button class="btn btn-danger" style="flex:1" onclick="Game.confirmRemovePlayerMidgame()">Remove</button>
- </div>
- </div>
- </div>
-
- <!-- Reset Scores Confirmation Modal -->
- <div id="modal-reset-scores-confirm" class="modal">
- <div class="modal-content" style="text-align: center; max-width: 400px; padding: 25px;">
- <h2 class="text-white mb-2">Reset Scores?</h2>
- <p class="text-muted mb-2">Are you sure you want to reset all player scores?</p>
- <div style="display: flex; gap: 10px; margin-top: 20px;">
- <button class="btn" style="flex:1" onclick="Game.cancelResetScores()">Cancel</button>
- <button class="btn btn-danger" style="flex:1" onclick="Game.confirmResetScores()">Reset</button>
- </div>
- </div>
- </div>
-
- <!-- Manage Players Mid-game Modal -->
- <div id="modal-manage-players" class="modal">
- <div class="modal-content" style="max-width: 440px; padding: 22px;">
- <h2 class="text-primary mb-1 text-c">Manage Players</h2>
- <p id="manage-players-subtext" class="text-muted text-c mb-2" style="font-size: 0.82rem;">Add, edit, remove, or drag ☰ to reorder players</p>
- 
- <button class="btn" onclick="AudioEngine.play('click'); Game.openAddPlayerMidgame()" style="border-style: dashed; width: 100%; margin-bottom: 12px; font-size: 0.85rem;">+ Add New Player</button>
- 
- <div id="manage-players-list" style="width: 100%; max-height: 280px; overflow-y: auto; margin-bottom: 15px;"></div>
- 
- <button class="btn btn-primary" style="width: 100%;" onclick="AudioEngine.play('click'); Game.closeManagePlayers()">Done</button>
- </div>
- </div>
-
- <!-- 7. Leaderboard Screen -->
- <div id="screen-scoreboard" class="screen">
- <div style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; max-width: 500px; margin: auto;">
- 
- <h1 class="text-c text-gold" style="letter-spacing: 1px; margin-bottom: 5px;">LEADERBOARD</h1>
- <p id="scoreboard-no-voting-note" class="text-muted text-c hidden" style="font-size: 0.82rem; font-style: italic; margin-bottom: 6px;">⚠️ Voting is OFF: Points are not calculated when voting mode is disabled.</p>
-
- <div class="content-area" id="scoreboard-list" style="width: 100%;">
- <!-- Dynamic Ranks with Medals -->
- </div>
- 
- <div style="display: flex; gap: 8px; width: 100%; margin-top: 5px; align-items: center;">
- <button class="btn" onclick="AudioEngine.play('click'); Game.openManagePlayers()" style="flex: 1; margin: 0; font-size: 0.85rem;">Players</button>
- <button class="btn" onclick="AudioEngine.play('click'); Game.openMidgameSettings()" style="flex: 1; margin: 0; font-size: 0.85rem;">Settings</button>
- <button id="btn-reset-scores" class="btn btn-icon btn-danger" onclick="AudioEngine.play('click'); Game.askResetScores()" style="margin: 0; border-radius: var(--radius); padding: 10px 14px; min-width: 44px; display: flex; align-items: center; justify-content: center;" title="Reset Scores">
- <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: currentColor;"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
- </button>
- </div>
- 
- <button id="btn-back-to-results" class="btn" style="margin-bottom: 0;" onclick="AudioEngine.play('click'); Game.backToResults()">Back to Imposter Reveal</button>
- <button class="btn btn-primary" style="margin-bottom: 0;" onclick="AudioEngine.play('click'); Game.setupNextRound()">NEXT ROUND</button>
- 
- <button class="btn btn-danger" style="margin-top: 5px; width: 100%;" onclick="AudioEngine.play('click'); Game.askEndGame()">End Game</button>
- </div>
-
- <!-- AdSense Container Slot (Sticks to bottom of screen!) -->
- <div class="ad-slot-container">
- <ins class="adsbygoogle"
- style="display:block; width:100%; text-align:center;"
- data-ad-client="ca-pub-9418997406256200"
- data-ad-format="auto"
- data-full-width-responsive="true"></ins>
- <script>
- try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e){}
- </script>
- </div>
- </div>
-</div>
-
-<script src="js/words-data.js"></script>
-<script src="js/storage.js"></script>
-<script src="js/audio.js"></script>
-<script src="js/game.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/install.js"></script>
+  <script src="js/install.js"></script>
+  <script>
+    const GameUI = {
+      toggleFaq: function(btn) {
+        const item = btn.closest('.faq-item');
+        if (!item) return;
+        const isOpen = item.classList.contains('active');
+        document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('active'));
+        if (!isOpen) {
+          item.classList.add('active');
+        }
+      }
+    };
+    document.querySelectorAll('.copyright-year').forEach(el => el.innerText = new Date().getFullYear());
+  </script>
 </body>
 </html>
+
+

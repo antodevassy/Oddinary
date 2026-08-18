@@ -1,5 +1,5 @@
 {
-  "name": "Oddinary",
+  "name": "Oddinary - Word Imposter Game",
   "short_name": "Oddinary",
   "description": "Find the imposter in this fun local party word game for 3-30 players.",
   "start_url": "./index.html",
@@ -9,36 +9,36 @@
   "theme_color": "#6BCF2D",
   "categories": ["games", "entertainment", "utilities"],
   "icons": [
-  {
-  "src": "assets/fav-icon.png",
-  "sizes": "192x192",
-  "type": "image/png",
-  "purpose": "any"
-  },
-  {
-  "src": "assets/fav-icon.png",
-  "sizes": "512x512",
-  "type": "image/png",
-  "purpose": "any"
-  },
-  {
-  "src": "assets/fav-icon.png",
-  "sizes": "192x192",
-  "type": "image/png",
-  "purpose": "maskable"
-  },
-  {
-  "src": "assets/fav-icon.png",
-  "sizes": "512x512",
-  "type": "image/png",
-  "purpose": "maskable"
-  }
+    {
+      "src": "assets/fav-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/fav-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/fav-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/fav-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ],
   "shortcuts": [
-  {
-  "name": "Start Game",
-  "url": "./index.html?action=setup",
-  "description": "Start a new game of Oddinary"
-  }
+    {
+      "name": "Play Game",
+      "url": "./play.html",
+      "description": "Start a new game of Oddinary"
+    }
   ]
 }
