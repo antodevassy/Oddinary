@@ -57,10 +57,10 @@ Game.renderSetupInputs = function(scrollToLast = false) {
       setTimeout(() => {
         const lastInput = document.getElementById(`player-input-${newIdx}`);
         if (lastInput) {
-          lastInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          lastInput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
           lastInput.focus();
         }
-      }, 100);
+      }, 120);
     }
     return;
   }

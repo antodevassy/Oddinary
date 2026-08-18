@@ -105,9 +105,9 @@
 
       <!-- Concept Pitch in 5 Seconds -->
       <div class="hero-pitch-card">
-        <p class="hero-pitch-line"><span class="pitch-bullet">•</span> Everyone gets a secret word.</p>
-        <p class="hero-pitch-line"><span class="pitch-bullet">•</span> One player gets something different.</p>
-        <p class="hero-pitch-line highlight-pitch"><span class="pitch-bullet">•</span> Give your clue. Spot the Oddinary.</p>
+        <p class="hero-pitch-line">Everyone gets a secret word.</p>
+        <p class="hero-pitch-line">One player gets something different.</p>
+        <p class="hero-pitch-line highlight-pitch">Give your clue. Spot the Oddinary.</p>
       </div>
 
       <!-- Single Primary Action Button (Play Button 2 of 2) -->
@@ -246,7 +246,10 @@
         <!-- Detective -->
         <div class="scoring-guide-card detective-card">
           <div class="scoring-card-header">
-            <span class="scoring-card-role text-primary">DETECTIVE</span>
+            <span class="scoring-card-role text-primary" style="display:flex; align-items:center; justify-content:center; gap:6px;">
+              <svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              DETECTIVE
+            </span>
             <span class="scoring-card-sub">Common Word Players</span>
           </div>
           <div class="scoring-row">
@@ -391,18 +394,16 @@
   </section>
 
   <!-- FOOTER -->
-  <footer class="landing-footer">
-    <div class="footer-inner">
-      <p class="footer-copy">&copy; <span class="copyright-year">2026</span> Oddinary by <a href="https://www.instagram.com/antodevassy.vp" target="_blank" rel="noopener noreferrer" class="author-link">Anto Devassy V.P</a>. All rights reserved.</p>
-      <div class="footer-nav-links">
-        <a href="about.html">About</a> | 
-        <a href="privacy.html">Privacy Policy</a> | 
-        <a href="terms.html">Terms of Service</a> | 
-        <a href="contact.html">Contact</a>
-        <span id="install-link-separator"> | </span>
-        <a href="#" id="install-app-link" onclick="event.preventDefault(); InstallPrompt.show();">Install App</a>
-      </div>
-    </div>
+  <footer class="footer-copyright">
+    <p>&copy; <span class="copyright-year">2026</span> Oddinary by <a href="https://www.instagram.com/antodevassy.vp" target="_blank" rel="noopener noreferrer" class="author-link">Anto Devassy V.P</a>. All rights reserved.</p>
+    <p class="footer-links">
+      <a href="about.html">About</a> | 
+      <a href="privacy.html">Privacy Policy</a> | 
+      <a href="terms.html">Terms of Service</a> | 
+      <a href="contact.html">Contact</a>
+      <span id="install-link-separator"> | </span>
+      <a href="#" id="install-app-link" onclick="event.preventDefault(); InstallPrompt.show();">Install App</a>
+    </p>
   </footer>
 
   <script src="js/install.js"></script>

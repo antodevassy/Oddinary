@@ -191,7 +191,7 @@ const InstallPrompt = (() => {
     show() {
       const platform = getPlatform();
       if (platform === 'standalone') return;
-      AudioEngine.play('click');
+      if (typeof AudioEngine !== 'undefined') AudioEngine.play('click');
       renderModal(platform);
     },
 

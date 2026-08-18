@@ -19,6 +19,10 @@ const Analytics = {
 // --- Word Selector Instance ---
 const wordSelector = new WordSelector();
 
+// --- Preload Logo Image for Share Canvas ---
+const shareLogoImg = new Image();
+shareLogoImg.src = 'assets/logo.png';
+
 // --- Game State Schema ---
 const State = {
  players: [],
@@ -254,7 +258,21 @@ const Game = {
  }
  },
 
- goHome: () => Game.showScreen('landing'),
+  goHome: () => Game.showScreen('landing'),
+
+  quitGame: () => {
+    shouldPreventRefresh = false;
+    StorageManager.clearSession();
+    State.round = 0;
+    State.stats = { imposterCountTimes: {}, imposterCaughtTimes: {}, correctGuesses: {}, votesReceived: {} };
+    State.players = [];
+    State.playerOrder = [];
+    State.roles = {};
+    State.words = { common: "", odd: "" };
+    State.oddPlayerIds = [];
+    State.votes = {};
+    window.location.href = 'index.html';
+  },
 
  addPlayer: (name = "") => {
     if (State.players.length >= 30) {
@@ -303,6 +321,14 @@ const Game = {
     const maxImposters = Math.max(1, Math.floor(State.players.length / 3));
     if (State.config.imposterCount > maxImposters) {
       State.config.imposterCount = maxImposters;
+    }
+
+    if (State.config.imposterCount <= 1 && State.config.secretAlliance) {
+      State.config.secretAlliance = false;
+      const setupCheck = $('setting-secret-alliance');
+      const midCheck = $('mid-setting-secret-alliance');
+      if (setupCheck) setupCheck.checked = false;
+      if (midCheck) midCheck.checked = false;
     }
 
     Game.saveSession();
@@ -530,40 +556,40 @@ const Game = {
  wordEl.classList.remove('text-danger');
  }
  
- const nextBtn = $('btn-next-player');
- nextBtn.classList.add('hidden');
- 
- if (State.stepIndex === State.players.length - 1) {
- nextBtn.innerHTML = `Start Investigation`;
- } else {
- nextBtn.innerHTML = `Hide & Pass`;
- }
- 
- State.canFlip = false;
- Game.showScreen('reveal');
- 
- setTimeout(() => {
- State.canFlip = true;
- }, 500);
- },
+  const nextBtn = $('btn-next-player');
+  nextBtn.classList.add('reveal-btn-hidden');
+  
+  if (State.stepIndex === State.players.length - 1) {
+  nextBtn.innerHTML = `Start Investigation`;
+  } else {
+  nextBtn.innerHTML = `Hide & Pass`;
+  }
+  
+  State.canFlip = false;
+  Game.showScreen('reveal');
+  
+  setTimeout(() => {
+  State.canFlip = true;
+  }, 500);
+  },
 
- flipCard: () => {
- if (!State.canFlip) return;
- 
- const card = $('word-card');
- if (card.classList.contains('flipped')) return;
- 
- AudioEngine.play('flip');
- card.classList.add('flipped');
- setTimeout(() => {
- $('btn-next-player').classList.remove('hidden');
- }, 800);
- },
+  flipCard: () => {
+  if (!State.canFlip) return;
+  
+  const card = $('word-card');
+  if (card.classList.contains('flipped')) return;
+  
+  AudioEngine.play('flip');
+  card.classList.add('flipped');
+  setTimeout(() => {
+  $('btn-next-player').classList.remove('reveal-btn-hidden');
+  }, 800);
+  },
 
- nextReveal: () => {
- AudioEngine.play('click');
- $('btn-next-player').classList.add('hidden');
- $('word-card').classList.remove('flipped');
+  nextReveal: () => {
+  AudioEngine.play('click');
+  $('btn-next-player').classList.add('reveal-btn-hidden');
+  $('word-card').classList.remove('flipped');
  
  setTimeout(() => {
  State.stepIndex++;
@@ -1068,7 +1094,7 @@ const Game = {
  dotsEl.style.display = "";
  dotsEl.style.opacity = "1";
  if (callback) callback();
- }, 2800);
+ }, 4200);
  },
 
  renderResults: (voteCounts, roundStatus) => {
@@ -1119,7 +1145,7 @@ const Game = {
     const isImposter = State.oddPlayerIds.includes(p.id);
     const roleIcon = isImposter 
       ? `<svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:var(--danger); display:block;"><path d="M2 12h20c0-1.7-1.5-2.8-3.2-2.8h-.8L16.5 4.2C16.2 2.9 15 2 13.6 2h-3.2C9 2 7.8 2.9 7.5 4.2L6 9.2H5.2C3.5 9.2 2 10.3 2 12zm4.5 2.5C4.6 14.5 3 16.1 3 18s1.6 3.5 3.5 3.5 3.5-1.6 3.5-3.5c0-.4-.1-.7-.2-1h4.4c-.1.3-.2.6-.2 1 0 1.9 1.6 3.5 3.5 3.5s3.5-1.6 3.5-3.5-1.6-3.5-3.5-3.5c-1.4 0-2.6.8-3.1 2h-4.8c-.5-1.2-1.7-2-3.1-2z"/></svg>`
-      : `<svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:var(--primary); display:block;"><path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>`;
+      : `<svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:none; stroke:var(--primary); stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; display:block;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
     
     const card = document.createElement('div');
     card.style.background = isImposter ? "#2D1515" : "var(--bg-card)";
@@ -1170,14 +1196,14 @@ const Game = {
  }
  }
  
- const btnBack = $('btn-back-to-results');
- if (btnBack) {
- if (State.round > 0 && State.oddPlayerIds && State.oddPlayerIds.length > 0) {
- btnBack.style.display = 'block';
- } else {
- btnBack.style.display = 'none';
- }
- }
+  const btnBack = $('btn-back-to-results');
+  if (btnBack) {
+  if (State.round > 0 && State.oddPlayerIds && State.oddPlayerIds.length > 0) {
+  btnBack.style.visibility = 'visible';
+  } else {
+  btnBack.style.visibility = 'hidden';
+  }
+  }
 
  const sorted = [...State.players].sort((a,b) => b.score - a.score);
 
@@ -1378,6 +1404,13 @@ const Game = {
     State.players.forEach(p => p.score = 0);
     State.config.timer = true;
     State.config.voting = true;
+    if (State.config.imposterCount <= 1 && State.config.secretAlliance) {
+      State.config.secretAlliance = false;
+      const setupCheck = $('setting-secret-alliance');
+      const midCheck = $('mid-setting-secret-alliance');
+      if (setupCheck) setupCheck.checked = false;
+      if (midCheck) midCheck.checked = false;
+    }
     Game.saveSession();
     Game.goToSetup();
   },
@@ -1397,98 +1430,260 @@ const Game = {
     const canvas = $('share-card-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
+
+    const sorted = [...State.players].sort((a,b) => (b.score || 0) - (a.score || 0));
+    const winner = sorted[0] || { name: 'Player', score: 0 };
+    const allPlayers = sorted;
+
+    const logoW = 190;
+    let logoH = 42;
+    if (shareLogoImg.naturalWidth && shareLogoImg.naturalHeight) {
+      logoH = (shareLogoImg.naturalHeight / shareLogoImg.naturalWidth) * logoW;
+    }
+    const logoY = 16;
+    const logoBottom = logoY + logoH;
+
+    const subtitleY = logoBottom + 10;
+    const winnerY = logoBottom + 20;
+    const winnerH = 82;
+    const statsY = winnerY + winnerH + 10;
+    const statsH = 72;
+    const standingsY = statsY + statsH + 10;
+    const standingsCardH = 46 + allPlayers.length * 32 + 10;
+    const footerY = standingsY + standingsCardH + 20;
+    const totalH = footerY + 20;
+
+    canvas.width = 600;
+    canvas.height = Math.max(600, totalH);
     const w = canvas.width;
     const h = canvas.height;
 
-    // 1. Dark Background
-    ctx.fillStyle = '#07080A';
-    ctx.fillRect(0, 0, w, h);
+    const render = () => {
+      // 1. Dark Background
+      ctx.fillStyle = '#07080A';
+      ctx.fillRect(0, 0, w, h);
 
-    // 2. Ambient Gradient Glow
-    const grad = ctx.createRadialGradient(w / 2, 120, 10, w / 2, 120, 300);
-    grad.addColorStop(0, 'rgba(107, 207, 45, 0.25)');
-    grad.addColorStop(1, 'rgba(7, 8, 10, 0)');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, w, h);
+      // 2. Ambient Gradient Glow
+      const grad = ctx.createRadialGradient(w / 2, 100, 10, w / 2, 100, 300);
+      grad.addColorStop(0, 'rgba(107, 207, 45, 0.25)');
+      grad.addColorStop(1, 'rgba(7, 8, 10, 0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
 
-    // 3. Card Border
-    ctx.strokeStyle = 'rgba(107, 207, 45, 0.4)';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(12, 12, w - 24, h - 24);
+      // 3. Card Border
+      ctx.strokeStyle = 'rgba(107, 207, 45, 0.4)';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(12, 12, w - 24, h - 24);
 
-    // 4. Header Title
-    ctx.fillStyle = '#6BCF2D';
-    ctx.font = '900 23px Inter, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('ODDINARY - WORD IMPOSTER GAME', w / 2, 54);
-    // Subtitle
-    ctx.fillStyle = '#F1C40F';
-    ctx.font = '800 15px Inter, sans-serif';
-    ctx.fillText(`GAME RESULTS • ${State.round || 1} ROUNDS PLAYED`, w / 2, 82);
+      // 4. Logo Image ALWAYS at Top
+      ctx.drawImage(shareLogoImg, (w - logoW) / 2, logoY, logoW, logoH);
 
-    // 5. Winner Box
-    const sorted = [...State.players].sort((a,b) => (b.score || 0) - (a.score || 0));
-    const winner = sorted[0] || { name: 'Player', score: 0 };
+      // Subtitle (grammar fix: 1 Round vs X Rounds)
+      const roundCount = State.round || 1;
+      const roundWord = roundCount === 1 ? 'ROUND' : 'ROUNDS';
+      ctx.fillStyle = '#F1C40F';
+      ctx.font = '800 13px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`GAME RESULTS • ${roundCount} ${roundWord} PLAYED`, w / 2, subtitleY);
 
-    ctx.fillStyle = 'rgba(24, 26, 32, 0.95)';
-    ctx.strokeStyle = '#F1C40F';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.roundRect(40, 106, w - 80, 120, 16);
-    ctx.fill();
-    ctx.stroke();
+      // 5. Winner Box
+      ctx.fillStyle = 'rgba(24, 26, 32, 0.95)';
+      ctx.strokeStyle = '#F1C40F';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(40, winnerY, w - 80, winnerH, 14);
+      ctx.fill();
+      ctx.stroke();
 
-    ctx.fillStyle = '#F1C40F';
-    ctx.font = '900 13px Inter, sans-serif';
-    ctx.fillText('ODDINARY CHAMPION', w / 2, 134);
+      ctx.fillStyle = '#F1C40F';
+      ctx.font = '900 12px Inter, sans-serif';
+      ctx.fillText('ODDINARY CHAMPION', w / 2, winnerY + 20);
 
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = '900 30px Inter, sans-serif';
-    ctx.fillText(`${winner.name}`, w / 2, 172);
-
-    ctx.fillStyle = '#6BCF2D';
-    ctx.font = '800 18px Inter, sans-serif';
-    ctx.fillText(`${winner.score || 0} points`, w / 2, 204);
-
-    // 6. Final Leaderboard Card
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.roundRect(40, 240, w - 80, 280, 16);
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle = '#6E7382';
-    ctx.font = '800 13px Inter, sans-serif';
-    ctx.textAlign = 'left';
-    ctx.fillText('FINAL STANDINGS', 60, 272);
-
-    ctx.textAlign = 'right';
-    ctx.fillText('POINTS', w - 60, 272);
-
-    const topPlayers = sorted.slice(0, 5);
-    let yPos = 308;
-
-    topPlayers.forEach((p, idx) => {
-      const medal = `#${idx + 1}`;
-      ctx.fillStyle = idx === 0 ? '#F1C40F' : '#FFFFFF';
-      ctx.font = '700 17px Inter, sans-serif';
-      ctx.textAlign = 'left';
-      ctx.fillText(`${medal}  ${p.name}`, 60, yPos);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '900 23px Inter, sans-serif';
+      ctx.fillText(`${winner.name}`, w / 2, winnerY + 50);
 
       ctx.fillStyle = '#6BCF2D';
-      ctx.font = '800 17px Inter, sans-serif';
-      ctx.textAlign = 'right';
-      ctx.fillText(`${p.score || 0} pts`, w - 60, yPos);
-      yPos += 38;
-    });
+      ctx.font = '800 14px Inter, sans-serif';
+      ctx.fillText(`${winner.score || 0} points`, w / 2, winnerY + 70);
 
-    // 7. Footer text
-    ctx.fillStyle = '#6E7382';
-    ctx.font = '600 13px Inter, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('Play free on single phone at https://oddinary.vercel.app/', w / 2, 565);
+      // 6. Highlights / Stats Row
+      let dangerousName = "-";
+      let dangerousSub = "-";
+      let detectiveName = "-";
+      let detectiveSub = "-";
+      let suspectedName = "-";
+      let suspectedSub = "-";
+
+      const allPointsZero = State.players.every(p => (p.score || 0) === 0);
+      if (!allPointsZero && State.round > 0) {
+        let lowestCaughtRatio = 999;
+        State.players.forEach(p => {
+          const imposterTimes = State.stats.imposterCountTimes[p.id] || 0;
+          const caughtTimes = State.stats.imposterCaughtTimes[p.id] || 0;
+          if (imposterTimes > 0) {
+            const ratio = caughtTimes / imposterTimes;
+            if (ratio < lowestCaughtRatio) {
+              lowestCaughtRatio = ratio;
+              dangerousName = p.name;
+              dangerousSub = `Caught ${caughtTimes} time${caughtTimes !== 1 ? 's' : ''}`;
+            }
+          }
+        });
+
+        let maxGuesses = 0;
+        State.players.forEach(p => {
+          const guesses = State.stats.correctGuesses[p.id] || 0;
+          if (guesses > maxGuesses) {
+            maxGuesses = guesses;
+            detectiveName = p.name;
+            detectiveSub = `${guesses} correct guess${guesses !== 1 ? 'es' : ''}`;
+          }
+        });
+
+        let maxVotes = 0;
+        State.players.forEach(p => {
+          const votes = State.stats.votesReceived[p.id] || 0;
+          if (votes > maxVotes) {
+            maxVotes = votes;
+            suspectedName = p.name;
+            suspectedSub = `Suspected ${votes} time${votes !== 1 ? 's' : ''}`;
+          }
+        });
+      }
+
+      const statsList = [
+        { label: 'DANGEROUS ODDINARY', val: dangerousName, sub: dangerousSub },
+        { label: 'BEST DETECTIVE', val: detectiveName, sub: detectiveSub },
+        { label: 'MOST SUSPECTED', val: suspectedName, sub: suspectedSub }
+      ];
+
+      const boxW = (w - 80 - 16) / 3;
+      statsList.forEach((s, idx) => {
+        const boxX = 40 + idx * (boxW + 8);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(boxX, statsY, boxW, statsH, 10);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#6E7382';
+        ctx.font = '800 8.5px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(s.label, boxX + boxW / 2, statsY + 18);
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = '800 13px Inter, sans-serif';
+        ctx.fillText(s.val, boxX + boxW / 2, statsY + 40);
+
+        ctx.fillStyle = '#F1C40F';
+        ctx.font = '700 9.5px Inter, sans-serif';
+        ctx.fillText(s.sub, boxX + boxW / 2, statsY + 58);
+      });
+
+      // 7. Standings Card (header: LEADERBOARD)
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(40, standingsY, w - 80, standingsCardH, 14);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#6E7382';
+      ctx.font = '800 12px Inter, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('LEADERBOARD', 60, standingsY + 28);
+
+      ctx.textAlign = 'right';
+      ctx.fillText('POINTS', w - 60, standingsY + 28);
+
+      let yPos = standingsY + 56;
+
+      allPlayers.forEach((p, idx) => {
+        const medal = `#${idx + 1}`;
+        ctx.fillStyle = idx === 0 ? '#F1C40F' : '#FFFFFF';
+        ctx.font = '700 15px Inter, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`${medal}  ${p.name}`, 60, yPos);
+
+        ctx.fillStyle = '#6BCF2D';
+        ctx.font = '800 15px Inter, sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText(`${p.score || 0} pts`, w - 60, yPos);
+        yPos += 32;
+      });
+
+      // 8. Footer text
+      ctx.fillStyle = '#6E7382';
+      ctx.font = '600 12.5px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Play free at https://oddinary.vercel.app', w / 2, footerY);
+    };
+
+    if (shareLogoImg.complete && shareLogoImg.naturalWidth !== 0) {
+      render();
+    } else {
+      shareLogoImg.onload = render;
+      render();
+    }
+  },
+
+  downloadShareImage: () => {
+    const canvas = $('share-card-canvas');
+    if (!canvas) return;
+
+    const roundCount = State.round || 1;
+    const filename = `oddinary-champion-round-${roundCount}.png`;
+
+    try {
+      if (canvas.toBlob) {
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            Game._directDataUrlDownload(canvas, filename);
+            return;
+          }
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.style.display = 'none';
+          link.download = filename;
+          link.href = url;
+          document.body.appendChild(link);
+          link.click();
+          setTimeout(() => {
+            if (link.parentNode) link.parentNode.removeChild(link);
+            URL.revokeObjectURL(url);
+          }, 1000);
+          Game.showAlert('Results image downloaded to your device!', 'Saved');
+        }, 'image/png');
+      } else {
+        Game._directDataUrlDownload(canvas, filename);
+      }
+    } catch (e) {
+      console.error('Blob download error:', e);
+      Game._directDataUrlDownload(canvas, filename);
+    }
+  },
+
+  _directDataUrlDownload: (canvas, filename) => {
+    try {
+      const dataUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.style.display = 'none';
+      link.download = filename;
+      link.href = dataUrl;
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        if (link.parentNode) link.parentNode.removeChild(link);
+      }, 1000);
+      Game.showAlert('Results image downloaded to your device!', 'Saved');
+    } catch (err) {
+      console.error('Direct download error:', err);
+      Game.showAlert('Unable to download image automatically. Please check browser permissions!', 'Download Error');
+    }
   },
 
   doNativeShare: async () => {
@@ -1541,12 +1736,34 @@ const Game = {
   downloadShareImage: () => {
     const canvas = $('share-card-canvas');
     if (!canvas) return;
-    const link = document.createElement('a');
-    link.download = `oddinary-champion-round-${State.round || 1}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-    Game.showAlert('Results image downloaded to your device!', 'Saved');
+
+    try {
+      if (canvas.toBlob) {
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            Game._fallbackDownloadDataUrl(canvas);
+            return;
+          }
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.download = `oddinary-champion-round-${State.round || 1}.png`;
+          link.href = url;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          setTimeout(() => URL.revokeObjectURL(url), 10000);
+          Game.showAlert('Results image saved to downloads!', 'Saved');
+        }, 'image/png');
+      } else {
+        Game._fallbackDownloadDataUrl(canvas);
+      }
+    } catch (e) {
+      console.error('Download error:', e);
+      Game._fallbackDownloadDataUrl(canvas);
+    }
   },
+
+
 
   copyShareText: () => {
     const sorted = [...State.players].sort((a,b) => (b.score || 0) - (a.score || 0));
@@ -1821,14 +2038,20 @@ const Game = {
  if (setupCheck) setupCheck.checked = false;
  if (midCheck) midCheck.checked = false;
  }
-
  Game.updateImposterUI();
  Game.saveSession();
  },
 
  updateImposterUI: () => {
- const count = State.config.imposterCount;
- const screens = ['setup', 'mid'];
+  const count = State.config.imposterCount;
+  if (count <= 1 && State.config.secretAlliance) {
+  State.config.secretAlliance = false;
+  const setupCheck = $('setting-secret-alliance');
+  const midCheck = $('mid-setting-secret-alliance');
+  if (setupCheck) setupCheck.checked = false;
+  if (midCheck) midCheck.checked = false;
+  }
+  const screens = ['setup', 'mid'];
  screens.forEach(s => {
  const display = $(`${s}-imposter-count-display`);
  const plusBtn = $(`${s}-imposter-plus`);
