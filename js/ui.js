@@ -67,12 +67,14 @@ Game.renderSetupInputs = function(scrollToLast = false) {
 
   // Full rebuild (initial load, drag-reorder, remove player, etc.)
   list.innerHTML = "";
+  const fragment = document.createDocumentFragment();
 
   State.players.forEach((p, idx) => {
     if (!p) return;
     const grp = Game._createPlayerRow(p, idx, false);
-    list.appendChild(grp);
+    fragment.appendChild(grp);
   });
+  list.appendChild(fragment);
 
   if (scrollToLast && State.players.length > 0) {
     setTimeout(() => {

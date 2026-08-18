@@ -395,7 +395,7 @@ h1, h2, h3, h4 { font-weight: 900; letter-spacing: -0.5px; }
   justify-content: center;
   width: 100%;
   max-width: 320px;
-  margin: 0 auto 35px auto;
+  margin: 0 auto 52px auto;
 }
 
 .hero-btn-play {
@@ -414,6 +414,7 @@ h1, h2, h3, h4 { font-weight: 900; letter-spacing: -0.5px; }
 @media (max-width: 480px) {
   .hero-actions-group {
     max-width: 100%;
+    margin-bottom: 42px;
   }
 }
 

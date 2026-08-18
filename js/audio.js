@@ -161,6 +161,17 @@ const AudioEngine = {
  }
  } catch(e) {
  console.error('[AudioEngine] Playback error:', e);
- }
- }
+  }
+  }
 };
+
+// --- Unlock Web Audio Context on first user interaction ---
+const unlockAudio = () => {
+  if (AudioEngine.ctx && AudioEngine.ctx.state === 'suspended') {
+    AudioEngine.ctx.resume();
+  }
+  document.removeEventListener('pointerdown', unlockAudio);
+  document.removeEventListener('keydown', unlockAudio);
+};
+document.addEventListener('pointerdown', unlockAudio, { passive: true });
+document.addEventListener('keydown', unlockAudio, { passive: true });

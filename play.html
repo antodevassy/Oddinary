@@ -799,7 +799,7 @@
 <!-- General Alert Modal -->
 <div id="modal-alert" class="modal" style="z-index: 99999 !important;">
   <div class="modal-content" style="text-align: center; max-width: 400px; padding: 25px;">
-    <div style="display:flex; justify-content:center; margin-bottom:10px;"><svg viewBox="0 0 24 24" style="width:48px; height:48px; fill:var(--accent-gold);"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg></div>
+    <div id="alert-icon-container" style="display:flex; justify-content:center; margin-bottom:10px;"><svg viewBox="0 0 24 24" style="width:48px; height:48px; fill:var(--primary);"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
     <h2 id="alert-title" class="text-primary mb-2" style="font-size: 1.4rem;">Notice</h2>
     <p id="alert-message" class="text-white mb-2" style="line-height: 1.5; font-size: 0.95rem; margin: 15px 0;">Notice message</p>
     <button class="btn btn-primary" style="margin-top: 15px; width: 100%;" onclick="AudioEngine.play('click'); Game.closeAlert()">Got It</button>
@@ -823,7 +823,7 @@
 <div id="modal-add-player-midgame" class="modal" style="z-index: 20000 !important;">
   <div class="modal-content" style="max-width: 400px; padding: 25px;">
     <h2 class="text-primary mb-2 text-c">Add New Player</h2>
-    <input type="text" id="new-player-name-midgame" placeholder="Enter player name" style="width: 100%; margin: 15px 0;" autocomplete="off">
+    <input type="text" id="new-player-name-midgame" placeholder="Enter player name" style="width: 100%; margin: 15px 0;" autocomplete="off" onkeydown="if(event.key==='Enter') Game.confirmAddPlayerMidgame()">
     <div id="add-player-midgame-error" class="error-msg" style="margin-bottom: 10px;"></div>
     <div style="display: flex; gap: 10px; margin-top: 10px;">
       <button class="btn" style="flex:1" onclick="Game.closeAddPlayerMidgame()">Cancel</button>

@@ -1435,77 +1435,83 @@ const Game = {
     const winner = sorted[0] || { name: 'Player', score: 0 };
     const allPlayers = sorted;
 
-    const logoW = 190;
-    let logoH = 42;
+    const baseW = 600;
+    const scale = 2.5; // Ultra HD High-DPI 1500px Canvas
+
+    const logoW = 220 * scale;
+    let logoH = 50 * scale;
     if (shareLogoImg.naturalWidth && shareLogoImg.naturalHeight) {
       logoH = (shareLogoImg.naturalHeight / shareLogoImg.naturalWidth) * logoW;
     }
-    const logoY = 16;
-    const logoBottom = logoY + logoH;
+    const logoY = 24 * scale;
+    const logoBottom = logoY + logoH - (8 * scale);
 
-    const subtitleY = logoBottom + 10;
-    const winnerY = logoBottom + 20;
-    const winnerH = 82;
-    const statsY = winnerY + winnerH + 10;
-    const statsH = 72;
-    const standingsY = statsY + statsH + 10;
-    const standingsCardH = 46 + allPlayers.length * 32 + 10;
-    const footerY = standingsY + standingsCardH + 20;
-    const totalH = footerY + 20;
+    const subtitleY = logoBottom + (10 * scale);
+    const winnerY = logoBottom + (24 * scale);
+    const winnerH = 96 * scale;
+    const statsY = winnerY + winnerH + (16 * scale);
+    const statsH = 84 * scale;
+    const standingsY = statsY + statsH + (16 * scale);
+    const standingsCardH = (52 + allPlayers.length * 36 + 12) * scale;
+    const footerY = standingsY + standingsCardH + (24 * scale);
+    const totalH = footerY + (24 * scale);
 
-    canvas.width = 600;
-    canvas.height = Math.max(600, totalH);
+    canvas.width = baseW * scale;
+    canvas.height = Math.max(600 * scale, totalH);
     const w = canvas.width;
     const h = canvas.height;
 
     const render = () => {
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+
       // 1. Dark Background
       ctx.fillStyle = '#07080A';
       ctx.fillRect(0, 0, w, h);
 
       // 2. Ambient Gradient Glow
-      const grad = ctx.createRadialGradient(w / 2, 100, 10, w / 2, 100, 300);
-      grad.addColorStop(0, 'rgba(107, 207, 45, 0.25)');
+      const grad = ctx.createRadialGradient(w / 2, 120 * scale, 10 * scale, w / 2, 120 * scale, 400 * scale);
+      grad.addColorStop(0, 'rgba(107, 207, 45, 0.28)');
       grad.addColorStop(1, 'rgba(7, 8, 10, 0)');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, w, h);
 
       // 3. Card Border
-      ctx.strokeStyle = 'rgba(107, 207, 45, 0.4)';
-      ctx.lineWidth = 4;
-      ctx.strokeRect(12, 12, w - 24, h - 24);
+      ctx.strokeStyle = 'rgba(107, 207, 45, 0.45)';
+      ctx.lineWidth = 5 * scale;
+      ctx.strokeRect(14 * scale, 14 * scale, w - (28 * scale), h - (28 * scale));
 
-      // 4. Logo Image ALWAYS at Top
+      // 4. Logo Image ALWAYS at Top (Full-Size Crisp PNG)
       ctx.drawImage(shareLogoImg, (w - logoW) / 2, logoY, logoW, logoH);
 
-      // Subtitle (grammar fix: 1 Round vs X Rounds)
+      // Subtitle
       const roundCount = State.round || 1;
       const roundWord = roundCount === 1 ? 'ROUND' : 'ROUNDS';
       ctx.fillStyle = '#F1C40F';
-      ctx.font = '800 13px Inter, sans-serif';
+      ctx.font = `800 ${14 * scale}px Inter, -apple-system, sans-serif`;
       ctx.textAlign = 'center';
       ctx.fillText(`GAME RESULTS • ${roundCount} ${roundWord} PLAYED`, w / 2, subtitleY);
 
       // 5. Winner Box
       ctx.fillStyle = 'rgba(24, 26, 32, 0.95)';
       ctx.strokeStyle = '#F1C40F';
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 3 * scale;
       ctx.beginPath();
-      ctx.roundRect(40, winnerY, w - 80, winnerH, 14);
+      ctx.roundRect(45 * scale, winnerY, w - (90 * scale), winnerH, 16 * scale);
       ctx.fill();
       ctx.stroke();
 
       ctx.fillStyle = '#F1C40F';
-      ctx.font = '900 12px Inter, sans-serif';
-      ctx.fillText('ODDINARY CHAMPION', w / 2, winnerY + 20);
+      ctx.font = `900 ${13 * scale}px Inter, -apple-system, sans-serif`;
+      ctx.fillText('ODDINARY CHAMPION', w / 2, winnerY + (24 * scale));
 
       ctx.fillStyle = '#FFFFFF';
-      ctx.font = '900 23px Inter, sans-serif';
-      ctx.fillText(`${winner.name}`, w / 2, winnerY + 50);
+      ctx.font = `900 ${26 * scale}px Inter, -apple-system, sans-serif`;
+      ctx.fillText(`${winner.name}`, w / 2, winnerY + (58 * scale));
 
       ctx.fillStyle = '#6BCF2D';
-      ctx.font = '800 14px Inter, sans-serif';
-      ctx.fillText(`${winner.score || 0} points`, w / 2, winnerY + 70);
+      ctx.font = `800 ${15 * scale}px Inter, -apple-system, sans-serif`;
+      ctx.fillText(`${winner.score || 0} points`, w / 2, winnerY + (82 * scale));
 
       // 6. Highlights / Stats Row
       let dangerousName = "-";
@@ -1558,67 +1564,67 @@ const Game = {
         { label: 'MOST SUSPECTED', val: suspectedName, sub: suspectedSub }
       ];
 
-      const boxW = (w - 80 - 16) / 3;
+      const boxW = (w - (90 * scale) - (18 * scale)) / 3;
       statsList.forEach((s, idx) => {
-        const boxX = 40 + idx * (boxW + 8);
+        const boxX = (45 * scale) + idx * (boxW + (9 * scale));
         ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-        ctx.lineWidth = 1;
+        ctx.lineWidth = 1.5 * scale;
         ctx.beginPath();
-        ctx.roundRect(boxX, statsY, boxW, statsH, 10);
+        ctx.roundRect(boxX, statsY, boxW, statsH, 12 * scale);
         ctx.fill();
         ctx.stroke();
 
         ctx.fillStyle = '#6E7382';
-        ctx.font = '800 8.5px Inter, sans-serif';
+        ctx.font = `800 ${9.5 * scale}px Inter, -apple-system, sans-serif`;
         ctx.textAlign = 'center';
-        ctx.fillText(s.label, boxX + boxW / 2, statsY + 18);
+        ctx.fillText(s.label, boxX + boxW / 2, statsY + (20 * scale));
 
         ctx.fillStyle = '#FFFFFF';
-        ctx.font = '800 13px Inter, sans-serif';
-        ctx.fillText(s.val, boxX + boxW / 2, statsY + 40);
+        ctx.font = `800 ${14 * scale}px Inter, -apple-system, sans-serif`;
+        ctx.fillText(s.val, boxX + boxW / 2, statsY + (44 * scale));
 
         ctx.fillStyle = '#F1C40F';
-        ctx.font = '700 9.5px Inter, sans-serif';
-        ctx.fillText(s.sub, boxX + boxW / 2, statsY + 58);
+        ctx.font = `700 ${10.5 * scale}px Inter, -apple-system, sans-serif`;
+        ctx.fillText(s.sub, boxX + boxW / 2, statsY + (64 * scale));
       });
 
       // 7. Standings Card (header: LEADERBOARD)
       ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-      ctx.lineWidth = 1;
+      ctx.lineWidth = 1.5 * scale;
       ctx.beginPath();
-      ctx.roundRect(40, standingsY, w - 80, standingsCardH, 14);
+      ctx.roundRect(45 * scale, standingsY, w - (90 * scale), standingsCardH, 16 * scale);
       ctx.fill();
       ctx.stroke();
 
       ctx.fillStyle = '#6E7382';
-      ctx.font = '800 12px Inter, sans-serif';
+      ctx.font = `800 ${13 * scale}px Inter, -apple-system, sans-serif`;
       ctx.textAlign = 'left';
-      ctx.fillText('LEADERBOARD', 60, standingsY + 28);
+      ctx.fillText('LEADERBOARD', 68 * scale, standingsY + (32 * scale));
 
       ctx.textAlign = 'right';
-      ctx.fillText('POINTS', w - 60, standingsY + 28);
+      ctx.fillText('POINTS', w - (68 * scale), standingsY + (32 * scale));
 
-      let yPos = standingsY + 56;
+      let yPos = standingsY + (64 * scale);
 
       allPlayers.forEach((p, idx) => {
         const medal = `#${idx + 1}`;
         ctx.fillStyle = idx === 0 ? '#F1C40F' : '#FFFFFF';
-        ctx.font = '700 15px Inter, sans-serif';
+        ctx.font = `700 ${16 * scale}px Inter, -apple-system, sans-serif`;
         ctx.textAlign = 'left';
-        ctx.fillText(`${medal}  ${p.name}`, 60, yPos);
+        ctx.fillText(`${medal}  ${p.name}`, 68 * scale, yPos);
 
         ctx.fillStyle = '#6BCF2D';
-        ctx.font = '800 15px Inter, sans-serif';
+        ctx.font = `800 ${16 * scale}px Inter, -apple-system, sans-serif`;
         ctx.textAlign = 'right';
-        ctx.fillText(`${p.score || 0} pts`, w - 60, yPos);
-        yPos += 32;
+        ctx.fillText(`${p.score || 0} pts`, w - (68 * scale), yPos);
+        yPos += 36 * scale;
       });
 
       // 8. Footer text
       ctx.fillStyle = '#6E7382';
-      ctx.font = '600 12.5px Inter, sans-serif';
+      ctx.font = `600 ${13.5 * scale}px Inter, -apple-system, sans-serif`;
       ctx.textAlign = 'center';
       ctx.fillText('Play free at https://oddinary.vercel.app', w / 2, footerY);
     };
@@ -2122,11 +2128,22 @@ const Game = {
 
  closeVotingBreakdown: () => $('modal-voting-breakdown').classList.remove('open'),
 
- showAlert: (message, title = "Notice") => {
- $('alert-title').innerText = title;
- $('alert-message').innerText = message;
- $('modal-alert').classList.add('open');
- },
+  showAlert: (message, title = "Notice", type = null) => {
+    $('alert-title').innerText = title;
+    $('alert-message').innerText = message;
+
+    const iconContainer = $('alert-icon-container');
+    if (iconContainer) {
+      const isSuccess = type === 'success' || /saved|copied|downloaded|success/i.test(title);
+      if (isSuccess) {
+        iconContainer.innerHTML = `<svg viewBox="0 0 24 24" style="width:48px; height:48px; fill:var(--primary);"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`;
+      } else {
+        iconContainer.innerHTML = `<svg viewBox="0 0 24 24" style="width:48px; height:48px; fill:var(--accent-gold);"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>`;
+      }
+    }
+
+    $('modal-alert').classList.add('open');
+  },
 
  closeAlert: () => $('modal-alert').classList.remove('open'),
 
@@ -2135,9 +2152,21 @@ const Game = {
  askEndGame: () => $('modal-end-game-confirm').classList.add('open'),
  cancelEndGame: () => $('modal-end-game-confirm').classList.remove('open'),
 
- confirmEndGame: () => {
+  confirmEndGame: () => {
     const modal = $('modal-end-game-confirm');
     if (modal) modal.classList.remove('open');
     Game.showGameOverScreen();
+  },
+
+  closeAllOpenModals: () => {
+    const openModals = document.querySelectorAll('.modal.open');
+    openModals.forEach(m => m.classList.remove('open'));
   }
 };
+
+// --- Global Keyboard Shortcuts ---
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    Game.closeAllOpenModals();
+  }
+});

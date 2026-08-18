@@ -21,15 +21,20 @@ const StorageManager = {
  /**
  * Load active game session from sessionStorage
  */
- loadSession: function() {
- try {
- const raw = sessionStorage.getItem(SESSION_KEY);
- return raw ? JSON.parse(raw) : null;
- } catch (e) {
- console.error('[StorageManager] Error loading session:', e);
- return null;
- }
- },
+  loadSession: function() {
+    try {
+      const raw = sessionStorage.getItem(SESSION_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object' && Array.isArray(parsed.players)) {
+        return parsed;
+      }
+      return null;
+    } catch (e) {
+      console.error('[StorageManager] Error loading session:', e);
+      return null;
+    }
+  },
 
  /**
  * Clear active session data
