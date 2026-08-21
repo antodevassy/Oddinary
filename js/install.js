@@ -278,7 +278,7 @@ if (document.readyState === 'loading') {
   InstallPrompt.init();
 }
 
-// --- Prevent Mobile Left-Edge Swipe-Right Back Navigation & Round Complete / Game Over Swiping ---
+// --- Disable Slide-to-Right / Swipe-Back Navigation Across Entire Gameplay ---
 (() => {
   let touchStartX = 0;
   let touchStartY = 0;
@@ -293,6 +293,11 @@ if (document.readyState === 'loading') {
   window.addEventListener('touchmove', (e) => {
     if (!e.touches || e.touches.length !== 1) return;
 
+    const target = e.target;
+    // Allow horizontal dragging inside range sliders (e.g. timer duration slider on setup page)
+    const isRangeSlider = target && (target.tagName === 'INPUT' && target.type === 'range' || (target.closest && target.closest('.slider-input')));
+    if (isRangeSlider) return;
+
     const currentX = e.touches[0].clientX;
     const currentY = e.touches[0].clientY;
     const deltaX = currentX - touchStartX;
@@ -300,17 +305,18 @@ if (document.readyState === 'loading') {
 
     const activeEl = document.querySelector('.screen.active');
     const activeId = activeEl ? activeEl.id.replace('screen-', '') : '';
-    const isRoundCompleteOrGameOver = activeId === 'scoreboard' || activeId === 'game-over';
+    const isGameActive = activeId && !['landing', 'setup'].includes(activeId);
 
-    // 1. Block left-edge swipe-right back navigation
-    if (touchStartX < 50 && deltaX > 10 && Math.abs(deltaX) > Math.abs(deltaY)) {
+    // 1. During active gameplay, block ANY horizontal swipe to the right regardless of touch start location
+    if (isGameActive && deltaX > 10 && Math.abs(deltaX) > Math.abs(deltaY)) {
       if (e.cancelable) e.preventDefault();
       return;
     }
 
-    // 2. Block any swipe right on Round Complete or Game Over screen to prevent going back to Imposter Reveal
-    if (isRoundCompleteOrGameOver && deltaX > 15 && Math.abs(deltaX) > Math.abs(deltaY)) {
+    // 2. Globally block left-edge swipe-right back navigation
+    if (touchStartX < 50 && deltaX > 10 && Math.abs(deltaX) > Math.abs(deltaY)) {
       if (e.cancelable) e.preventDefault();
+      return;
     }
   }, { passive: false });
 })();
