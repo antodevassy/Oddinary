@@ -96,13 +96,8 @@ window.addEventListener('popstate', () => {
   // Immediately re-push history state so browser stays on current page
   lockHistoryState();
 
-  if (activeId === 'scoreboard' || activeId === 'game-over') {
-    return;
-  }
-
-  if (typeof Game !== 'undefined' && Game.askEndGame) {
-    Game.askEndGame();
-  }
+  // Stay on current screen without switching or regressing state
+  return;
 });
 
 // Intercept refresh and back keyboard shortcuts (F5, Ctrl+R, Cmd+R, Alt+LeftArrow) during active game & game-over screens
@@ -631,8 +626,9 @@ const Game = {
  Game.showRevealScreen();
  },
 
- showRevealScreen: () => {
- const playerId = State.playerOrder[State.stepIndex];
+  showRevealScreen: () => {
+    lockHistoryState();
+    const playerId = State.playerOrder[State.stepIndex];
  const player = State.players.find(p => p.id === playerId);
  
  $('reveal-player-name').innerText = player.name;
@@ -969,6 +965,7 @@ const Game = {
   },
 
   showVotingScreen: () => {
+    lockHistoryState();
     const voterId = State.playerOrder[State.stepIndex];
     const voter = State.players.find(p => p.id === voterId);
     State.selectedTargets = [];
@@ -2234,7 +2231,8 @@ openDeletePlayers: () => Game.openManagePlayers(),
   confirmEndGame: () => {
     const modal = $('modal-end-game-confirm');
     if (modal) modal.classList.remove('open');
-    Game.showGameOverScreen();
+    // End ongoing round alone and return to setup screen with earned points intact
+    Game.showScreen('setup');
   },
 
   closeAllOpenModals: () => {
