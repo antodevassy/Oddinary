@@ -62,45 +62,76 @@ const $ = (id) => document.getElementById(id);
 const Screens = ['landing', 'setup', 'reveal', 'discuss', 'voting', 'voting-complete', 'results', 'scoreboard', 'game-over'];
 let shouldPreventRefresh = true;
 
-// Helper to push history entry & prevent mobile back navigation
+// Helper to push history entry & prevent back navigation during active game rounds
 function lockHistoryState() {
   try {
-    window.history.pushState({ oddinary: true }, '', location.href);
+    for (let i = 0; i < 3; i++) {
+      window.history.pushState({ oddinary: true }, '', location.href);
+    }
   } catch (e) {}
 }
 
-// Lock history stack on initial script load
-lockHistoryState();
-
-// Prevent refresh warning during active game
+// Prevent refresh warning during active game rounds (excludes setup & landing)
 window.addEventListener('beforeunload', (e) => {
   const activeEl = document.querySelector('.screen.active');
   const activeId = activeEl ? activeEl.id.replace('screen-', '') : '';
-  const isGameInProgress = activeId && !['landing', 'setup', 'game-over'].includes(activeId);
+  const isGameInProgress = activeId && !['landing', 'setup'].includes(activeId);
 
   if (!shouldPreventRefresh || !isGameInProgress) return;
 
   Analytics.logEvent('game_abandoned', { round: State.round });
   e.preventDefault();
-  e.returnValue = '';
-  return '';
+  e.returnValue = 'Game in progress. Are you sure you want to leave or refresh?';
+  return e.returnValue;
 });
 
-// Traps mobile hardware back button and swipe-back gestures during active game
+// Traps hardware back button, browser back, and swipe-back gestures during active game & game-over screens
 window.addEventListener('popstate', () => {
   const activeEl = document.querySelector('.screen.active');
   const activeId = activeEl ? activeEl.id.replace('screen-', '') : '';
-  const isGameInProgress = activeId && !['landing', 'setup', 'game-over'].includes(activeId);
+  const isGameInProgress = activeId && !['landing', 'setup'].includes(activeId);
+
+  if (!isGameInProgress || !shouldPreventRefresh) return;
 
   // Immediately re-push history state so browser stays on current page
   lockHistoryState();
 
-  if ((isGameInProgress || activeId === 'setup') && shouldPreventRefresh) {
+  if (typeof Game !== 'undefined' && Game.askEndGame) {
+    Game.askEndGame();
+  }
+});
+
+// Intercept refresh and back keyboard shortcuts (F5, Ctrl+R, Cmd+R, Alt+LeftArrow) during active game & game-over screens
+window.addEventListener('keydown', (e) => {
+  const activeEl = document.querySelector('.screen.active');
+  const activeId = activeEl ? activeEl.id.replace('screen-', '') : '';
+  const isGameInProgress = activeId && !['landing', 'setup'].includes(activeId);
+
+  if (!isGameInProgress || !shouldPreventRefresh) return;
+
+  // Block F5, Ctrl+R, Cmd+R, Ctrl+Shift+R, Cmd+Shift+R
+  if (
+    e.key === 'F5' ||
+    ((e.ctrlKey || e.metaKey) && (e.key === 'r' || e.key === 'R'))
+  ) {
+    e.preventDefault();
+    e.stopPropagation();
     if (typeof Game !== 'undefined' && Game.askEndGame) {
       Game.askEndGame();
     }
+    return false;
   }
-});
+
+  // Block Alt + Left Arrow (browser back shortcut)
+  if (e.altKey && (e.key === 'ArrowLeft' || e.keyCode === 37)) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof Game !== 'undefined' && Game.askEndGame) {
+      Game.askEndGame();
+    }
+    return false;
+  }
+}, true);
 
 // --- Game Controller Engine ---
 const Game = {
@@ -221,7 +252,9 @@ const Game = {
     });
     const target = $(`screen-${name}`);
     if (target) target.classList.add('active');
-    lockHistoryState();
+    if (name !== 'landing' && name !== 'setup') {
+      lockHistoryState();
+    }
     window.scrollTo(0, 0);
 
     if (name === 'landing' || name === 'setup') {
