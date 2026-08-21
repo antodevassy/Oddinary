@@ -54,6 +54,10 @@ html {
   overflow-x: hidden;
   max-width: 100%;
   width: 100%;
+  touch-action: pan-y;
+  overscroll-behavior: none;
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: none;
 }
 
 body {
@@ -61,6 +65,7 @@ body {
   background-color: var(--bg-dark);
   color: var(--text-main);
   min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: hidden;
   max-width: 100%;
   width: 100%;
@@ -70,6 +75,9 @@ body {
   position: relative;
   line-height: 1.5;
   touch-action: pan-y;
+  overscroll-behavior: none;
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: none;
 }
 
 /* Background Atmosphere */
@@ -1181,6 +1189,8 @@ section[id] {
    ========================================================================== */
 .game-page-body {
   text-align: center;
+  overscroll-behavior: none;
+  overscroll-behavior-y: none;
 }
 
 #app {
@@ -1194,6 +1204,8 @@ section[id] {
   position: relative;
   min-height: 100vh;
   min-height: 100dvh;
+  overscroll-behavior: none;
+  overscroll-behavior-y: none;
 }
 
 .screen {
@@ -1202,12 +1214,14 @@ section[id] {
   position: relative;
   min-height: calc(100vh - 20px);
   min-height: calc(100dvh - 20px);
-  padding: calc(10px + env(safe-area-inset-top)) 4px calc(15px + env(safe-area-inset-bottom));
+  padding: calc(10px + env(safe-area-inset-top)) 4px calc(24px + env(safe-area-inset-bottom));
   box-sizing: border-box;
   animation: screenFadeIn 0.18s ease-out;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 12px;
+  overscroll-behavior: none;
+  overscroll-behavior-y: none;
 }
 .screen.active { display: flex; }
 
