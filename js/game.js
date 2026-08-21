@@ -115,8 +115,8 @@ window.addEventListener('keydown', (e) => {
   ) {
     e.preventDefault();
     e.stopPropagation();
-    if (typeof Game !== 'undefined' && Game.askEndGame) {
-      Game.askEndGame();
+    if (typeof Game !== 'undefined' && Game.askCloseReveal) {
+      Game.askCloseReveal();
     }
     return false;
   }
@@ -125,8 +125,8 @@ window.addEventListener('keydown', (e) => {
   if (e.altKey && (e.key === 'ArrowLeft' || e.keyCode === 37)) {
     e.preventDefault();
     e.stopPropagation();
-    if (typeof Game !== 'undefined' && Game.askEndGame) {
-      Game.askEndGame();
+    if (typeof Game !== 'undefined' && Game.askCloseReveal) {
+      Game.askCloseReveal();
     }
     return false;
   }
@@ -2231,8 +2231,7 @@ openDeletePlayers: () => Game.openManagePlayers(),
   confirmEndGame: () => {
     const modal = $('modal-end-game-confirm');
     if (modal) modal.classList.remove('open');
-    // End ongoing round alone and return to setup screen with earned points intact
-    Game.showScreen('setup');
+    Game.showGameOverScreen();
   },
 
   closeAllOpenModals: () => {
