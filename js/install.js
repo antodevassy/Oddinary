@@ -6,13 +6,42 @@
 const InstallPrompt = (() => {
   let deferredPrompt = null;
 
+  function isInstalled() {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+      || window.matchMedia('(display-mode: fullscreen)').matches
+      || window.matchMedia('(display-mode: minimal-ui)').matches
+      || window.matchMedia('(display-mode: window-controls-overlay)').matches
+      || navigator.standalone === true
+      || (document.referrer && document.referrer.startsWith('android-app://'));
+
+    const isMarkedInstalled = localStorage.getItem('oddinary_app_installed') === 'true';
+
+    return isStandalone || isMarkedInstalled;
+  }
+
+  function hideInstallLink() {
+    const link = document.getElementById('install-app-link');
+    const sep = document.getElementById('install-link-separator');
+    if (link) link.style.display = 'none';
+    if (sep) sep.style.display = 'none';
+  }
+
+  function checkRelatedApps() {
+    if ('getInstalledRelatedApps' in navigator) {
+      navigator.getInstalledRelatedApps().then(apps => {
+        if (apps && apps.length > 0) {
+          localStorage.setItem('oddinary_app_installed', 'true');
+          hideInstallLink();
+        }
+      }).catch(() => {});
+    }
+  }
+
   // --- Platform Detection ---
   function getPlatform() {
-    const ua = navigator.userAgent || '';
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
-      || navigator.standalone === true;
-    if (isStandalone) return 'standalone';
+    if (isInstalled()) return 'standalone';
 
+    const ua = navigator.userAgent || '';
     if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) return 'ios';
     if (/Android/i.test(ua)) return 'android';
     if (/Windows/i.test(ua)) return 'windows';
@@ -108,21 +137,18 @@ const InstallPrompt = (() => {
 
     let actionsHTML;
     if (hasNativePrompt) {
-      // Native prompt available — show Install Now
       actionsHTML = `<button class="btn btn-primary install-btn" onclick="InstallPrompt.doInstall()">
            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;margin-right:6px;"><path d="M12 5v14m0 0l-4-4m4 4l4-4"/><path d="M4 19h16"/></svg>
            Install Now
          </button>
          <button class="btn install-dismiss-btn" onclick="InstallPrompt.close()">Not Now</button>`;
     } else if (info.canAutoInstall) {
-      // Platform supports install but prompt hasn't fired yet — show button that tries to trigger it
       actionsHTML = `<button class="btn btn-primary install-btn" id="install-confirm-btn" onclick="InstallPrompt.doInstall()">
            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;margin-right:6px;"><path d="M12 5v14m0 0l-4-4m4 4l4-4"/><path d="M4 19h16"/></svg>
            Install Now
          </button>
          <button class="btn install-dismiss-btn" onclick="InstallPrompt.close()">Not Now</button>`;
     } else {
-      // iOS — manual steps only
       actionsHTML = `<button class="btn btn-primary install-btn" onclick="InstallPrompt.close()">Got It</button>`;
     }
 
@@ -152,7 +178,6 @@ const InstallPrompt = (() => {
 
     document.body.appendChild(modal);
 
-    // If prompt hasn't fired yet, listen for it while modal is open
     if (!hasNativePrompt && info.canAutoInstall) {
       const lateListener = (e) => {
         e.preventDefault();
@@ -170,25 +195,42 @@ const InstallPrompt = (() => {
   // --- Public API ---
   return {
     init() {
-      const platform = getPlatform();
-
-      // Hide the footer link if already installed as standalone
-      if (platform === 'standalone') {
-        const link = document.getElementById('install-app-link');
-        const sep = document.getElementById('install-link-separator');
-        if (link) link.style.display = 'none';
-        if (sep) sep.style.display = 'none';
+      if (isInstalled()) {
+        hideInstallLink();
         return;
       }
 
-      // Capture the native install prompt (Chrome / Edge on Android & desktop)
+      checkRelatedApps();
+
+      // Capture native install prompt
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
       });
+
+      // Listen for app installation completion
+      window.addEventListener('appinstalled', () => {
+        localStorage.setItem('oddinary_app_installed', 'true');
+        hideInstallLink();
+        deferredPrompt = null;
+      });
+
+      // Listen for standalone display-mode match
+      try {
+        window.matchMedia('(display-mode: standalone)').addEventListener('change', (e) => {
+          if (e.matches) {
+            localStorage.setItem('oddinary_app_installed', 'true');
+            hideInstallLink();
+          }
+        });
+      } catch (err) {}
     },
 
     show() {
+      if (isInstalled()) {
+        hideInstallLink();
+        return;
+      }
       const platform = getPlatform();
       if (platform === 'standalone') return;
       if (typeof AudioEngine !== 'undefined') AudioEngine.play('click');
@@ -200,20 +242,16 @@ const InstallPrompt = (() => {
         deferredPrompt.prompt();
         const result = await deferredPrompt.userChoice;
         if (result.outcome === 'accepted') {
+          localStorage.setItem('oddinary_app_installed', 'true');
+          hideInstallLink();
           const modal = document.getElementById('modal-install');
           if (modal) {
             modal.classList.remove('open');
             setTimeout(() => modal.remove(), 300);
           }
-          // Hide the link since they installed
-          const link = document.getElementById('install-app-link');
-          const sep = document.getElementById('install-link-separator');
-          if (link) link.style.display = 'none';
-          if (sep) sep.style.display = 'none';
         }
         deferredPrompt = null;
       } else {
-        // Native prompt not available — show fallback tip inside the modal
         const btn = document.getElementById('install-confirm-btn');
         if (btn) {
           btn.outerHTML = `<p style="font-size: 0.85rem; color: var(--text-sec); text-align: center; padding: 8px 0; margin: 0; line-height: 1.5;">
@@ -232,6 +270,13 @@ const InstallPrompt = (() => {
     }
   };
 })();
+
+// Auto-run init on document load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => InstallPrompt.init());
+} else {
+  InstallPrompt.init();
+}
 
 // --- Prevent Mobile Horizontal Edge-Swipe Navigation & Top Pull-Down Displacement ---
 (() => {
