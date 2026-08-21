@@ -278,7 +278,7 @@ if (document.readyState === 'loading') {
   InstallPrompt.init();
 }
 
-// --- Prevent Mobile Horizontal Edge-Swipe Navigation & Top Pull-Down Displacement ---
+// --- Prevent Mobile Left-Edge Swipe-Right Back Navigation Only ---
 (() => {
   let touchStartX = 0;
   let touchStartY = 0;
@@ -293,42 +293,14 @@ if (document.readyState === 'loading') {
   window.addEventListener('touchmove', (e) => {
     if (!e.touches || e.touches.length !== 1) return;
 
-    const target = e.target;
-    // Allow horizontal dragging inside range sliders (e.g. timer duration slider)
-    const isRangeSlider = target && (target.tagName === 'INPUT' && target.type === 'range' || (target.closest && target.closest('.slider-input')));
-
     const currentX = e.touches[0].clientX;
     const currentY = e.touches[0].clientY;
     const deltaX = currentX - touchStartX;
     const deltaY = currentY - touchStartY;
 
-    // 1. Prevent Edge Swipe Navigation (swipe right starting near left screen edge)
-    if (!isRangeSlider && touchStartX < 60 && deltaX > 5) {
+    // Only block if touch initiated at extreme left edge (<35px) and is a clear horizontal swipe right
+    if (touchStartX < 35 && deltaX > 15 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
       if (e.cancelable) e.preventDefault();
-      return;
-    }
-
-    // 2. Prevent general horizontal swiping if horizontal movement is dominant
-    if (!isRangeSlider && Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
-      if (e.cancelable) e.preventDefault();
-      return;
-    }
-
-    // 3. Prevent top pull-down overscroll displacement
-    const scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
-    if (scrollTop <= 0 && deltaY > 0) {
-      let node = target;
-      let isInsideScrolledElement = false;
-      while (node && node !== document.body && node !== document.documentElement) {
-        if (node.scrollTop > 0) {
-          isInsideScrolledElement = true;
-          break;
-        }
-        node = node.parentElement;
-      }
-      if (!isInsideScrolledElement && e.cancelable) {
-        e.preventDefault();
-      }
     }
   }, { passive: false });
 })();
