@@ -16,6 +16,18 @@ const Analytics = {
  }
 };
 
+// --- Mobile Haptics Helper ---
+function triggerHaptic(type = 'light') {
+  try {
+    if ('vibrate' in navigator && typeof navigator.vibrate === 'function') {
+      if (type === 'light') navigator.vibrate(20);
+      else if (type === 'medium') navigator.vibrate(45);
+      else if (type === 'heavy') navigator.vibrate(80);
+      else if (type === 'success') navigator.vibrate([30, 50, 30]);
+    }
+  } catch (e) {}
+}
+
 // --- Word Selector Instance ---
 const wordSelector = new WordSelector();
 
@@ -687,20 +699,22 @@ const Game = {
   },
 
   flipCard: () => {
-  if (!State.canFlip) return;
-  
-  const card = $('word-card');
-  if (card.classList.contains('flipped')) return;
-  
-  AudioEngine.play('flip');
-  card.classList.add('flipped');
-  setTimeout(() => {
-  $('btn-next-player').classList.remove('reveal-btn-hidden');
-  }, 800);
+    if (!State.canFlip) return;
+    
+    const card = $('word-card');
+    if (card.classList.contains('flipped')) return;
+    
+    triggerHaptic('medium');
+    AudioEngine.play('flip');
+    card.classList.add('flipped');
+    setTimeout(() => {
+      $('btn-next-player').classList.remove('reveal-btn-hidden');
+    }, 800);
   },
 
   nextReveal: () => {
-  AudioEngine.play('click');
+    triggerHaptic('light');
+    AudioEngine.play('click');
   $('btn-next-player').classList.add('reveal-btn-hidden');
   $('word-card').classList.remove('flipped');
  
@@ -752,6 +766,7 @@ const Game = {
         if (State.discussionTimeLeft <= 10) {
           if (timerDisplay) timerDisplay.classList.add('timer-urgent');
           AudioEngine.play('tick');
+          if (State.discussionTimeLeft <= 5) triggerHaptic('heavy');
         } else {
           if (timerDisplay) timerDisplay.classList.remove('timer-urgent');
         }
@@ -1007,6 +1022,7 @@ const Game = {
   },
 
   toggleVoteSelect: (targetId) => {
+    triggerHaptic('light');
     AudioEngine.play('click');
     const idx = State.selectedTargets.indexOf(targetId);
     const max = State.oddPlayerIds.length;
@@ -2250,6 +2266,7 @@ document.addEventListener('keydown', (e) => {
 // --- Confetti FX Engine ---
 const ConfettiFX = {
   launch: () => {
+    triggerHaptic('success');
     let canvas = document.getElementById('confetti-canvas');
     if (!canvas) {
       canvas = document.createElement('canvas');
