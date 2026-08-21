@@ -53,6 +53,12 @@
  --text-muted: #6C6F78;
  --radius: 16px;
  }
+  html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+    width: 100%;
+    touch-action: pan-y;
+  }
  * { margin: 0; padding: 0; box-sizing: border-box; }
  body {
  font-family: 'Inter', sans-serif;
@@ -121,9 +127,6 @@
  font-size: 0.72rem;
  padding: 10px 4px 18px 4px;
  }
- .footer-copyright p {
- white-space: nowrap;
- }
  .footer-copyright .footer-links {
  margin-top: 4px;
  }
@@ -174,7 +177,7 @@
  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
  <path d="M15 18l-6-6 6-6"/>
  </svg>
- <span>Back to Game</span>
+ <span>Back</span>
  </a>
  <div class="card">
  <h1>Privacy Policy</h1>
