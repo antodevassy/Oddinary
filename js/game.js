@@ -96,6 +96,10 @@ window.addEventListener('popstate', () => {
   // Immediately re-push history state so browser stays on current page
   lockHistoryState();
 
+  if (activeId === 'scoreboard' || activeId === 'game-over') {
+    return;
+  }
+
   if (typeof Game !== 'undefined' && Game.askEndGame) {
     Game.askEndGame();
   }
@@ -2222,7 +2226,7 @@ openDeletePlayers: () => Game.openManagePlayers(),
 
  closeAlert: () => $('modal-alert').classList.remove('open'),
 
- backToResults: () => Game.showScreen('results'),
+  backToResults: () => {},
  
  askEndGame: () => $('modal-end-game-confirm').classList.add('open'),
  cancelEndGame: () => $('modal-end-game-confirm').classList.remove('open'),

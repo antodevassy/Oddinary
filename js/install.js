@@ -278,7 +278,7 @@ if (document.readyState === 'loading') {
   InstallPrompt.init();
 }
 
-// --- Prevent Mobile Left-Edge Swipe-Right Back Navigation Only ---
+// --- Prevent Mobile Left-Edge Swipe-Right Back Navigation & Round Complete / Game Over Swiping ---
 (() => {
   let touchStartX = 0;
   let touchStartY = 0;
@@ -298,8 +298,18 @@ if (document.readyState === 'loading') {
     const deltaX = currentX - touchStartX;
     const deltaY = currentY - touchStartY;
 
-    // Only block if touch initiated at extreme left edge (<35px) and is a clear horizontal swipe right
-    if (touchStartX < 35 && deltaX > 15 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+    const activeEl = document.querySelector('.screen.active');
+    const activeId = activeEl ? activeEl.id.replace('screen-', '') : '';
+    const isRoundCompleteOrGameOver = activeId === 'scoreboard' || activeId === 'game-over';
+
+    // 1. Block left-edge swipe-right back navigation
+    if (touchStartX < 50 && deltaX > 10 && Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (e.cancelable) e.preventDefault();
+      return;
+    }
+
+    // 2. Block any swipe right on Round Complete or Game Over screen to prevent going back to Imposter Reveal
+    if (isRoundCompleteOrGameOver && deltaX > 15 && Math.abs(deltaX) > Math.abs(deltaY)) {
       if (e.cancelable) e.preventDefault();
     }
   }, { passive: false });
